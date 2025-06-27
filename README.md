@@ -1,0 +1,1 @@
+# flutter_web3_ai_insights
