@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_theme.dart';
-import 'package:web3_ai_assistant/core/navigation/app_router.dart';
+import 'package:web3_ai_assistant/routes/app_router.dart';
 
 void main() {
   // Ensure Flutter is initialized
