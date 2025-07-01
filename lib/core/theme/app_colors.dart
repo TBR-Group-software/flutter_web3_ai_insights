@@ -158,4 +158,45 @@ class AppColors {
   static const Color bullish = Palette.secondary;
   static const Color bearish = Palette.errorRed;
   static const Color neutral = Palette.overlay3;
+
+  // Primary containers with opacity
+  static const Color primaryContainer10 = Color(0x1A6BE7C8); // 10% opacity
+  static const Color primaryContainer30 = Color(0x4D6BE7C8); // 30% opacity
+  static const Color primaryContainer50 = Color(0x806BE7C8); // 50% opacity
+  
+  // Success containers with opacity
+  static const Color successContainer10 = Color(0x1A03C9A9); // 10% opacity
+  static const Color successContainer30 = Color(0x4D03C9A9); // 30% opacity
+  
+  // Error containers with opacity
+  static const Color errorContainer10 = Color(0x1AFF3B30); // 10% opacity
+  static const Color errorContainer30 = Color(0x4DFF3B30); // 30% opacity
+  
+  // Warning containers with opacity
+  static const Color warningContainer10 = Color(0x1AFFB020); // 10% opacity
+  static const Color warningContainer30 = Color(0x4DFFB020); // 30% opacity
+  
+  // Surface containers with opacity
+  static const Color surfaceContainer10 = Color(0x1A171615); // 10% opacity
+  static const Color surfaceContainer30 = Color(0x4D171615); // 30% opacity
+  static const Color surfaceContainer50 = Color(0x80171615); // 50% opacity
+  static const Color surfaceContainerHighest50 = Color(0x801D1B1A); // 50% opacity
+  
+  // Outline with opacity
+  static const Color outlineContainer20 = Color(0x33595857); // 20% opacity
+  static const Color outlineContainer30 = Color(0x4D595857); // 30% opacity
+  static const Color outlineContainer50 = Color(0x80595857); // 50% opacity
+  
+  // Overlay variants with opacity
+  static const Color onSurfaceVariant60 = Color(0x99DFDFDF); // 60% opacity
+  static const Color onSurfaceVariant70 = Color(0xB3DFDFDF); // 70% opacity
+  static const Color onSurfaceVariant80 = Color(0xCCDFDFDF); // 80% opacity
+  
+  // Shadow variants
+  static const Color shadow10 = Color(0x1A000000); // 10% opacity
+  static const Color shadow20 = Color(0x33000000); // 20% opacity
+  static const Color shadow30 = Color(0x4D000000); // 30% opacity
+  
+  // Scrim variants
+  static const Color scrim50 = Color(0x80000000); // 50% opacity
 }
