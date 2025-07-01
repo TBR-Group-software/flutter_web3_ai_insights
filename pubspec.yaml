@@ -1,6 +1,6 @@
 name: web3_ai_assistant
 description: "Flutter Web3 AI Insights"
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -9,53 +9,29 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   # State Management
-  flutter_riverpod: ^2.5.1
-  riverpod_annotation: ^2.4.0
-  
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
   # Navigation
-  go_router: ^14.5.0
-  
+  go_router: ^15.1.3
+
   # HTTP Client
-  dio: ^5.7.0
-  
-  # Immutable Models
-  freezed_annotation: ^2.4.4
-  
+  dio: ^5.8.0+1
+
   # JSON Serialization
   json_annotation: ^4.9.0
-  
-  # AI Integration
-  google_generative_ai: ^0.4.6
-  
+
   # Web3 Integration
   web3dart: ^3.0.1
-  
-  # Utilities
-  logger: ^2.4.0
-  
-  # HTTP Caching and Storage
-  dio_cache_interceptor: ^3.5.0
-  shared_preferences: ^2.2.2
-  
-  # Functional Programming
-  equatable: ^2.0.5
-  dartz: ^0.10.1
-  
-  # Dependency Injection
-  get_it: ^8.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  
-  # Code Generation
-  build_runner: ^2.4.13
-  freezed: ^2.5.7
-  json_serializable: ^6.8.0
-  riverpod_generator: ^2.4.3
+
+  riverpod_generator: ^2.6.5
 
 flutter:
   uses-material-design: true
