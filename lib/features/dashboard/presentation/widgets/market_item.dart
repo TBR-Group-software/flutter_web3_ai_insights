@@ -28,7 +28,7 @@ class MarketItem extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+            color: theme.colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
@@ -68,8 +68,8 @@ class MarketItem extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: isPositive 
-                ? theme.colorScheme.tertiaryContainer.withOpacity(0.1)
-                : theme.colorScheme.errorContainer.withOpacity(0.1),
+                ? theme.colorScheme.surfaceContainerLowest
+                : theme.colorScheme.errorContainer,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

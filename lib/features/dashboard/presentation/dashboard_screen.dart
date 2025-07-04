@@ -5,8 +5,8 @@ import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/core/widgets/adaptive_scaffold.dart';
 import 'package:web3_ai_assistant/core/widgets/responsive_builder.dart';
 import 'package:web3_ai_assistant/core/widgets/responsive_padding.dart';
+import 'package:web3_ai_assistant/core/widgets/shared_app_bar.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
-import 'package:web3_ai_assistant/features/dashboard/presentation/widgets/dashboard_app_bar.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/layouts/dashboard_mobile_layout.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/layouts/dashboard_tablet_layout.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/layouts/dashboard_desktop_layout.dart';
@@ -20,7 +20,10 @@ class DashboardScreen extends ConsumerWidget {
     final isLoading = ref.watch(dashboardLoadingProvider);
     
     return Scaffold(
-      appBar: const DashboardAppBar(),
+      appBar: const SharedAppBar(
+        title: AppConstants.dashboardLabel,
+        icon: Icons.dashboard_rounded,
+      ),
       body: AdaptiveScaffold(
         currentRoute: AppConstants.dashboardRoute,
         body: isLoading

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:web3_ai_assistant/core/constants/app_constants.dart';
+import 'package:web3_ai_assistant/core/widgets/shared_app_bar.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
 
 class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
@@ -62,10 +63,10 @@ class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
             child: Column(
               children: [
                 if (title != null)
-                  AppBar(
-                    title: Text(title!),
+                  SharedAppBar(
+                    title: title!,
+                    icon: _getIconForRoute(currentRoute),
                     actions: actions,
-                    automaticallyImplyLeading: false,
                   ),
                 Expanded(child: body),
               ],
@@ -101,6 +102,21 @@ class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
         context.go(AppConstants.portfolioRoute);
       case 3:
         context.go(AppConstants.aiInsightsRoute);
+    }
+  }
+
+  IconData? _getIconForRoute(String route) {
+    switch (route) {
+      case AppConstants.dashboardRoute:
+        return Icons.dashboard_rounded;
+      case AppConstants.walletRoute:
+        return Icons.account_balance_wallet_rounded;
+      case AppConstants.portfolioRoute:
+        return Icons.pie_chart_rounded;
+      case AppConstants.aiInsightsRoute:
+        return Icons.auto_awesome_rounded;
+      default:
+        return null;
     }
   }
 } 

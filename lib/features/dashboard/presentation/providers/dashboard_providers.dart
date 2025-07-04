@@ -1,11 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Mock wallet connection state provider
-/// This will be replaced with real wallet connection logic later
-final walletConnectionStateProvider = StateProvider<WalletConnectionState>((ref) {
-  return WalletConnectionState.disconnected;
-});
-
 /// Dashboard loading state provider
 final dashboardLoadingProvider = StateProvider<bool>((ref) => false);
 
@@ -43,14 +37,6 @@ final mockRecentTransactionsProvider = Provider<List<MockTransaction>>((ref) {
   ];
 });
 
-/// Wallet connection state enum
-enum WalletConnectionState {
-  disconnected,
-  connecting,
-  connected,
-  error,
-}
-
 /// Mock transaction model
 class MockTransaction {
 
@@ -70,11 +56,4 @@ enum TransactionStatus {
   pending,
   completed,
   failed,
-}
-
-/// Extension for wallet connection state
-extension WalletConnectionStateX on WalletConnectionState {
-  bool get isConnected => this == WalletConnectionState.connected;
-  bool get isConnecting => this == WalletConnectionState.connecting;
-  bool get hasError => this == WalletConnectionState.error;
 }

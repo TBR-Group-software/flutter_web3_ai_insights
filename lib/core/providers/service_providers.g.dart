@@ -6,7 +6,7 @@ part of 'service_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$web3ServiceHash() => r'6a1a3fdfe3e514f984db1e2a8084cdd43436d1dc';
+String _$web3ServiceHash() => r'ad2c18c2b0d3f46b0dfdfdb1ccb23529eaf0eb94';
 
 /// See also [web3Service].
 @ProviderFor(web3Service)
