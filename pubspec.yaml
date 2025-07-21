@@ -25,6 +25,12 @@ dependencies:
 
   # Web3 Integration
   web3dart: ^3.0.1
+  
+  # HTTP Client for Web3
+  http: ^1.4.0
+
+  # Google Fonts
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

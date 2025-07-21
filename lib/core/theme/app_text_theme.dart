@@ -1,82 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:web3_ai_assistant/core/theme/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTextTheme {
   static const String fontFamily = 'System';
 
   // Base text theme for dark theme
-  static TextTheme get darkTextTheme {
-    return const TextTheme(
+  static TextTheme darkTextTheme(ColorScheme colorScheme) {
+    return TextTheme(
       // Display styles
-      displayLarge: TextStyle(
+      displayLarge: GoogleFonts.orbitron(
         fontSize: 57,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w700,
         height: 1.12,
         letterSpacing: -0.25,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
-      displayMedium: TextStyle(
+      displayMedium: GoogleFonts.orbitron(
         fontSize: 45,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w700,
         height: 1.16,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
-      displaySmall: TextStyle(
+      displaySmall: GoogleFonts.orbitron(
         fontSize: 36,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w700,
         height: 1.22,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
 
       // Headline styles
-      headlineLarge: TextStyle(
+      headlineLarge: GoogleFonts.orbitron(
         fontSize: 32,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w700,
         height: 1.25,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
-      headlineMedium: TextStyle(
+      headlineMedium: GoogleFonts.orbitron(
         fontSize: 28,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w700,
         height: 1.29,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
-      headlineSmall: TextStyle(
+      headlineSmall: GoogleFonts.orbitron(
         fontSize: 24,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w700,
         height: 1.33,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
 
       // Title styles
-      titleLarge: TextStyle(
+      titleLarge: GoogleFonts.orbitron(
         fontSize: 22,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w700,
         height: 1.27,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
-      titleMedium: TextStyle(
+      titleMedium: GoogleFonts.orbitron(
         fontSize: 16,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w700,
         height: 1.50,
         letterSpacing: 0.15,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
-      titleSmall: TextStyle(
+      titleSmall: GoogleFonts.orbitron(
         fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w700,
         height: 1.43,
         letterSpacing: 0.1,
-        color: AppColors.onBackground,
-        fontFamily: fontFamily,
+        color: colorScheme.onSurface,
       ),
 
       // Body styles
@@ -85,7 +76,7 @@ class AppTextTheme {
         fontWeight: FontWeight.w400,
         height: 1.50,
         letterSpacing: 0.5,
-        color: AppColors.onBackground,
+        color: colorScheme.onSurface,
         fontFamily: fontFamily,
       ),
       bodyMedium: TextStyle(
@@ -93,7 +84,7 @@ class AppTextTheme {
         fontWeight: FontWeight.w400,
         height: 1.43,
         letterSpacing: 0.25,
-        color: AppColors.onBackground,
+        color: colorScheme.onSurface,
         fontFamily: fontFamily,
       ),
       bodySmall: TextStyle(
@@ -101,7 +92,7 @@ class AppTextTheme {
         fontWeight: FontWeight.w400,
         height: 1.33,
         letterSpacing: 0.4,
-        color: AppColors.onSurfaceVariant,
+        color: colorScheme.onSurfaceVariant,
         fontFamily: fontFamily,
       ),
 
@@ -111,7 +102,7 @@ class AppTextTheme {
         fontWeight: FontWeight.w500,
         height: 1.43,
         letterSpacing: 0.1,
-        color: AppColors.onSurface,
+        color: colorScheme.onSurface,
         fontFamily: fontFamily,
       ),
       labelMedium: TextStyle(
@@ -119,7 +110,7 @@ class AppTextTheme {
         fontWeight: FontWeight.w500,
         height: 1.33,
         letterSpacing: 0.5,
-        color: AppColors.onSurface,
+        color: colorScheme.onSurface,
         fontFamily: fontFamily,
       ),
       labelSmall: TextStyle(
@@ -127,17 +118,17 @@ class AppTextTheme {
         fontWeight: FontWeight.w500,
         height: 1.45,
         letterSpacing: 0.5,
-        color: AppColors.onSurfaceVariant,
+        color: colorScheme.onSurfaceVariant,
         fontFamily: fontFamily,
       ),
     );
   }
 
   // Light text theme (for future use or contrast scenarios)
-  static TextTheme get lightTextTheme {
-    return darkTextTheme.apply(
-      bodyColor: AppColors.background,
-      displayColor: AppColors.background,
+  static TextTheme lightTextTheme(ColorScheme colorScheme) {
+    return darkTextTheme(colorScheme).apply(
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onSurface,
     );
   }
 
@@ -158,108 +149,110 @@ class AppTextTheme {
   }
 
   // Custom text styles for specific use cases
-  static TextStyle get gradientText => TextStyle(
+  static TextStyle gradientText(ColorScheme colorScheme) => TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w600,
     height: 1.2,
     foreground: Paint()
-      ..shader = AppColors.primaryGradient.createShader(
+      ..shader = LinearGradient(
+        colors: [colorScheme.primary, colorScheme.secondary],
+      ).createShader(
         const Rect.fromLTWH(0, 0, 200, 70),
       ),
     fontFamily: fontFamily,
   );
 
-  static TextStyle get currencyText => const TextStyle(
+  static TextStyle currencyText(ColorScheme colorScheme) => TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
     height: 1.2,
-    color: AppColors.primary,
+    color: colorScheme.primary,
     fontFamily: fontFamily,
-    fontFeatures: [FontFeature.tabularFigures()],
+    fontFeatures: const [FontFeature.tabularFigures()],
   );
 
-  static TextStyle get percentagePositive => const TextStyle(
+  static TextStyle percentagePositive(ColorScheme colorScheme) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.2,
-    color: AppColors.success,
+    color: colorScheme.tertiary,
     fontFamily: fontFamily,
-    fontFeatures: [FontFeature.tabularFigures()],
+    fontFeatures: const [FontFeature.tabularFigures()],
   );
 
-  static TextStyle get percentageNegative => const TextStyle(
+  static TextStyle percentageNegative(ColorScheme colorScheme) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.2,
-    color: AppColors.error,
+    color: colorScheme.error,
     fontFamily: fontFamily,
-    fontFeatures: [FontFeature.tabularFigures()],
+    fontFeatures: const [FontFeature.tabularFigures()],
   );
 
-  static TextStyle get percentageNeutral => const TextStyle(
+  static TextStyle percentageNeutral(ColorScheme colorScheme) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.2,
-    color: AppColors.neutral,
+    color: colorScheme.onSurfaceVariant,
     fontFamily: fontFamily,
-    fontFeatures: [FontFeature.tabularFigures()],
+    fontFeatures: const [FontFeature.tabularFigures()],
   );
 
-  static TextStyle get tokenSymbol => const TextStyle(
+  static TextStyle tokenSymbol(ColorScheme colorScheme) => TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w600,
     height: 1.2,
-    color: AppColors.onSurfaceVariant,
+    color: colorScheme.onSurfaceVariant,
     fontFamily: fontFamily,
     letterSpacing: 0.5,
   );
 
-  static TextStyle get walletAddress => const TextStyle(
+  static TextStyle walletAddress(ColorScheme colorScheme) => TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.2,
-    color: AppColors.onSurfaceVariant,
+    color: colorScheme.onSurfaceVariant,
     fontFamily: 'monospace',
     letterSpacing: 0.2,
   );
 
-  static TextStyle get aiInsightTitle => const TextStyle(
+  static TextStyle aiInsightTitle(ColorScheme colorScheme) => TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     height: 1.3,
-    color: AppColors.primary,
+    color: colorScheme.primary,
     fontFamily: fontFamily,
   );
 
-  static TextStyle get aiInsightBody => const TextStyle(
+  static TextStyle aiInsightBody(ColorScheme colorScheme) => TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    color: AppColors.onSurface,
+    color: colorScheme.onSurface,
     fontFamily: fontFamily,
   );
 
-  static TextStyle get errorText => const TextStyle(
+  static TextStyle errorText(ColorScheme colorScheme) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    color: AppColors.error,
+    color: colorScheme.error,
     fontFamily: fontFamily,
   );
 
-  static TextStyle get successText => const TextStyle(
+  static TextStyle successText(ColorScheme colorScheme) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    color: AppColors.success,
+    color: colorScheme.tertiary,
     fontFamily: fontFamily,
   );
 
-  static TextStyle get warningText => const TextStyle(
+  static TextStyle warningText(ColorScheme colorScheme) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    color: AppColors.warning,
+    color: colorScheme.secondary,
     fontFamily: fontFamily,
   );
 }

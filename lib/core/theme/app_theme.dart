@@ -7,39 +7,57 @@ import 'package:web3_ai_assistant/core/theme/component_themes.dart';
 class AppTheme {
   static ThemeData get darkTheme {
     const colorScheme = ColorScheme.dark(
-      primary: AppColors.primary,
-      onPrimary: AppColors.onPrimary,
-      primaryContainer: AppColors.primaryContainer,
-      onPrimaryContainer: AppColors.onPrimaryContainer,
-      secondary: AppColors.secondary,
-      onSecondary: AppColors.onSecondary,
-      secondaryContainer: AppColors.secondaryContainer,
-      onSecondaryContainer: AppColors.onSecondaryContainer,
-      tertiary: AppColors.tertiary,
-      onTertiary: AppColors.onTertiary,
-      tertiaryContainer: AppColors.tertiaryContainer,
-      onTertiaryContainer: AppColors.onTertiaryContainer,
-      error: AppColors.error,
-      onError: AppColors.onError,
-      errorContainer: AppColors.errorContainer,
-      onErrorContainer: AppColors.onErrorContainer,
-      surface: AppColors.surface,
-      surfaceContainerHighest: AppColors.surfaceVariant,
-      onSurfaceVariant: AppColors.onSurfaceVariant,
-      outline: AppColors.outline,
-      outlineVariant: AppColors.outlineVariant,
-      shadow: AppColors.shadow,
-      scrim: AppColors.scrim,
-      inverseSurface: AppColors.inverseSurface,
-      onInverseSurface: AppColors.inverseOnSurface,
-      inversePrimary: AppColors.inversePrimary,
-      surfaceTint: AppColors.primary,
+      // Primary colors
+      primary: Palette.primary,
+      onPrimary: Palette.background,
+      primaryContainer: Palette.base2,
+      onPrimaryContainer: Palette.primary,
+      
+      // Secondary colors
+      secondary: Palette.secondary,
+      onSecondary: Palette.background,
+      secondaryContainer: Palette.base3,
+      onSecondaryContainer: Palette.secondary,
+      
+      // Tertiary colors
+      tertiary: Palette.tertiary,
+      onTertiary: Palette.white,
+      tertiaryContainer: Palette.base4,
+      onTertiaryContainer: Palette.accentBlue,
+      
+      // Error colors
+      error: Palette.errorRed,
+      onError: Palette.white,
+      errorContainer: Palette.darkRed,
+      onErrorContainer: Palette.lightRed,
+      
+      // Surface colors
+      surface: Palette.base1,
+      onSurface: Palette.white,
+      surfaceContainerLowest: Palette.background,
+      surfaceContainerLow: Palette.base1,
+      surfaceContainer: Palette.base2,
+      surfaceContainerHigh: Palette.base3,
+      surfaceContainerHighest: Palette.base4,
+      
+      // Surface variants
+      onSurfaceVariant: Palette.overlay2,
+      outline: Palette.overlay4,
+      outlineVariant: Palette.overlay3,
+      
+      // Other colors
+      shadow: Color(0xFF000000),
+      scrim: Color(0xFF000000),
+      inverseSurface: Palette.white,
+      onInverseSurface: Palette.background,
+      inversePrimary: Palette.tertiary,
+      surfaceTint: Palette.primary,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      textTheme: AppTextTheme.darkTextTheme,
+      textTheme: AppTextTheme.darkTextTheme(colorScheme),
       appBarTheme: ComponentThemes.darkAppBarTheme(colorScheme),
       elevatedButtonTheme: ComponentThemes.elevatedButtonTheme(colorScheme),
       outlinedButtonTheme: ComponentThemes.outlinedButtonTheme(colorScheme),
@@ -49,7 +67,9 @@ class AppTheme {
       chipTheme: ComponentThemes.chipTheme(colorScheme),
       inputDecorationTheme: ComponentThemes.inputDecorationTheme(colorScheme),
       bottomNavigationBarTheme: ComponentThemes.bottomNavigationBarTheme(colorScheme),
+      navigationBarTheme: ComponentThemes.navigationBarTheme(colorScheme),
       navigationRailTheme: ComponentThemes.navigationRailTheme(colorScheme),
+      navigationDrawerTheme: ComponentThemes.navigationDrawerTheme(colorScheme),
       drawerTheme: ComponentThemes.drawerTheme(colorScheme),
       dividerTheme: ComponentThemes.dividerTheme(colorScheme),
       snackBarTheme: ComponentThemes.snackBarTheme(colorScheme),
@@ -77,39 +97,57 @@ class AppTheme {
   // Light theme for future use or testing
   static ThemeData get lightTheme {
     const colorScheme = ColorScheme.light(
-      primary: AppColors.secondary,
-      onPrimary: AppColors.background,
+      // Primary colors
+      primary: Palette.secondary,
+      onPrimary: Palette.background,
       primaryContainer: Palette.overlay1,
-      onPrimaryContainer: AppColors.secondary,
-      secondary: AppColors.primary,
-      onSecondary: AppColors.background,
+      onPrimaryContainer: Palette.secondary,
+      
+      // Secondary colors
+      secondary: Palette.primary,
+      onSecondary: Palette.background,
       secondaryContainer: Palette.overlay2,
-      onSecondaryContainer: AppColors.primary,
-      tertiary: AppColors.tertiary,
+      onSecondaryContainer: Palette.primary,
+      
+      // Tertiary colors
+      tertiary: Palette.tertiary,
       onTertiary: Palette.white,
       tertiaryContainer: Palette.overlay1,
-      onTertiaryContainer: AppColors.tertiary,
-      error: AppColors.error,
+      onTertiaryContainer: Palette.tertiary,
+      
+      // Error colors
+      error: Palette.errorRed,
+      onError: Palette.white,
       errorContainer: Palette.overlay1,
-      onErrorContainer: AppColors.error,
+      onErrorContainer: Palette.errorRed,
+      
+      // Surface colors
       surface: Palette.overlay1,
-      onSurface: AppColors.background,
-      surfaceContainerHighest: Palette.overlay2,
-      onSurfaceVariant: AppColors.background,
+      onSurface: Palette.background,
+      surfaceContainerLowest: Palette.white,
+      surfaceContainerLow: Palette.overlay1,
+      surfaceContainer: Palette.overlay2,
+      surfaceContainerHigh: Palette.overlay3,
+      surfaceContainerHighest: Palette.overlay4,
+      
+      // Surface variants
+      onSurfaceVariant: Palette.background,
       outline: Palette.overlay3,
       outlineVariant: Palette.overlay2,
-      shadow: AppColors.shadow,
-      scrim: AppColors.scrim,
-      inverseSurface: AppColors.background,
+      
+      // Other colors
+      shadow: Color(0xFF000000),
+      scrim: Color(0xFF000000),
+      inverseSurface: Palette.background,
       onInverseSurface: Palette.white,
-      inversePrimary: AppColors.primary,
-      surfaceTint: AppColors.secondary,
+      inversePrimary: Palette.primary,
+      surfaceTint: Palette.secondary,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      textTheme: AppTextTheme.lightTextTheme,
+      textTheme: AppTextTheme.lightTextTheme(colorScheme),
       appBarTheme: ComponentThemes.lightAppBarTheme(colorScheme),
       elevatedButtonTheme: ComponentThemes.elevatedButtonTheme(colorScheme),
       outlinedButtonTheme: ComponentThemes.outlinedButtonTheme(colorScheme),
@@ -119,7 +157,9 @@ class AppTheme {
       chipTheme: ComponentThemes.chipTheme(colorScheme),
       inputDecorationTheme: ComponentThemes.inputDecorationTheme(colorScheme),
       bottomNavigationBarTheme: ComponentThemes.bottomNavigationBarTheme(colorScheme),
+      navigationBarTheme: ComponentThemes.navigationBarTheme(colorScheme),
       navigationRailTheme: ComponentThemes.navigationRailTheme(colorScheme),
+      navigationDrawerTheme: ComponentThemes.navigationDrawerTheme(colorScheme),
       drawerTheme: ComponentThemes.drawerTheme(colorScheme),
       dividerTheme: ComponentThemes.dividerTheme(colorScheme),
       snackBarTheme: ComponentThemes.snackBarTheme(colorScheme),
@@ -149,7 +189,7 @@ class AppTheme {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.dark,
-      systemNavigationBarColor: AppColors.background,
+      systemNavigationBarColor: Palette.background,
       systemNavigationBarIconBrightness: Brightness.light,
     );
   }

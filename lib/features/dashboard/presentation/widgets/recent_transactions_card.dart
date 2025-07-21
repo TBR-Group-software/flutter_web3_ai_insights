@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/widgets/transaction_item.dart';
 
 class RecentTransactionsCard extends ConsumerWidget {
@@ -11,7 +12,7 @@ class RecentTransactionsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final transactions = ref.watch(mockRecentTransactionsProvider);
-    final walletState = ref.watch(walletConnectionStateProvider);
+    final walletStateAsync = ref.watch(walletNotifierProvider);
 
     return Card(
       elevation: 0,
@@ -35,19 +36,42 @@ class RecentTransactionsCard extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            if (walletState.isConnected) ...[
-              ...transactions.map((tx) => TransactionItem(transaction: tx)),
-            ] else
-              Container(
+            walletStateAsync.when(
+              data: (walletState) {
+                if (walletState.isConnected) {
+                  return Column(
+                    children: transactions.map((tx) => TransactionItem(transaction: tx)).toList(),
+                  );
+                } else {
+                  return Container(
+                    height: 120,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Connect wallet to view transactions',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  );
+                }
+              },
+              loading: () => const SizedBox(
+                height: 120,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              error: (_, __) => Container(
                 height: 120,
                 alignment: Alignment.center,
                 child: Text(
-                  'Connect wallet to view transactions',
+                  'Error loading wallet state',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: theme.colorScheme.error,
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),

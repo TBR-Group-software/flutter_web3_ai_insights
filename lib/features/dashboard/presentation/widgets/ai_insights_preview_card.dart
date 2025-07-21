@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:web3_ai_assistant/core/constants/app_constants.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
-import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
 
 class AiInsightsPreviewCard extends ConsumerWidget {
   const AiInsightsPreviewCard({super.key});
@@ -11,7 +11,7 @@ class AiInsightsPreviewCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final walletState = ref.watch(walletConnectionStateProvider);
+    final walletStateAsync = ref.watch(walletNotifierProvider);
 
     return Card(
       elevation: 0,
@@ -70,7 +70,11 @@ class AiInsightsPreviewCard extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              if (walletState.isConnected) ...[
+              walletStateAsync.when(
+                data: (walletState) {
+                  if (walletState.isConnected) {
+                    return Column(
+                      children: [
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
@@ -116,14 +120,17 @@ class AiInsightsPreviewCard extends ConsumerWidget {
                     minimumSize: const Size(double.infinity, 44),
                   ),
                 ),
-              ] else ...[
+                      ],
+                    );
+                  } else {
+                    return
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    color: theme.colorScheme.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
+                      color: theme.colorScheme.outlineVariant,
                     ),
                   ),
                   child: Column(
@@ -143,8 +150,27 @@ class AiInsightsPreviewCard extends ConsumerWidget {
                       ),
                     ],
                   ),
+                    );
+                  }
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
                 ),
-              ],
+                error: (_, __) => Container(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.errorContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'Error loading wallet state',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onErrorContainer,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
 
 class PortfolioSummaryCard extends ConsumerWidget {
   const PortfolioSummaryCard({super.key});
@@ -10,16 +11,17 @@ class PortfolioSummaryCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final portfolioValue = ref.watch(mockPortfolioValueProvider);
-    final walletState = ref.watch(walletConnectionStateProvider);
+    final walletStateAsync = ref.watch(walletNotifierProvider);
 
     return Card(
       elevation: 0,
-      child: InkWell(
-        onTap: walletState.isConnected ? () {
-          // Navigate to portfolio
-        } : null,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
+      child: walletStateAsync.when(
+        data: (walletState) => InkWell(
+          onTap: walletState.isConnected ? () {
+            // Navigate to portfolio
+          } : null,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +46,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                         vertical: AppSpacing.xs,
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.tertiaryContainer.withOpacity(0.1),
+                        color: theme.colorScheme.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -116,7 +118,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                       Text(
                         'Connect your wallet to view portfolio',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -124,6 +126,19 @@ class PortfolioSummaryCard extends ConsumerWidget {
                 ),
               ],
             ],
+            ),
+          ),
+        ),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(AppSpacing.lg),
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        error: (_, __) => const Padding(
+          padding: EdgeInsets.all(AppSpacing.lg),
+          child: Center(
+            child: Text('Error loading wallet state'),
           ),
         ),
       ),
