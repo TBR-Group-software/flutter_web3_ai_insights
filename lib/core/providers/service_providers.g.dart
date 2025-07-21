@@ -22,5 +22,43 @@ final web3ServiceProvider = AutoDisposeProvider<Web3Service>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef Web3ServiceRef = AutoDisposeProviderRef<Web3Service>;
+String _$marketDataServiceHash() => r'eaaa5ba68701743b75f479f13088308d0389ce5e';
+
+/// See also [marketDataService].
+@ProviderFor(marketDataService)
+final marketDataServiceProvider =
+    AutoDisposeProvider<MarketDataService>.internal(
+      marketDataService,
+      name: r'marketDataServiceProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$marketDataServiceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MarketDataServiceRef = AutoDisposeProviderRef<MarketDataService>;
+String _$blockchainServiceHash() => r'76160442c7c8b668046401a695dc269cad3b4589';
+
+/// See also [blockchainService].
+@ProviderFor(blockchainService)
+final blockchainServiceProvider =
+    AutoDisposeProvider<BlockchainService>.internal(
+      blockchainService,
+      name: r'blockchainServiceProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$blockchainServiceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef BlockchainServiceRef = AutoDisposeProviderRef<BlockchainService>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
