@@ -25,7 +25,7 @@ final walletRepositoryProvider = AutoDisposeProvider<WalletRepository>.internal(
 // ignore: unused_element
 typedef WalletRepositoryRef = AutoDisposeProviderRef<WalletRepository>;
 String _$portfolioRepositoryHash() =>
-    r'119f7b2a2db90e4c938ccdf41b871ec5621309a4';
+    r'e81f3598d780e57b2bd466aac174e768956fffa7';
 
 /// See also [portfolioRepository].
 @ProviderFor(portfolioRepository)

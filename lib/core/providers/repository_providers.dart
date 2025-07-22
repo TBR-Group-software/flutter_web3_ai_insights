@@ -18,10 +18,10 @@ WalletRepository walletRepository(WalletRepositoryRef ref) {
 @riverpod
 PortfolioRepository portfolioRepository(PortfolioRepositoryRef ref) {
   final marketDataService = ref.watch(marketDataServiceProvider);
-  final blockchainService = ref.watch(blockchainServiceProvider);
+  final web3Service = ref.watch(web3ServiceProvider);
   final repository = PortfolioRepositoryImpl(
     marketDataService: marketDataService,
-    blockchainService: blockchainService,
+    web3Service: web3Service,
   );
   ref.onDispose(repository.dispose);
   return repository;

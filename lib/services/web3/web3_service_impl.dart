@@ -3,6 +3,7 @@ import 'dart:js_interop';
 import 'package:web3_ai_assistant/services/web3/models/wallet_connection_status.dart';
 import 'package:web3_ai_assistant/services/web3/models/wallet_info.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
+import 'package:web3_ai_assistant/services/market_data/models/token_balance.dart';
 
 // JS interop definitions
 @JS('window')
@@ -214,6 +215,122 @@ class Web3ServiceImpl implements Web3Service {
       return [];
     } catch (e) {
       throw Exception('Failed to request accounts: $e');
+    }
+  }
+
+  @override
+  Future<List<TokenBalance>> getTokenBalances(String walletAddress) async {
+    try {
+      if (!_isMetaMaskAvailable()) {
+        return [];
+      }
+
+      final ethereum = _getEthereum();
+      final tokenBalances = <TokenBalance>[];
+
+      // Common ERC-20 tokens with their contract addresses (Ethereum mainnet)
+      final commonTokens = <Map<String, dynamic>>[
+        {
+          'symbol': 'USDT',
+          'name': 'Tether USD',
+          'contractAddress': '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+          'decimals': 6,
+        },
+        {
+          'symbol': 'USDC',
+          'name': 'USD Coin',
+          'contractAddress': '0xA0b86a33E6441b8a80204c64C41e5b35c38a1A8e',
+          'decimals': 6,
+        },
+        {
+          'symbol': 'WETH',
+          'name': 'Wrapped Ether',
+          'contractAddress': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+          'decimals': 18,
+        },
+        {
+          'symbol': 'WBTC',
+          'name': 'Wrapped Bitcoin',
+          'contractAddress': '0x2260FAC5E5542a773Aa44fBcfeDf7C193bc2C599',
+          'decimals': 8,
+        },
+        // Add ETH balance as native token
+        {'symbol': 'ETH', 'name': 'Ethereum', 'contractAddress': 'native', 'decimals': 18},
+      ];
+
+      // ERC-20 balanceOf function signature
+      const balanceOfSignature = '0x70a08231'; // keccak256("balanceOf(address)")[:8]
+
+      for (final token in commonTokens) {
+        try {
+          BigInt balance;
+
+          if (token['contractAddress'] == 'native') {
+            // Get native ETH balance
+            try {
+              final params = [walletAddress.toJS, 'latest'.toJS].toJS;
+              final requestParams = {'method': 'eth_getBalance', 'params': params}.jsify()! as JSObject;
+
+              final result = await ethereum.request(requestParams).toDart;
+
+              if (result != null) {
+                final balanceHex = (result as JSString).toDart;
+                balance = BigInt.parse(balanceHex.replaceFirst('0x', ''), radix: 16);
+              } else {
+                continue;
+              }
+            } catch (e) {
+              continue;
+            }
+          } else {
+            // Get ERC-20 token balance
+            try {
+              // Encode the address parameter (remove 0x prefix and pad to 64 chars)
+              final addressParam = walletAddress.replaceFirst('0x', '').padLeft(64, '0');
+              final data = '$balanceOfSignature$addressParam';
+              final params =
+                  [
+                    {'to': token['contractAddress'], 'data': data}.jsify(),
+                    'latest'.toJS,
+                  ].toJS;
+
+              final requestParams = {'method': 'eth_call', 'params': params}.jsify()! as JSObject;
+
+              final result = await ethereum.request(requestParams).toDart;
+
+              if (result != null) {
+                final balanceHex = (result as JSString).toDart;
+                balance = BigInt.parse(balanceHex.replaceFirst('0x', ''), radix: 16);
+              } else {
+                continue;
+              }
+            } catch (e) {
+              continue;
+            }
+          }
+
+          // Add token if balance > 0 OR if it's ETH (show even with 0 balance for testing)
+          if (balance > BigInt.zero || token['symbol'] == 'ETH') {
+            final tokenBalance = TokenBalance(
+              symbol: token['symbol'] as String,
+              name: token['name'] as String,
+              contractAddress: token['contractAddress'] as String,
+              balance: balance,
+              decimals: token['decimals'] as int,
+            );
+            tokenBalances.add(tokenBalance);
+          } else {
+          }
+        } catch (e) {
+          // Continue with other tokens if one fails
+          continue;
+        }
+      }
+
+      return tokenBalances;
+    } catch (e) {
+      // Return empty list on error
+      return [];
     }
   }
 
