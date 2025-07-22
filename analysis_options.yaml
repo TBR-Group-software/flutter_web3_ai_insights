@@ -70,10 +70,11 @@ linter:
 
 analyzer:
   exclude:
-    # Exclude generated Retrofit files from analysis.
-    - lib/data/api/*.g.dart
-    # - "**/*.g.dart"
-    # - "**/*.freezed.dart"
+    # Exclude generated files from analysis.
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "lib/**.g.dart"
+    - "lib/**.freezed.dart"
   plugins:
     - custom_lint
   language:

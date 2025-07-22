@@ -19,9 +19,17 @@ dependencies:
 
   # HTTP Client
   dio: ^5.8.0+1
+  dio_cache_interceptor: ^3.5.0
+  retrofit: ^4.5.0
+  
+  # WebSocket
+  web_socket_channel: ^3.0.1
 
   # JSON Serialization
   json_annotation: ^4.9.0
+  
+  # Logging
+  logger: ^2.0.2+1
 
   # Web3 Integration
   web3dart: ^3.0.1
@@ -38,6 +46,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
   riverpod_generator: ^2.6.5
+  json_serializable: ^6.9.5
+  retrofit_generator: ^9.1.4
 
 flutter:
   uses-material-design: true

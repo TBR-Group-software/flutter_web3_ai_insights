@@ -45,24 +45,66 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
         return [];
       }
 
-      // Extract symbols for price fetching
-      final symbols = tokenBalances.map((token) => '${token.symbol}USDT').toList();
+      // Extract symbols for price fetching - map to correct Binance symbols
+      final symbols = <String>[];
+      final symbolMapping = <String, String>{}; // Maps Binance symbol back to original token symbol
       
-      // Get current prices for all tokens
+      for (final token in tokenBalances) {
+        final binanceSymbol = _mapToBinanceSymbol(token.symbol);
+        if (binanceSymbol != null) {
+          symbols.add(binanceSymbol);
+          symbolMapping[binanceSymbol] = token.symbol;
+        }
+      }
+      
+      _logger.i('📊 Requesting REST API prices for ${symbols.length} Binance symbols: $symbols');
+      
+      // Get current prices for all tokens via REST API
       final tokenPrices = await _marketDataService.getTokenPrices(symbols);
-      final priceMap = {for (final price in tokenPrices) price.symbol: price};
+      final priceMap = <String, TokenPrice>{};
+      for (final price in tokenPrices) {
+        final originalSymbol = symbolMapping[price.symbol];
+        if (originalSymbol != null) {
+          priceMap[originalSymbol] = price;
+          _logger.i('💰 REST API price ${price.symbol} (\$${price.price}) -> $originalSymbol');
+        }
+      }
       
-      // Transform balances and prices into portfolio tokens
-      final portfolioTokens = <PortfolioToken>[];
-      for (final balance in tokenBalances) {
-        final symbol = '${balance.symbol}USDT';
-        final price = priceMap[symbol];
-        
-        final balanceDouble = balance.balance.toDouble() / 
-            BigInt.from(10).pow(balance.decimals).toDouble(); // Convert from wei to readable format
-        
-        if (price != null) {
-          _logger.i('Creating portfolio token: ${balance.symbol}, Balance: $balanceDouble, Price: ${price.price}');
+      // Ensure we have prices for all requested tokens
+      if (priceMap.isEmpty && symbols.isNotEmpty) {
+        _logger.w('No prices received for symbols: $symbols');
+      }
+      
+      _logger.i('Price map contains: ${priceMap.keys.toList()}');
+      
+                      // Transform balances and prices into portfolio tokens
+        final portfolioTokens = <PortfolioToken>[];
+        for (final balance in tokenBalances) {
+          final price = priceMap[balance.symbol];
+          
+          final balanceDouble = balance.balance.toDouble() / 
+              BigInt.from(10).pow(balance.decimals).toDouble(); // Convert from wei to readable format
+          
+          _logger.i('Token ${balance.symbol}: Balance ${balance.balance} wei, Decimals: ${balance.decimals}, Converted: $balanceDouble');
+          
+          // Special handling for USDT - it's always worth $1.00
+          if (balance.symbol.toUpperCase() == 'USDT') {
+            final portfolioToken = PortfolioToken(
+              symbol: balance.symbol,
+              name: balance.name,
+              contractAddress: balance.contractAddress,
+              balance: balanceDouble,
+              decimals: balance.decimals,
+              price: 1, // USDT is pegged to $1
+              change24h: 0, // Stable coin doesn't change much
+              changePercent24h: 0,
+              totalValue: balanceDouble * 1.0,
+              logoUri: balance.logoUri,
+              lastUpdated: DateTime.now(),
+            );
+            portfolioTokens.add(portfolioToken);
+          } else if (price != null) {
+            _logger.i('Creating portfolio token: ${balance.symbol}, Balance: $balanceDouble, Price: \$${price.price}');
           
           final portfolioToken = PortfolioToken(
             symbol: balance.symbol,
@@ -88,10 +130,10 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
             contractAddress: balance.contractAddress,
             balance: balanceDouble,
             decimals: balance.decimals,
-            price: 0.0, // No price data available
-            change24h: 0.0,
-            changePercent24h: 0.0,
-            totalValue: 0.0, // Can't calculate without price
+            price: 0, // No price data available
+            change24h: 0,
+            changePercent24h: 0,
+            totalValue: 0, // Can't calculate without price
             logoUri: balance.logoUri,
             lastUpdated: DateTime.now(),
           );
@@ -103,9 +145,12 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       portfolioTokens.sort((a, b) => b.totalValue.compareTo(a.totalValue));
       
       _currentPortfolio = portfolioTokens;
+      
+      // Immediately emit to stream for real-time UI updates
+      _portfolioController ??= StreamController<List<PortfolioToken>>.broadcast();
       _portfolioController?.add(_currentPortfolio);
       
-      _logger.i('Portfolio fetched successfully. ${portfolioTokens.length} tokens found.');
+      _logger.i('✅ Portfolio fetched with REST API data. ${portfolioTokens.length} tokens found. Stream initialized.');
       return portfolioTokens;
     } catch (e) {
       _logger.e('Error fetching portfolio: $e');
@@ -121,6 +166,7 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   @override
   Future<void> subscribeToPortfolioUpdates(String walletAddress) async {
     if (_currentWalletAddress == walletAddress && _priceSubscription != null) {
+      _logger.i('Already subscribed to portfolio updates for $walletAddress');
       return; // Already subscribed
     }
     
@@ -129,15 +175,33 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
     _currentWalletAddress = walletAddress;
     _portfolioController ??= StreamController<List<PortfolioToken>>.broadcast();
     
+    _logger.i('🚀 Starting portfolio subscription for wallet: $walletAddress');
+    
     // Subscribe to price updates for all tokens in portfolio
     if (_currentPortfolio.isNotEmpty) {
-      final symbols = _currentPortfolio.map((token) => '${token.symbol}USDT').toList();
-      _marketDataService.subscribeToMultiplePrices(symbols);
+      final symbols = <String>[];
+      for (final token in _currentPortfolio) {
+        final binanceSymbol = _mapToBinanceSymbol(token.symbol);
+        if (binanceSymbol != null) {
+          symbols.add(binanceSymbol);
+        }
+      }
       
-      _priceSubscription = _marketDataService.priceStream.listen(
-        _handlePriceUpdate,
-        onError: (Object error) => _logger.e('Price stream error: $error'),
-      );
+      if (symbols.isNotEmpty) {
+        _logger.i('📡 Subscribing to WebSocket price updates for ${symbols.length} symbols: $symbols');
+        _marketDataService.subscribeToMultiplePrices(symbols);
+        
+        _priceSubscription = _marketDataService.priceStream.listen(
+          _handlePriceUpdate,
+          onError: (Object error) => _logger.e('❌ Price stream error: $error'),
+        );
+        
+        _logger.i('✅ WebSocket subscription active - real-time updates enabled');
+      } else {
+        _logger.w('⚠️ No valid symbols found for WebSocket subscription');
+      }
+    } else {
+      _logger.w('⚠️ Portfolio is empty - cannot subscribe to price updates');
     }
   }
 
@@ -149,19 +213,31 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
     }
     
     if (_currentPortfolio.isNotEmpty) {
-      final symbols = _currentPortfolio.map((token) => '${token.symbol}USDT').toList();
-      _marketDataService.unsubscribeFromMultiplePrices(symbols);
+      final symbols = <String>[];
+      for (final token in _currentPortfolio) {
+        final binanceSymbol = _mapToBinanceSymbol(token.symbol);
+        if (binanceSymbol != null) {
+          symbols.add(binanceSymbol);
+        }
+      }
+      if (symbols.isNotEmpty) {
+        _marketDataService.unsubscribeFromMultiplePrices(symbols);
+      }
     }
     
     _currentWalletAddress = null;
   }
 
   void _handlePriceUpdate(TokenPrice tokenPrice) {
+    _logger.i('🔄 WebSocket price update for ${tokenPrice.symbol}: \$${tokenPrice.price}');
+    
     // Find the token in current portfolio and update its price
     var hasUpdates = false;
     final updatedPortfolio = _currentPortfolio.map((token) {
-      if ('${token.symbol}USDT' == tokenPrice.symbol) {
+      final binanceSymbol = _mapToBinanceSymbol(token.symbol);
+      if (binanceSymbol == tokenPrice.symbol) {
         hasUpdates = true;
+        _logger.i('💎 REAL-TIME UPDATE: ${token.symbol} price \$${token.price} → \$${tokenPrice.price}');
         return token.copyWith(
           price: tokenPrice.price,
           change24h: tokenPrice.change24h,
@@ -177,7 +253,48 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       // Re-sort by total value
       updatedPortfolio.sort((a, b) => b.totalValue.compareTo(a.totalValue));
       _currentPortfolio = updatedPortfolio;
+      
+      // CRITICAL: Emit to stream for immediate UI update
       _portfolioController?.add(_currentPortfolio);
+      _logger.i('📺 UI UPDATED: Portfolio streamed with WebSocket data - should see in real-time!');
+    } else {
+      _logger.w('⚠️ No matching token found for ${tokenPrice.symbol} in portfolio: ${_currentPortfolio.map((t) => t.symbol).join(', ')}');
+    }
+  }
+
+  /// Map Web3 token symbols to valid Binance trading pairs
+  String? _mapToBinanceSymbol(String tokenSymbol) {
+    switch (tokenSymbol.toUpperCase()) {
+      case 'ETH':
+        return 'ETHUSDT';
+      case 'WETH':
+        return 'ETHUSDT'; // WETH uses same price as ETH on Binance
+      case 'BTC':
+      case 'WBTC':
+        return 'BTCUSDT'; // Both BTC and WBTC use BTC price
+      case 'USDC':
+        return 'USDCUSDT';
+      case 'USDT':
+        return null; // USDT is the quote currency, no need to fetch its price vs itself
+      case 'BNB':
+        return 'BNBUSDT';
+      case 'ADA':
+        return 'ADAUSDT';
+      case 'DOT':
+        return 'DOTUSDT';
+      case 'LINK':
+        return 'LINKUSDT';
+      case 'UNI':
+        return 'UNIUSDT';
+      case 'MATIC':
+        return 'MATICUSDT';
+      case 'AVAX':
+        return 'AVAXUSDT';
+      case 'SOL':
+        return 'SOLUSDT';
+      default:
+        // For unknown tokens, try adding USDT suffix
+        return '${tokenSymbol.toUpperCase()}USDT';
     }
   }
 

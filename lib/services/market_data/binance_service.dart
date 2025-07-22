@@ -1,68 +1,46 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:dio/dio.dart';
-import 'package:retrofit/retrofit.dart';
 import 'package:logger/logger.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web3_ai_assistant/services/market_data/market_data_service.dart';
 import 'package:web3_ai_assistant/services/market_data/models/token_price.dart';
-import 'package:web3_ai_assistant/services/market_data/models/token_ticker.dart';
-import 'package:web3_ai_assistant/services/market_data/models/ticker_24hr.dart';
-import 'package:web3_ai_assistant/services/market_data/models/simple_price.dart';
+import 'package:web3_ai_assistant/services/market_data/binance_api.dart';
+import 'package:web3_ai_assistant/services/market_data/binance_websocket_service.dart';
 
-part 'binance_service.g.dart';
-
-@RestApi()
-/// Service for retrieving market data from Binance API with REST API and Retrofit
-abstract class BinanceApi {
-  factory BinanceApi(Dio dio, {String baseUrl}) = _BinanceApi;
-
-  /// Get latest prices for symbols
-  @GET('/api/v3/ticker/price')
-  Future<List<SimplePrice>> getPrices({
-    @Query('symbols') required String symbols,
-  });
-
-  /// Get 24hr ticker statistics for symbols
-  @GET('/api/v3/ticker/24hr')
-  Future<List<Ticker24hr>> getTicker24hr({
-    @Query('symbols') required String symbols,
-  });
-}
-
+/// Implementation of MarketDataService using Binance API
+/// Follows clean architecture with separated REST API and WebSocket concerns
 class BinanceService implements MarketDataService {
-
   BinanceService({
     BinanceApi? api,
+    BinanceWebSocketService? webSocketService,
     Logger? logger,
   }) : _api = api ?? BinanceApi(
-         Dio(BaseOptions(connectTimeout: const Duration(seconds: 10))),
-         baseUrl: 'https://api.binance.com',
+         Dio(BaseOptions(
+           connectTimeout: const Duration(seconds: 10),
+           receiveTimeout: const Duration(seconds: 30),
+         )),
+               ),
+       _webSocketService = webSocketService ?? BinanceWebSocketService(
+         logger: logger,
        ),
-        _logger = logger ?? Logger();
+       _logger = logger ?? Logger();
+
   final BinanceApi _api;
+  final BinanceWebSocketService _webSocketService;
   final Logger _logger;
   
-  static const String _wsUrl = 'wss://stream.binance.com:9443/ws/stream';
   static const int _maxRequestsPerSecond = 20;
-  
-  // WebSocket related fields
-  IOWebSocketChannel? _webSocketChannel;
-  bool _isConnected = false;
-  bool _isReconnecting = false;
-  Timer? _heartbeatTimer;
-  Timer? _reconnectTimer;
-  final Set<String> _subscribedSymbols = {};
   
   // Caching and rate limiting
   final Map<String, TokenPrice> _priceCache = {};
   final Map<String, DateTime> _lastRequestTime = {};
-  StreamController<TokenPrice>? _priceController;
 
   @override
-  Stream<TokenPrice> get priceStream => 
-      _priceController?.stream ?? const Stream.empty();
+  Stream<TokenPrice> get priceStream => _webSocketService.priceStream.map((price) {
+    // Update cache with real-time data
+    _priceCache[price.symbol] = price;
+    return price;
+  });
 
   @override
   Map<String, TokenPrice> get cachedPrices => Map.unmodifiable(_priceCache);
@@ -139,33 +117,22 @@ class BinanceService implements MarketDataService {
 
   @override
   void subscribeToPrice(String symbol) {
-    subscribeToMultiplePrices([symbol]);
+    _webSocketService.subscribeToPrice(symbol);
   }
 
   @override
   void unsubscribeFromPrice(String symbol) {
-    unsubscribeFromMultiplePrices([symbol]);
+    _webSocketService.unsubscribeFromPrice(symbol);
   }
 
   @override
   void subscribeToMultiplePrices(List<String> symbols) {
-    for (final symbol in symbols) {
-      _subscribedSymbols.add(symbol.toLowerCase());
-    }
-    _connectWebSocket();
+    _webSocketService.subscribeToMultiplePrices(symbols);
   }
 
   @override
   void unsubscribeFromMultiplePrices(List<String> symbols) {
-    for (final symbol in symbols) {
-      _subscribedSymbols.remove(symbol.toLowerCase());
-    }
-    
-    if (_subscribedSymbols.isEmpty) {
-      _disconnectWebSocket();
-    } else {
-      _connectWebSocket(); // Reconnect with updated subscriptions
-    }
+    _webSocketService.unsubscribeFromMultiplePrices(symbols);
   }
 
   Future<void> _rateLimitCheck(String key) async {
@@ -184,127 +151,12 @@ class BinanceService implements MarketDataService {
     _lastRequestTime[key] = now;
   }
 
-  void _connectWebSocket() {
-    if (_isConnected || _isReconnecting || _subscribedSymbols.isEmpty) {
-      return;
-    }
-    
-    _isReconnecting = true;
-    _disconnectWebSocket();
-    
-    try {
-      _priceController ??= StreamController<TokenPrice>.broadcast();
-      
-      final streams = _subscribedSymbols.map((symbol) => '$symbol@ticker').join('/');
-      final wsUrl = '$_wsUrl/$streams';
-      
-      _webSocketChannel = IOWebSocketChannel.connect(wsUrl);
-      _isConnected = true;
-      _isReconnecting = false;
-      
-      _logger.i('WebSocket connected to Binance for symbols: ${_subscribedSymbols.join(', ')}');
-      
-      _webSocketChannel!.stream.listen(
-        (message) => _handleWebSocketMessage(message as String),
-        onError: _handleWebSocketError,
-        onDone: _handleWebSocketDone,
-      );
-      
-      _startHeartbeat();
-    } catch (e) {
-      _logger.e('WebSocket connection failed: $e');
-      _isConnected = false;
-      _isReconnecting = false;
-      _scheduleReconnect();
-    }
-  }
 
-  void _handleWebSocketMessage(String message) {
-    try {
-      final data = jsonDecode(message);
-      
-      if (data is Map<String, dynamic>) {
-        final ticker = TokenTicker.fromJson(data);
-        final currentPrice = double.parse(ticker.price);
-        final changePercent = double.parse(ticker.changePercent);
-        
-        final price = TokenPrice(
-          symbol: ticker.symbol,
-          price: currentPrice,
-          change24h: currentPrice * (changePercent / 100),
-          changePercent24h: changePercent,
-          high24h: double.parse(ticker.high),
-          low24h: double.parse(ticker.low),
-          volume24h: double.parse(ticker.volume),
-          lastUpdated: DateTime.fromMillisecondsSinceEpoch(ticker.eventTime),
-        );
-        
-        _priceCache[ticker.symbol] = price;
-        _priceController?.add(price);
-      }
-    } catch (e) {
-      _logger.e('Error parsing WebSocket message: $e');
-    }
-  }
-
-  void _handleWebSocketError(Object error) {
-    _logger.e('WebSocket error: $error');
-    _isConnected = false;
-    _scheduleReconnect();
-  }
-
-  void _handleWebSocketDone() {
-    _logger.i('WebSocket connection closed');
-    _isConnected = false;
-    _scheduleReconnect();
-  }
-
-  void _scheduleReconnect() {
-    if (_isReconnecting || _subscribedSymbols.isEmpty) {
-      return;
-    }
-    
-    _reconnectTimer?.cancel();
-    _reconnectTimer = Timer(
-      Duration(seconds: 5 + Random().nextInt(10)), // Random backoff
-      _connectWebSocket,
-    );
-  }
-
-  void _startHeartbeat() {
-    _heartbeatTimer?.cancel();
-    _heartbeatTimer = Timer.periodic(
-      const Duration(seconds: 30),
-      (timer) {
-        if (_isConnected) {
-          try {
-            _webSocketChannel?.sink.add(jsonEncode({'method': 'ping'}));
-          } catch (e) {
-            _logger.e('Heartbeat failed: $e');
-            _isConnected = false;
-            _scheduleReconnect();
-          }
-        }
-      },
-    );
-  }
-
-  void _disconnectWebSocket() {
-    _heartbeatTimer?.cancel();
-    _reconnectTimer?.cancel();
-    _webSocketChannel?.sink.close();
-    _webSocketChannel = null;
-    _isConnected = false;
-    _isReconnecting = false;
-  }
 
   @override
   void dispose() {
-    _disconnectWebSocket();
-    _priceController?.close();
-    _priceController = null;
+    _webSocketService.dispose();
     _priceCache.clear();
     _lastRequestTime.clear();
-    _subscribedSymbols.clear();
   }
-} 
+}

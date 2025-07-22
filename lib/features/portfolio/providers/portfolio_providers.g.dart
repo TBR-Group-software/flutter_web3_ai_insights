@@ -6,7 +6,7 @@ part of 'portfolio_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$portfolioStreamHash() => r'0af758a91f0257cb40fa3558035b3078a208fdd9';
+String _$portfolioStreamHash() => r'106b02e7a219a07faaa67ec31864a7f0454c6502';
 
 /// See also [portfolioStream].
 @ProviderFor(portfolioStream)
@@ -140,7 +140,7 @@ final topValueTokensProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TopValueTokensRef = AutoDisposeProviderRef<List<PortfolioToken>>;
-String _$portfolioNotifierHash() => r'9809cccedc684c5ffe0641856d6bc40cdc276d72';
+String _$portfolioNotifierHash() => r'4c2e0d2d10f64919add481eba5f024f19fecd324';
 
 /// See also [PortfolioNotifier].
 @ProviderFor(PortfolioNotifier)
