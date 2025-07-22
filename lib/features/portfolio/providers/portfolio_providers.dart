@@ -70,9 +70,7 @@ Stream<List<PortfolioToken>> portfolioStream(PortfolioStreamRef ref) async* {
   final portfolioRepository = ref.watch(portfolioRepositoryProvider);
   
   // Dispose subscription when provider is disposed
-  ref.onDispose(() {
-    portfolioRepository.unsubscribeFromPortfolioUpdates();
-  });
+  ref.onDispose(portfolioRepository.unsubscribeFromPortfolioUpdates);
   
   final currentWalletState = walletRepository.currentWalletState;
   if (currentWalletState.isConnected && currentWalletState.walletInfo != null) {
