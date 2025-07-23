@@ -119,4 +119,4 @@ class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
         return null;
     }
   }
-} 
+}

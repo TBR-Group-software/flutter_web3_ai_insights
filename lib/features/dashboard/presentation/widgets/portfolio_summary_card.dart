@@ -135,7 +135,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
             child: CircularProgressIndicator(),
           ),
         ),
-        error: (_, __) => const Padding(
+                    error: (_, _) => const Padding(
           padding: EdgeInsets.all(AppSpacing.lg),
           child: Center(
             child: Text('Error loading wallet state'),

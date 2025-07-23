@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:logger/logger.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web3_ai_assistant/services/market_data/models/token_price.dart';
-import 'package:web3_ai_assistant/services/market_data/models/token_ticker.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_service.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/models/token_ticker.dart';
 
-/// WebSocket service for real-time Binance price streaming
-class BinanceWebSocketService {
-  BinanceWebSocketService({
+/// Implementation of BinanceWebSocketService for real-time price streaming
+class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
+  BinanceWebSocketServiceImpl({
     Logger? logger,
   }) : _logger = logger ?? Logger();
 
@@ -24,20 +24,20 @@ class BinanceWebSocketService {
   Timer? _reconnectTimer;
   final Set<String> _subscribedSymbols = {};
   
-  StreamController<TokenPrice>? _priceController;
+  StreamController<TokenTicker>? _tickerController;
 
-  /// Stream of real-time price updates
-  Stream<TokenPrice> get priceStream => 
-      _priceController?.stream ?? const Stream.empty();
+  @override
+  Stream<TokenTicker> get tickerStream => 
+      _tickerController?.stream ?? const Stream.empty();
 
-  /// Current subscribed symbols
+  @override
   Set<String> get subscribedSymbols => Set.unmodifiable(_subscribedSymbols);
 
-  /// Check if WebSocket is connected
+  @override
   bool get isConnected => _isConnected;
 
-  /// Subscribe to price updates for multiple symbols
-  void subscribeToMultiplePrices(List<String> symbols) {
+  @override
+  void subscribeToSymbols(List<String> symbols) {
     if (symbols.isEmpty) {
       _logger.w('No symbols provided for WebSocket subscription');
       return;
@@ -51,8 +51,8 @@ class BinanceWebSocketService {
     _connectWebSocket();
   }
 
-  /// Unsubscribe from price updates for multiple symbols
-  void unsubscribeFromMultiplePrices(List<String> symbols) {
+  @override
+  void unsubscribeFromSymbols(List<String> symbols) {
     if (symbols.isEmpty) {
       return;
     }
@@ -68,16 +68,6 @@ class BinanceWebSocketService {
     }
   }
 
-  /// Subscribe to price updates for a single symbol
-  void subscribeToPrice(String symbol) {
-    subscribeToMultiplePrices([symbol]);
-  }
-
-  /// Unsubscribe from price updates for a single symbol
-  void unsubscribeFromPrice(String symbol) {
-    unsubscribeFromMultiplePrices([symbol]);
-  }
-
   void _connectWebSocket() {
     if (_isConnected || _isReconnecting || _subscribedSymbols.isEmpty) {
       _logger.d('Skipping WebSocket connection: connected=$_isConnected, reconnecting=$_isReconnecting, symbols=${_subscribedSymbols.length}');
@@ -88,7 +78,7 @@ class BinanceWebSocketService {
     _disconnectWebSocket();
     
     try {
-      _priceController ??= StreamController<TokenPrice>.broadcast();
+      _tickerController ??= StreamController<TokenTicker>.broadcast();
       
       final streams = _subscribedSymbols.map((symbol) => '$symbol@ticker').join('/');
       final wsUrl = '$_wsUrl/$streams';
@@ -121,22 +111,9 @@ class BinanceWebSocketService {
       
       if (data is Map<String, dynamic>) {
         final ticker = TokenTicker.fromJson(data);
-        final currentPrice = double.parse(ticker.price);
-        final changePercent = double.parse(ticker.changePercent);
         
-        final price = TokenPrice(
-          symbol: ticker.symbol,
-          price: currentPrice,
-          change24h: currentPrice * (changePercent / 100),
-          changePercent24h: changePercent,
-          high24h: double.parse(ticker.high),
-          low24h: double.parse(ticker.low),
-          volume24h: double.parse(ticker.volume),
-          lastUpdated: DateTime.fromMillisecondsSinceEpoch(ticker.eventTime),
-        );
-        
-        _logger.d('🔄 Real-time price update: ${price.symbol} = \$${price.price}');
-        _priceController?.add(price);
+        _logger.d('🔄 Real-time ticker update: ${ticker.symbol} = \$${ticker.price}');
+        _tickerController?.add(ticker);
       }
     } catch (e) {
       _logger.e('Error parsing WebSocket message: $e');
@@ -195,11 +172,11 @@ class BinanceWebSocketService {
     _isReconnecting = false;
   }
 
-  /// Dispose the service and clean up resources
+  @override
   void dispose() {
     _disconnectWebSocket();
-    _priceController?.close();
-    _priceController = null;
+    _tickerController?.close();
+    _tickerController = null;
     _subscribedSymbols.clear();
   }
-} 
+}

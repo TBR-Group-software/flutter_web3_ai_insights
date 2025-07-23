@@ -57,7 +57,7 @@ class WalletDisconnectButton extends ConsumerWidget {
       },
     );
 
-    if (result == true) {
+    if (result ?? false) {
       await ref.read(walletNotifierProvider.notifier).disconnect();
     }
   }

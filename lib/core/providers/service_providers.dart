@@ -1,8 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service_impl.dart';
-import 'package:web3_ai_assistant/services/market_data/market_data_service.dart';
-import 'package:web3_ai_assistant/services/market_data/binance_service.dart';
+import 'package:web3_ai_assistant/services/binance_rest/binance_rest_service.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_service.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_service_impl.dart';
 
 part 'service_providers.g.dart';
 
@@ -14,8 +16,19 @@ Web3Service web3Service(Web3ServiceRef ref) {
 }
 
 @riverpod
-MarketDataService marketDataService(MarketDataServiceRef ref) {
-  final service = BinanceService();
+BinanceRestService binanceRestService(BinanceRestServiceRef ref) {
+  final dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 30),
+    ),
+  );
+  return BinanceRestService(dio,);
+}
+
+@riverpod
+BinanceWebSocketService binanceWebSocketService(BinanceWebSocketServiceRef ref) {
+  final service = BinanceWebSocketServiceImpl();
   ref.onDispose(service.dispose);
   return service;
 }

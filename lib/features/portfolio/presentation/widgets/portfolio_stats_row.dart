@@ -13,8 +13,8 @@ class PortfolioStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalValue = tokens.fold(0.0, (sum, token) => sum + token.totalValue);
-    final totalChange = tokens.fold(0.0, (sum, token) => sum + token.changePercent24h);
+    final totalValue = tokens.fold<double>(0, (sum, token) => sum + token.totalValue);
+    final totalChange = tokens.fold<double>(0, (sum, token) => sum + token.changePercent24h);
     final averageChange = tokens.isEmpty ? 0.0 : totalChange / tokens.length;
 
     return Row(

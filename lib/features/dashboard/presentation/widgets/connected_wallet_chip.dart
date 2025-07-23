@@ -93,7 +93,6 @@ class ConnectedWalletChip extends StatelessWidget {
           switch (value) {
             case 'view':
               context.goNamed(AppConstants.walletRouteName);
-              break;
             case 'copy':
               Clipboard.setData(ClipboardData(text: address));
               ScaffoldMessenger.of(context).showSnackBar(
@@ -104,10 +103,8 @@ class ConnectedWalletChip extends StatelessWidget {
                   width: 280,
                 ),
               );
-              break;
             case 'disconnect':
               onDisconnect();
-              break;
           }
         },
         child: Material(
