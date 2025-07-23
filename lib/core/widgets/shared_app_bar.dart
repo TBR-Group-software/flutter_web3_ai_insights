@@ -102,7 +102,7 @@ class SharedAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 child: CircularProgressIndicator(),
               ),
-              error: (_, __) => Padding(
+              error: (_, _) => Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: AppSpacing.sm,
                   horizontal: AppSpacing.md,

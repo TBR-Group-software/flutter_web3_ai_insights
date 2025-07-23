@@ -434,7 +434,7 @@ class ComponentThemes {
       modalBackgroundColor: colorScheme.surface,
       elevation: 8,
       modalElevation: 8,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
     );

@@ -27,13 +27,11 @@ class AppTheme {
       
       // Error colors
       error: Palette.errorRed,
-      onError: Palette.white,
       errorContainer: Palette.darkRed,
       onErrorContainer: Palette.lightRed,
       
       // Surface colors
       surface: Palette.base1,
-      onSurface: Palette.white,
       surfaceContainerLowest: Palette.background,
       surfaceContainerLow: Palette.base1,
       surfaceContainer: Palette.base2,
@@ -117,7 +115,6 @@ class AppTheme {
       
       // Error colors
       error: Palette.errorRed,
-      onError: Palette.white,
       errorContainer: Palette.overlay1,
       onErrorContainer: Palette.errorRed,
       

@@ -1,28 +1,34 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:logger/logger.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/portfolio_repository.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.dart';
-import 'package:web3_ai_assistant/services/market_data/market_data_service.dart';
-import 'package:web3_ai_assistant/services/market_data/models/token_price.dart';
+import 'package:web3_ai_assistant/repositories/portfolio/models/token_price.dart';
+import 'package:web3_ai_assistant/services/binance_rest/binance_rest_service.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_service.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/models/token_ticker.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
 
 class PortfolioRepositoryImpl implements PortfolioRepository {
   
   PortfolioRepositoryImpl({
-    required MarketDataService marketDataService,
+    required BinanceRestService binanceRestService,
+    required BinanceWebSocketService binanceWebSocketService,
     required Web3Service web3Service,
     Logger? logger,
-  }) : _marketDataService = marketDataService,
+  }) : _binanceRestService = binanceRestService,
+       _binanceWebSocketService = binanceWebSocketService,
        _web3Service = web3Service,
        _logger = logger ?? Logger();
        
-  final MarketDataService _marketDataService;
+  final BinanceRestService _binanceRestService;
+  final BinanceWebSocketService _binanceWebSocketService;
   final Web3Service _web3Service;
   final Logger _logger;
   
   List<PortfolioToken> _currentPortfolio = [];
   StreamController<List<PortfolioToken>>? _portfolioController;
-  StreamSubscription<TokenPrice>? _priceSubscription;
+  StreamSubscription<TokenTicker>? _priceSubscription;
   String? _currentWalletAddress;
 
   @override
@@ -60,13 +66,26 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       _logger.i('📊 Requesting REST API prices for ${symbols.length} Binance symbols: $symbols');
       
       // Get current prices for all tokens via REST API
-      final tokenPrices = await _marketDataService.getTokenPrices(symbols);
+      final symbolsJson = jsonEncode(symbols);
+      final tickers = await _binanceRestService.getTicker24hr(symbols: symbolsJson);
       final priceMap = <String, TokenPrice>{};
-      for (final price in tokenPrices) {
-        final originalSymbol = symbolMapping[price.symbol];
+      
+      for (final ticker in tickers) {
+        final originalSymbol = symbolMapping[ticker.symbol];
         if (originalSymbol != null) {
-          priceMap[originalSymbol] = price;
-          _logger.i('💰 REST API price ${price.symbol} (\$${price.price}) -> $originalSymbol');
+          // Convert Ticker24hr to TokenPrice domain model
+          final tokenPrice = TokenPrice(
+            symbol: ticker.symbol,
+            price: double.parse(ticker.lastPrice),
+            change24h: double.parse(ticker.lastPrice) * (double.parse(ticker.priceChangePercent) / 100),
+            changePercent24h: double.parse(ticker.priceChangePercent),
+            high24h: double.parse(ticker.highPrice),
+            low24h: double.parse(ticker.lowPrice),
+            volume24h: double.parse(ticker.volume),
+            lastUpdated: DateTime.fromMillisecondsSinceEpoch(ticker.closeTime),
+          );
+          priceMap[originalSymbol] = tokenPrice;
+          _logger.i('💰 REST API price ${ticker.symbol} (\$${ticker.lastPrice}) -> $originalSymbol');
         }
       }
       
@@ -189,10 +208,10 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       
       if (symbols.isNotEmpty) {
         _logger.i('📡 Subscribing to WebSocket price updates for ${symbols.length} symbols: $symbols');
-        _marketDataService.subscribeToMultiplePrices(symbols);
+        _binanceWebSocketService.subscribeToSymbols(symbols);
         
-        _priceSubscription = _marketDataService.priceStream.listen(
-          _handlePriceUpdate,
+        _priceSubscription = _binanceWebSocketService.tickerStream.listen(
+          _handleTickerUpdate,
           onError: (Object error) => _logger.e('❌ Price stream error: $error'),
         );
         
@@ -221,21 +240,35 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
         }
       }
       if (symbols.isNotEmpty) {
-        _marketDataService.unsubscribeFromMultiplePrices(symbols);
+        _binanceWebSocketService.unsubscribeFromSymbols(symbols);
       }
     }
     
     _currentWalletAddress = null;
   }
 
-  void _handlePriceUpdate(TokenPrice tokenPrice) {
-    _logger.i('🔄 WebSocket price update for ${tokenPrice.symbol}: \$${tokenPrice.price}');
+  void _handleTickerUpdate(TokenTicker ticker) {
+    _logger.i('🔄 WebSocket ticker update for ${ticker.symbol}: \$${ticker.price}');
+    
+    // Convert TokenTicker to TokenPrice domain model
+    final currentPrice = double.parse(ticker.price);
+    final changePercent = double.parse(ticker.changePercent);
+    final tokenPrice = TokenPrice(
+      symbol: ticker.symbol,
+      price: currentPrice,
+      change24h: currentPrice * (changePercent / 100),
+      changePercent24h: changePercent,
+      high24h: double.parse(ticker.high),
+      low24h: double.parse(ticker.low),
+      volume24h: double.parse(ticker.volume),
+      lastUpdated: DateTime.fromMillisecondsSinceEpoch(ticker.eventTime),
+    );
     
     // Find the token in current portfolio and update its price
     var hasUpdates = false;
     final updatedPortfolio = _currentPortfolio.map((token) {
       final binanceSymbol = _mapToBinanceSymbol(token.symbol);
-      if (binanceSymbol == tokenPrice.symbol) {
+      if (binanceSymbol == ticker.symbol) {
         hasUpdates = true;
         _logger.i('💎 REAL-TIME UPDATE: ${token.symbol} price \$${token.price} → \$${tokenPrice.price}');
         return token.copyWith(

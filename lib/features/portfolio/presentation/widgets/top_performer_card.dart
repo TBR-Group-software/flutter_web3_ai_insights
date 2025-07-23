@@ -17,7 +17,7 @@ class TopPerformerCard extends StatelessWidget {
     }
 
     final topPerformer = tokens.reduce((a, b) => 
-        a.changePercent24h > b.changePercent24h ? a : b);
+        a.changePercent24h > b.changePercent24h ? a : b,);
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),

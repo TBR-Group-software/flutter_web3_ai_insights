@@ -3,7 +3,7 @@ import 'dart:js_interop';
 import 'package:web3_ai_assistant/services/web3/models/wallet_connection_status.dart';
 import 'package:web3_ai_assistant/services/web3/models/wallet_info.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
-import 'package:web3_ai_assistant/services/market_data/models/token_balance.dart';
+import 'package:web3_ai_assistant/services/web3/models/token_balance.dart';
 
 // JS interop definitions
 @JS('window')
@@ -70,8 +70,6 @@ class Web3ServiceImpl implements Web3Service {
         networkName: chainId != null ? _getNetworkName(chainId) : 'Unknown',
       );
 
-      print('WalletInfo: ${walletInfo.chainId}');
-      print('balance: $balance');
 
       final status = WalletConnectionStatus.connected(walletInfo);
       _updateStatus(status);

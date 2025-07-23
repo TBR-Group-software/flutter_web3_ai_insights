@@ -101,7 +101,7 @@ bool isPortfolioEmpty(IsPortfolioEmptyRef ref) {
 double totalPortfolioValue(TotalPortfolioValueRef ref) {
   final portfolioAsync = ref.watch(portfolioNotifierProvider);
   return portfolioAsync.maybeWhen(
-    data: (tokens) => tokens.fold(0.0, (sum, token) => sum + token.totalValue),
+    data: (tokens) => tokens.fold<double>(0, (sum, token) => sum + token.totalValue),
     orElse: () => 0.0,
   );
 }
@@ -110,7 +110,7 @@ double totalPortfolioValue(TotalPortfolioValueRef ref) {
 double totalPortfolioChange(TotalPortfolioChangeRef ref) {
   final portfolioAsync = ref.watch(portfolioNotifierProvider);
   return portfolioAsync.maybeWhen(
-    data: (tokens) => tokens.fold(0.0, (sum, token) => sum + token.change24h),
+    data: (tokens) => tokens.fold<double>(0, (sum, token) => sum + token.change24h),
     orElse: () => 0.0,
   );
 }

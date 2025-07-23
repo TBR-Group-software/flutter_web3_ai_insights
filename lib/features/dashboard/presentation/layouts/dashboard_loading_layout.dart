@@ -26,7 +26,7 @@ class _MobileLoadingLayout extends StatelessWidget {
       children: [
         LoadingSkeleton.card(height: 180),
         const SizedBox(height: AppSpacing.md),
-        LoadingSkeleton.card(height: 200),
+        LoadingSkeleton.card(),
         const SizedBox(height: AppSpacing.md),
         LoadingSkeleton.card(height: 250),
         const SizedBox(height: AppSpacing.md),

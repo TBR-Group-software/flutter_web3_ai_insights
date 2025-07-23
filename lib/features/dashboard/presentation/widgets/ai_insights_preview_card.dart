@@ -156,7 +156,7 @@ class AiInsightsPreviewCard extends ConsumerWidget {
                 loading: () => const Center(
                   child: CircularProgressIndicator(),
                 ),
-                error: (_, __) => Container(
+                error: (_, _) => Container(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.errorContainer,

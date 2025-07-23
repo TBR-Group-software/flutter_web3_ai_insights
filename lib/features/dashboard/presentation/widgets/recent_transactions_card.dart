@@ -61,7 +61,7 @@ class RecentTransactionsCard extends ConsumerWidget {
                   child: CircularProgressIndicator(),
                 ),
               ),
-              error: (_, __) => Container(
+              error: (_, _) => Container(
                 height: 120,
                 alignment: Alignment.center,
                 child: Text(
