@@ -63,5 +63,76 @@ final binanceWebSocketServiceProvider =
 // ignore: unused_element
 typedef BinanceWebSocketServiceRef =
     AutoDisposeProviderRef<BinanceWebSocketService>;
+String _$geminiServiceHash() => r'f3bd620754bc5f200dd2dd2bf380ac3d7261fff9';
+
+/// See also [geminiService].
+@ProviderFor(geminiService)
+final geminiServiceProvider = AutoDisposeProvider<GeminiService>.internal(
+  geminiService,
+  name: r'geminiServiceProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$geminiServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GeminiServiceRef = AutoDisposeProviderRef<GeminiService>;
+String _$geminiApiKeyHash() => r'93034c0c61916be6a65d6c6b66af80d2d48e5b57';
+
+/// See also [geminiApiKey].
+@ProviderFor(geminiApiKey)
+final geminiApiKeyProvider = AutoDisposeProvider<String>.internal(
+  geminiApiKey,
+  name: r'geminiApiKeyProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$geminiApiKeyHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GeminiApiKeyRef = AutoDisposeProviderRef<String>;
+String _$geminiModelHash() => r'fd070b9d1bf569ff0942ad660a9b1a450c0d08e0';
+
+/// See also [geminiModel].
+@ProviderFor(geminiModel)
+final geminiModelProvider = AutoDisposeProvider<String>.internal(
+  geminiModel,
+  name: r'geminiModelProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$geminiModelHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GeminiModelRef = AutoDisposeProviderRef<String>;
+String _$aiInsightsStorageServiceHash() =>
+    r'dc2f8a91fa805f59a253679d6f8a3661a3a1cc1d';
+
+/// See also [aiInsightsStorageService].
+@ProviderFor(aiInsightsStorageService)
+final aiInsightsStorageServiceProvider =
+    AutoDisposeProvider<AiInsightsStorageService>.internal(
+      aiInsightsStorageService,
+      name: r'aiInsightsStorageServiceProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$aiInsightsStorageServiceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AiInsightsStorageServiceRef =
+    AutoDisposeProviderRef<AiInsightsStorageService>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

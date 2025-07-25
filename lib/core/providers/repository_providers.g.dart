@@ -44,5 +44,46 @@ final portfolioRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PortfolioRepositoryRef = AutoDisposeProviderRef<PortfolioRepository>;
+String _$aiInsightsRepositoryHash() =>
+    r'b04257e66276f9c96b554b2864fd8f1795523d2d';
+
+/// See also [aiInsightsRepository].
+@ProviderFor(aiInsightsRepository)
+final aiInsightsRepositoryProvider =
+    AutoDisposeProvider<AiInsightsRepository>.internal(
+      aiInsightsRepository,
+      name: r'aiInsightsRepositoryProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$aiInsightsRepositoryHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AiInsightsRepositoryRef = AutoDisposeProviderRef<AiInsightsRepository>;
+String _$aiInsightsStorageRepositoryHash() =>
+    r'5a631f7142cb8f12624266a5d6b8b8c2b8dade84';
+
+/// See also [aiInsightsStorageRepository].
+@ProviderFor(aiInsightsStorageRepository)
+final aiInsightsStorageRepositoryProvider =
+    AutoDisposeProvider<AiInsightsStorageRepository>.internal(
+      aiInsightsStorageRepository,
+      name: r'aiInsightsStorageRepositoryProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$aiInsightsStorageRepositoryHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AiInsightsStorageRepositoryRef =
+    AutoDisposeProviderRef<AiInsightsStorageRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
