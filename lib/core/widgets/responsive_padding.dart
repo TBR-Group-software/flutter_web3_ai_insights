@@ -3,7 +3,6 @@ import 'package:web3_ai_assistant/core/theme/breakpoints.dart';
 
 /// A widget that applies responsive padding based on screen size
 class ResponsivePadding extends StatelessWidget {
-
   const ResponsivePadding({
     super.key,
     required this.child,
@@ -14,9 +13,7 @@ class ResponsivePadding extends StatelessWidget {
   });
 
   /// Factory constructor for symmetric horizontal responsive padding
-  factory ResponsivePadding.horizontal({
-    required Widget child,
-  }) {
+  factory ResponsivePadding.horizontal({required Widget child}) {
     return ResponsivePadding(
       mobilePadding: const EdgeInsets.symmetric(horizontal: 16),
       tabletPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -27,9 +24,7 @@ class ResponsivePadding extends StatelessWidget {
   }
 
   /// Factory constructor for all-sides responsive padding
-  factory ResponsivePadding.all({
-    required Widget child,
-  }) {
+  factory ResponsivePadding.all({required Widget child}) {
     return ResponsivePadding(
       mobilePadding: const EdgeInsets.all(16),
       tabletPadding: const EdgeInsets.all(24),
@@ -52,28 +47,16 @@ class ResponsivePadding extends StatelessWidget {
         EdgeInsets padding;
 
         if (AppBreakpoints.isLargeDesktop(width)) {
-          padding = largeDektopPadding ?? 
-                    desktopPadding ?? 
-                    tabletPadding ?? 
-                    mobilePadding ?? 
-                    EdgeInsets.zero;
+          padding = largeDektopPadding ?? desktopPadding ?? tabletPadding ?? mobilePadding ?? EdgeInsets.zero;
         } else if (AppBreakpoints.isDesktop(width)) {
-          padding = desktopPadding ?? 
-                    tabletPadding ?? 
-                    mobilePadding ?? 
-                    EdgeInsets.zero;
+          padding = desktopPadding ?? tabletPadding ?? mobilePadding ?? EdgeInsets.zero;
         } else if (AppBreakpoints.isTablet(width)) {
-          padding = tabletPadding ?? 
-                    mobilePadding ?? 
-                    EdgeInsets.zero;
+          padding = tabletPadding ?? mobilePadding ?? EdgeInsets.zero;
         } else {
           padding = mobilePadding ?? EdgeInsets.zero;
         }
 
-        return Padding(
-          padding: padding,
-          child: child,
-        );
+        return Padding(padding: padding, child: child);
       },
     );
   }
@@ -81,7 +64,6 @@ class ResponsivePadding extends StatelessWidget {
 
 /// A container with responsive max width constraint
 class ResponsiveContainer extends StatelessWidget {
-
   const ResponsiveContainer({
     super.key,
     required this.child,
@@ -104,10 +86,7 @@ class ResponsiveContainer extends StatelessWidget {
         return Container(
           alignment: alignment,
           padding: padding,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: contentMaxWidth),
-            child: child,
-          ),
+          child: ConstrainedBox(constraints: BoxConstraints(maxWidth: contentMaxWidth), child: child),
         );
       },
     );

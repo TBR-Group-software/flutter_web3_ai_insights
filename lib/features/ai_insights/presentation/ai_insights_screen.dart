@@ -1,81 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/constants/app_constants.dart';
-import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/core/widgets/adaptive_scaffold.dart';
 import 'package:web3_ai_assistant/core/widgets/responsive_padding.dart';
+import 'package:web3_ai_assistant/features/ai_insights/presentation/views/ai_insights_error_view.dart';
+import 'package:web3_ai_assistant/features/ai_insights/presentation/views/ai_insights_initial_view.dart';
+import 'package:web3_ai_assistant/features/ai_insights/presentation/views/ai_insights_loaded_view.dart';
+import 'package:web3_ai_assistant/features/ai_insights/presentation/views/ai_insights_loading_view.dart';
+import 'package:web3_ai_assistant/features/ai_insights/providers/ai_insights_providers.dart';
 
-class AiInsightsScreen extends StatelessWidget {
+class AiInsightsScreen extends ConsumerWidget {
   const AiInsightsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
+  Widget build(BuildContext context, WidgetRef ref) {
+    final aiStateAsync = ref.watch(aiInsightsProvider);
+    final canGenerate = ref.watch(canGenerateAnalysisProvider);
+
     return AdaptiveScaffold(
       currentRoute: AppConstants.aiInsightsRoute,
       title: AppConstants.aiInsightsLabel,
       body: ResponsivePadding.all(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.auto_awesome_rounded,
-                size: 80,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              Text(
-                'AI Portfolio Analysis',
-                style: theme.textTheme.headlineMedium,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'Get AI-powered insights for your Web3 portfolio',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.xxl),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 48,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Text(
-                        'Portfolio analysis requires:',
-                        style: theme.textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      const Text('1. Connected wallet'),
-                      const Text('2. Token holdings data'),
-                      const SizedBox(height: AppSpacing.md),
-                      FilledButton.icon(
-                        onPressed: () {
-                          // TODO: Implement AI analysis
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('AI analysis will be implemented after portfolio feature'),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.psychology),
-                        label: const Text('Generate AI Report'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+        child: aiStateAsync.when(
+          data: (aiState) => switch (aiState) {
+            AiInsightsInitial() => AiInsightsInitialView(canGenerate: canGenerate),
+            AiInsightsLoading() => const AiInsightsLoadingView(),
+            AiInsightsWithHistory(:final history, :final currentIndex) => 
+              AiInsightsLoadedView(history: history, currentIndex: currentIndex),
+            AiInsightsError(:final message) => AiInsightsErrorView(message: message),
+          },
+          loading: () => const AiInsightsLoadingView(),
+          error: (error, _) => AiInsightsErrorView(message: error.toString()),
         ),
       ),
     );

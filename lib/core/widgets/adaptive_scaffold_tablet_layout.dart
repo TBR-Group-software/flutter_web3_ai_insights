@@ -6,7 +6,6 @@ import 'package:web3_ai_assistant/core/widgets/shared_app_bar.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
 
 class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
-
   const AdaptiveScaffoldTabletLayout({
     super.key,
     required this.currentRoute,
@@ -22,7 +21,7 @@ class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = _getCurrentIndex();
-    
+
     // Update navigation state when route changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(selectedNavigationIndexProvider.notifier).state = currentIndex;
@@ -62,12 +61,7 @@ class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
           Expanded(
             child: Column(
               children: [
-                if (title != null)
-                  SharedAppBar(
-                    title: title!,
-                    icon: _getIconForRoute(currentRoute),
-                    actions: actions,
-                  ),
+                if (title != null) SharedAppBar(title: title!, icon: _getIconForRoute(currentRoute), actions: actions),
                 Expanded(child: body),
               ],
             ),

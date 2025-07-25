@@ -12,24 +12,24 @@ class AppTheme {
       onPrimary: Palette.background,
       primaryContainer: Palette.base2,
       onPrimaryContainer: Palette.primary,
-      
+
       // Secondary colors
       secondary: Palette.secondary,
       onSecondary: Palette.background,
       secondaryContainer: Palette.base3,
       onSecondaryContainer: Palette.secondary,
-      
+
       // Tertiary colors
       tertiary: Palette.tertiary,
       onTertiary: Palette.white,
       tertiaryContainer: Palette.base4,
       onTertiaryContainer: Palette.accentBlue,
-      
+
       // Error colors
       error: Palette.errorRed,
       errorContainer: Palette.darkRed,
       onErrorContainer: Palette.lightRed,
-      
+
       // Surface colors
       surface: Palette.base1,
       surfaceContainerLowest: Palette.background,
@@ -37,12 +37,12 @@ class AppTheme {
       surfaceContainer: Palette.base2,
       surfaceContainerHigh: Palette.base3,
       surfaceContainerHighest: Palette.base4,
-      
+
       // Surface variants
       onSurfaceVariant: Palette.overlay2,
       outline: Palette.overlay4,
       outlineVariant: Palette.overlay3,
-      
+
       // Other colors
       shadow: Color(0xFF000000),
       scrim: Color(0xFF000000),
@@ -100,24 +100,24 @@ class AppTheme {
       onPrimary: Palette.background,
       primaryContainer: Palette.overlay1,
       onPrimaryContainer: Palette.secondary,
-      
+
       // Secondary colors
       secondary: Palette.primary,
       onSecondary: Palette.background,
       secondaryContainer: Palette.overlay2,
       onSecondaryContainer: Palette.primary,
-      
+
       // Tertiary colors
       tertiary: Palette.tertiary,
       onTertiary: Palette.white,
       tertiaryContainer: Palette.overlay1,
       onTertiaryContainer: Palette.tertiary,
-      
+
       // Error colors
       error: Palette.errorRed,
       errorContainer: Palette.overlay1,
       onErrorContainer: Palette.errorRed,
-      
+
       // Surface colors
       surface: Palette.overlay1,
       onSurface: Palette.background,
@@ -126,12 +126,12 @@ class AppTheme {
       surfaceContainer: Palette.overlay2,
       surfaceContainerHigh: Palette.overlay3,
       surfaceContainerHighest: Palette.overlay4,
-      
+
       // Surface variants
       onSurfaceVariant: Palette.background,
       outline: Palette.overlay3,
       outlineVariant: Palette.overlay2,
-      
+
       // Other colors
       shadow: Color(0xFF000000),
       scrim: Color(0xFF000000),
@@ -203,8 +203,6 @@ class AppTheme {
 
   // Helper method to apply theme-based system UI overlay
   static void setSystemUIOverlayStyle(bool isDark) {
-    SystemChrome.setSystemUIOverlayStyle(
-      isDark ? darkSystemUiOverlayStyle : lightSystemUiOverlayStyle,
-    );
+    SystemChrome.setSystemUIOverlayStyle(isDark ? darkSystemUiOverlayStyle : lightSystemUiOverlayStyle);
   }
 }

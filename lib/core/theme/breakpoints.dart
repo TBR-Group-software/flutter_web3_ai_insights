@@ -188,15 +188,6 @@ class AppBreakpoints {
   }
 }
 
-enum ScreenSize {
-  mobile,
-  tablet,
-  desktop,
-  largeDesktop,
-}
+enum ScreenSize { mobile, tablet, desktop, largeDesktop }
 
-enum NavigationType {
-  bottom,
-  rail,
-  drawer,
-}
+enum NavigationType { bottom, rail, drawer }

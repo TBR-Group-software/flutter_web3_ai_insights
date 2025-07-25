@@ -8,13 +8,7 @@ import 'package:web3_ai_assistant/features/dashboard/presentation/widgets/connec
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
 
 class SharedAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  const SharedAppBar({
-    super.key,
-    required this.title,
-    this.showIcon = true,
-    this.icon,
-    this.actions,
-  });
+  const SharedAppBar({super.key, required this.title, this.showIcon = true, this.icon, this.actions});
 
   final String title;
   final bool showIcon;
@@ -37,22 +31,16 @@ class SharedAppBar extends ConsumerWidget implements PreferredSizeWidget {
           title: Row(
             children: [
               if (!isMobile && showIcon && icon != null) ...[
-                Icon(
-                  icon,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(icon, color: theme.colorScheme.primary),
                 const SizedBox(width: AppSpacing.sm),
               ],
-              Text(
-                title,
-                style: theme.textTheme.titleLarge,
-              ),
+              Text(title, style: theme.textTheme.titleLarge),
             ],
           ),
           actions: [
             // Custom actions if provided
             if (actions != null) ...actions!,
-            
+
             // Wallet connection UI
             walletState.when(
               data: (state) {
@@ -65,58 +53,44 @@ class SharedAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   );
                 } else {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                      horizontal: AppSpacing.md,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.md),
                     child: FilledButton.icon(
-                      onPressed: state.isLoading
-                          ? null
-                          : () => context.goNamed(AppConstants.walletRouteName),
-                      icon: state.isLoading
-                          ? SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: theme.colorScheme.onPrimary,
-                              ),
-                            )
-                          : const Icon(Icons.account_balance_wallet, size: 18),
-                      label: Text(
-                        state.isLoading
-                            ? 'Connecting...'
-                            : (isMobile ? 'Connect' : 'Connect Wallet'),
-                      ),
+                      onPressed: state.isLoading ? null : () => context.goNamed(AppConstants.walletRouteName),
+                      icon:
+                          state.isLoading
+                              ? SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: theme.colorScheme.onPrimary),
+                              )
+                              : const Icon(Icons.account_balance_wallet, size: 18),
+                      label: Text(state.isLoading ? 'Connecting...' : (isMobile ? 'Connect' : 'Connect Wallet')),
                       style: FilledButton.styleFrom(
                         minimumSize: Size(isMobile ? 100 : 140, 40),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isMobile ? AppSpacing.sm : AppSpacing.md,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: isMobile ? AppSpacing.sm : AppSpacing.md),
                       ),
                     ),
                   );
                 }
               },
-              loading: () => const Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                child: CircularProgressIndicator(),
-              ),
-              error: (_, _) => Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppSpacing.sm,
-                  horizontal: AppSpacing.md,
-                ),
-                child: FilledButton.icon(
-                  onPressed: () => context.goNamed(AppConstants.walletRouteName),
-                  icon: const Icon(Icons.error_outline, size: 18),
-                  label: const Text('Wallet Error'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: theme.colorScheme.error,
-                    foregroundColor: theme.colorScheme.onError,
+              loading:
+                  () => const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-              ),
+              error:
+                  (_, _) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.md),
+                    child: FilledButton.icon(
+                      onPressed: () => context.goNamed(AppConstants.walletRouteName),
+                      icon: const Icon(Icons.error_outline, size: 18),
+                      label: const Text('Wallet Error'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: theme.colorScheme.error,
+                        foregroundColor: theme.colorScheme.onError,
+                      ),
+                    ),
+                  ),
             ),
           ],
         );

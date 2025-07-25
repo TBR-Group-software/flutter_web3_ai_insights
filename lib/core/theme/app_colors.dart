@@ -18,12 +18,7 @@ class Palette {
   static const Color secondary = Color(0xFF03C9A9);
   static const Color tertiary = Color(0xFF00A0AF);
 
-  static const LinearGradient gradient = LinearGradient(
-    colors: <Color>[
-      Color(0xFF00A0AF),
-      Color(0xFF6BE7C8),
-    ],
-  );
+  static const LinearGradient gradient = LinearGradient(colors: <Color>[Color(0xFF00A0AF), Color(0xFF6BE7C8)]);
 
   static const Color errorRed = Color(0xFFFF3B30);
   static const Color lightRed = Color(0xFFFF6057);
@@ -38,7 +33,7 @@ class Palette {
   static const Color warningLight = Color(0xFFFFC947);
   static const Color warningDark = Color(0xFFE6A017);
   static const Color warningContainer = Color(0xFF4A3B1A);
-  
+
   // Chart colors for portfolio visualization
   static const List<Color> chartColors = [
     primary,
