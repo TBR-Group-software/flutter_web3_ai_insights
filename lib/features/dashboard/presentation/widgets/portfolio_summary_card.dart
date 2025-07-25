@@ -16,131 +16,112 @@ class PortfolioSummaryCard extends ConsumerWidget {
     return Card(
       elevation: 0,
       child: walletStateAsync.when(
-        data: (walletState) => InkWell(
-          onTap: walletState.isConnected ? () {
-            // Navigate to portfolio
-          } : null,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.account_balance_wallet_rounded,
-                    color: theme.colorScheme.primary,
-                    size: 24,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    'Portfolio Value',
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const Spacer(),
-                  if (walletState.isConnected)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
-                        vertical: AppSpacing.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+        data:
+            (walletState) => InkWell(
+              onTap:
+                  walletState.isConnected
+                      ? () {
+                        // Navigate to portfolio
+                      }
+                      : null,
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.account_balance_wallet_rounded, color: theme.colorScheme.primary, size: 24),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text('Portfolio Value', style: theme.textTheme.titleMedium),
+                        const Spacer(),
+                        if (walletState.isConnected)
                           Container(
-                            width: 8,
-                            height: 8,
+                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.tertiary,
-                              shape: BoxShape.circle,
+                              color: theme.colorScheme.surfaceContainerLowest,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(color: theme.colorScheme.tertiary, shape: BoxShape.circle),
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                Text(
+                                  'Connected',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: theme.colorScheme.tertiary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    if (walletState.isConnected) ...[
+                      Text(
+                        '\$${portfolioValue.toStringAsFixed(2)}',
+                        style: theme.textTheme.headlineLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Row(
+                        children: [
+                          Icon(Icons.trending_up, color: theme.colorScheme.tertiary, size: 16),
                           const SizedBox(width: AppSpacing.xs),
                           Text(
-                            'Connected',
-                            style: theme.textTheme.labelSmall?.copyWith(
+                            '+12.5% (24h)',
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.tertiary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              if (walletState.isConnected) ...[
-                Text(
-                  '\$${portfolioValue.toStringAsFixed(2)}',
-                  style: theme.textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.trending_up,
-                      color: theme.colorScheme.tertiary,
-                      size: 16,
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      '+12.5% (24h)',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.tertiary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ] else ...[
-                Container(
-                  height: 80,
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'No wallet connected',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'Connect your wallet to view portfolio',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                    ] else ...[
+                      Container(
+                        height: 80,
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'No wallet connected',
+                              style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Text(
+                              'Connect your wallet to view portfolio',
+                              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
+                  ],
                 ),
-              ],
-            ],
+              ),
             ),
-          ),
-        ),
-        loading: () => const Padding(
-          padding: EdgeInsets.all(AppSpacing.lg),
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-                    error: (_, _) => const Padding(
-          padding: EdgeInsets.all(AppSpacing.lg),
-          child: Center(
-            child: Text('Error loading wallet state'),
-          ),
-        ),
+        loading:
+            () => const Padding(
+              padding: EdgeInsets.all(AppSpacing.lg),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+        error:
+            (_, _) => const Padding(
+              padding: EdgeInsets.all(AppSpacing.lg),
+              child: Center(child: Text('Error loading wallet state')),
+            ),
       ),
     );
   }

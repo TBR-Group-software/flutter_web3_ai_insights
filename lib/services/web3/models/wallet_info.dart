@@ -1,11 +1,5 @@
 class WalletInfo {
-
-  WalletInfo({
-    required this.address,
-    this.balance,
-    this.chainId,
-    this.networkName,
-  });
+  WalletInfo({required this.address, this.balance, this.chainId, this.networkName});
   final String address;
   final BigInt? balance;
   final int? chainId;
@@ -26,12 +20,7 @@ class WalletInfo {
     return '${eth.toStringAsFixed(4)} ETH';
   }
 
-  WalletInfo copyWith({
-    String? address,
-    BigInt? balance,
-    int? chainId,
-    String? networkName,
-  }) {
+  WalletInfo copyWith({String? address, BigInt? balance, int? chainId, String? networkName}) {
     return WalletInfo(
       address: address ?? this.address,
       balance: balance ?? this.balance,

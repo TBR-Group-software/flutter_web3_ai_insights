@@ -3,10 +3,7 @@ import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.dart';
 
 class TokenHoldingsInfo extends StatelessWidget {
-  const TokenHoldingsInfo({
-    super.key,
-    required this.token,
-  });
+  const TokenHoldingsInfo({super.key, required this.token});
 
   final PortfolioToken token;
 
@@ -23,16 +20,14 @@ class TokenHoldingsInfo extends StatelessWidget {
         children: [
           Text(
             'Holdings',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
             '${token.balance.toStringAsFixed(6)} ${token.symbol}',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),

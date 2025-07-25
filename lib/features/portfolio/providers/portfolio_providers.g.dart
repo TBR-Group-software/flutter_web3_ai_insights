@@ -44,7 +44,7 @@ final isPortfolioEmptyProvider = AutoDisposeProvider<bool>.internal(
 // ignore: unused_element
 typedef IsPortfolioEmptyRef = AutoDisposeProviderRef<bool>;
 String _$totalPortfolioValueHash() =>
-    r'9a46dd5287fe47125bfa8dc551e0b2ed16102b76';
+    r'2602af82785259f1ad276af9f5c3ac61bd5ebe75';
 
 /// See also [totalPortfolioValue].
 @ProviderFor(totalPortfolioValue)
@@ -63,7 +63,7 @@ final totalPortfolioValueProvider = AutoDisposeProvider<double>.internal(
 // ignore: unused_element
 typedef TotalPortfolioValueRef = AutoDisposeProviderRef<double>;
 String _$totalPortfolioChangeHash() =>
-    r'aa27dd235f6b86df366446261f7be2c48021defa';
+    r'1036b3a432196eff914f4ea99d76a1b4f10259f6';
 
 /// See also [totalPortfolioChange].
 @ProviderFor(totalPortfolioChange)

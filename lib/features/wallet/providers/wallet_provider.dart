@@ -9,23 +9,20 @@ class WalletNotifier extends _$WalletNotifier {
   @override
   Future<WalletState> build() async {
     final repository = ref.watch(walletRepositoryProvider);
-    
+
     // Listen to wallet state changes
-    ref.listen(
-      walletStateStreamProvider,
-      (previous, next) {
-        next.when(
-          data: (walletState) {
-            state = AsyncValue.data(walletState);
-          },
-          loading: () {},
-          error: (error, stack) {
-            state = AsyncValue.error(error, stack);
-          },
-        );
-      },
-    );
-    
+    ref.listen(walletStateStreamProvider, (previous, next) {
+      next.when(
+        data: (walletState) {
+          state = AsyncValue.data(walletState);
+        },
+        loading: () {},
+        error: (error, stack) {
+          state = AsyncValue.error(error, stack);
+        },
+      );
+    });
+
     // Return initial state
     return repository.currentWalletState;
   }

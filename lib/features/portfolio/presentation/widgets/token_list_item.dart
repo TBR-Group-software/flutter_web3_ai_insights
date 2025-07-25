@@ -6,11 +6,7 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_list_item_desktop.dart';
 
 class TokenListItem extends StatelessWidget {
-  const TokenListItem({
-    super.key,
-    required this.token,
-    this.onTap,
-  });
+  const TokenListItem({super.key, required this.token, this.onTap});
 
   final PortfolioToken token;
   final VoidCallback? onTap;
@@ -23,6 +19,4 @@ class TokenListItem extends StatelessWidget {
       desktop: TokenListItemDesktop(token: token, onTap: onTap),
     );
   }
-
-
-} 
+}

@@ -13,31 +13,17 @@ class WalletStatusDisplay extends ConsumerWidget {
     return walletState.when(
       data: (state) {
         if (state.error != null) {
-          return WalletStatusWidget(
-            type: WalletStatusType.error,
-            message: state.error,
-          );
+          return WalletStatusWidget(type: WalletStatusType.error, message: state.error);
         }
 
         if (!state.isConnected) {
-          return const WalletStatusWidget(
-            type: WalletStatusType.disconnected,
-          );
+          return const WalletStatusWidget(type: WalletStatusType.disconnected);
         }
 
-        return WalletStatusWidget(
-          type: WalletStatusType.connected,
-          networkName: state.walletInfo?.networkName,
-        );
+        return WalletStatusWidget(type: WalletStatusType.connected, networkName: state.walletInfo?.networkName);
       },
-      loading: () => const WalletStatusWidget(
-        type: WalletStatusType.loading,
-      ),
-      error: (error, _) => WalletStatusWidget(
-        type: WalletStatusType.error,
-        message: error.toString(),
-      ),
+      loading: () => const WalletStatusWidget(type: WalletStatusType.loading),
+      error: (error, _) => WalletStatusWidget(type: WalletStatusType.error, message: error.toString()),
     );
   }
-
 }

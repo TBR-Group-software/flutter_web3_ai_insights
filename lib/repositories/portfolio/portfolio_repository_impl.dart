@@ -10,7 +10,6 @@ import 'package:web3_ai_assistant/services/binance_websocket/models/token_ticker
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
 
 class PortfolioRepositoryImpl implements PortfolioRepository {
-  
   PortfolioRepositoryImpl({
     required BinanceRestService binanceRestService,
     required BinanceWebSocketService binanceWebSocketService,
@@ -20,20 +19,19 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
        _binanceWebSocketService = binanceWebSocketService,
        _web3Service = web3Service,
        _logger = logger ?? Logger();
-       
+
   final BinanceRestService _binanceRestService;
   final BinanceWebSocketService _binanceWebSocketService;
   final Web3Service _web3Service;
   final Logger _logger;
-  
+
   List<PortfolioToken> _currentPortfolio = [];
   StreamController<List<PortfolioToken>>? _portfolioController;
   StreamSubscription<TokenTicker>? _priceSubscription;
   String? _currentWalletAddress;
 
   @override
-  Stream<List<PortfolioToken>> get portfolioStream => 
-      _portfolioController?.stream ?? const Stream.empty();
+  Stream<List<PortfolioToken>> get portfolioStream => _portfolioController?.stream ?? const Stream.empty();
 
   @override
   List<PortfolioToken> get currentPortfolio => List.unmodifiable(_currentPortfolio);
@@ -42,10 +40,10 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   Future<List<PortfolioToken>> getPortfolio(String walletAddress) async {
     try {
       _logger.i('Fetching portfolio for wallet: $walletAddress');
-      
+
       // Get token balances from web3 wallet
       final tokenBalances = await _web3Service.getTokenBalances(walletAddress);
-      
+
       if (tokenBalances.isEmpty) {
         _logger.w('No token balances found for wallet: $walletAddress');
         return [];
@@ -54,7 +52,7 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       // Extract symbols for price fetching - map to correct Binance symbols
       final symbols = <String>[];
       final symbolMapping = <String, String>{}; // Maps Binance symbol back to original token symbol
-      
+
       for (final token in tokenBalances) {
         final binanceSymbol = _mapToBinanceSymbol(token.symbol);
         if (binanceSymbol != null) {
@@ -62,14 +60,14 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
           symbolMapping[binanceSymbol] = token.symbol;
         }
       }
-      
+
       _logger.i('📊 Requesting REST API prices for ${symbols.length} Binance symbols: $symbols');
-      
+
       // Get current prices for all tokens via REST API
       final symbolsJson = jsonEncode(symbols);
       final tickers = await _binanceRestService.getTicker24hr(symbols: symbolsJson);
       final priceMap = <String, TokenPrice>{};
-      
+
       for (final ticker in tickers) {
         final originalSymbol = symbolMapping[ticker.symbol];
         if (originalSymbol != null) {
@@ -88,43 +86,46 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
           _logger.i('💰 REST API price ${ticker.symbol} (\$${ticker.lastPrice}) -> $originalSymbol');
         }
       }
-      
+
       // Ensure we have prices for all requested tokens
       if (priceMap.isEmpty && symbols.isNotEmpty) {
         _logger.w('No prices received for symbols: $symbols');
       }
-      
+
       _logger.i('Price map contains: ${priceMap.keys.toList()}');
-      
-                      // Transform balances and prices into portfolio tokens
-        final portfolioTokens = <PortfolioToken>[];
-        for (final balance in tokenBalances) {
-          final price = priceMap[balance.symbol];
-          
-          final balanceDouble = balance.balance.toDouble() / 
-              BigInt.from(10).pow(balance.decimals).toDouble(); // Convert from wei to readable format
-          
-          _logger.i('Token ${balance.symbol}: Balance ${balance.balance} wei, Decimals: ${balance.decimals}, Converted: $balanceDouble');
-          
-          // Special handling for USDT - it's always worth $1.00
-          if (balance.symbol.toUpperCase() == 'USDT') {
-            final portfolioToken = PortfolioToken(
-              symbol: balance.symbol,
-              name: balance.name,
-              contractAddress: balance.contractAddress,
-              balance: balanceDouble,
-              decimals: balance.decimals,
-              price: 1, // USDT is pegged to $1
-              change24h: 0, // Stable coin doesn't change much
-              changePercent24h: 0,
-              totalValue: balanceDouble * 1.0,
-              logoUri: balance.logoUri,
-              lastUpdated: DateTime.now(),
-            );
-            portfolioTokens.add(portfolioToken);
-          } else if (price != null) {
-            _logger.i('Creating portfolio token: ${balance.symbol}, Balance: $balanceDouble, Price: \$${price.price}');
-          
+
+      // Transform balances and prices into portfolio tokens
+      final portfolioTokens = <PortfolioToken>[];
+      for (final balance in tokenBalances) {
+        final price = priceMap[balance.symbol];
+
+        final balanceDouble =
+            balance.balance.toDouble() /
+            BigInt.from(10).pow(balance.decimals).toDouble(); // Convert from wei to readable format
+
+        _logger.i(
+          'Token ${balance.symbol}: Balance ${balance.balance} wei, Decimals: ${balance.decimals}, Converted: $balanceDouble',
+        );
+
+        // Special handling for USDT - it's always worth $1.00
+        if (balance.symbol.toUpperCase() == 'USDT') {
+          final portfolioToken = PortfolioToken(
+            symbol: balance.symbol,
+            name: balance.name,
+            contractAddress: balance.contractAddress,
+            balance: balanceDouble,
+            decimals: balance.decimals,
+            price: 1, // USDT is pegged to $1
+            change24h: 0, // Stable coin doesn't change much
+            changePercent24h: 0,
+            totalValue: balanceDouble * 1.0,
+            logoUri: balance.logoUri,
+            lastUpdated: DateTime.now(),
+          );
+          portfolioTokens.add(portfolioToken);
+        } else if (price != null) {
+          _logger.i('Creating portfolio token: ${balance.symbol}, Balance: $balanceDouble, Price: \$${price.price}');
+
           final portfolioToken = PortfolioToken(
             symbol: balance.symbol,
             name: balance.name,
@@ -142,7 +143,7 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
         } else {
           // Add token even without price data so users can see their balance
           _logger.w('No price found for token: ${balance.symbol}, adding with zero price');
-          
+
           final portfolioToken = PortfolioToken(
             symbol: balance.symbol,
             name: balance.name,
@@ -159,16 +160,16 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
           portfolioTokens.add(portfolioToken);
         }
       }
-      
+
       // Sort by total value (descending)
       portfolioTokens.sort((a, b) => b.totalValue.compareTo(a.totalValue));
-      
+
       _currentPortfolio = portfolioTokens;
-      
+
       // Immediately emit to stream for real-time UI updates
       _portfolioController ??= StreamController<List<PortfolioToken>>.broadcast();
       _portfolioController?.add(_currentPortfolio);
-      
+
       _logger.i('✅ Portfolio fetched with REST API data. ${portfolioTokens.length} tokens found. Stream initialized.');
       return portfolioTokens;
     } catch (e) {
@@ -188,14 +189,14 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       _logger.i('Already subscribed to portfolio updates for $walletAddress');
       return; // Already subscribed
     }
-    
+
     await unsubscribeFromPortfolioUpdates();
-    
+
     _currentWalletAddress = walletAddress;
     _portfolioController ??= StreamController<List<PortfolioToken>>.broadcast();
-    
+
     _logger.i('🚀 Starting portfolio subscription for wallet: $walletAddress');
-    
+
     // Subscribe to price updates for all tokens in portfolio
     if (_currentPortfolio.isNotEmpty) {
       final symbols = <String>[];
@@ -205,16 +206,16 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
           symbols.add(binanceSymbol);
         }
       }
-      
+
       if (symbols.isNotEmpty) {
         _logger.i('📡 Subscribing to WebSocket price updates for ${symbols.length} symbols: $symbols');
         _binanceWebSocketService.subscribeToSymbols(symbols);
-        
+
         _priceSubscription = _binanceWebSocketService.tickerStream.listen(
           _handleTickerUpdate,
           onError: (Object error) => _logger.e('❌ Price stream error: $error'),
         );
-        
+
         _logger.i('✅ WebSocket subscription active - real-time updates enabled');
       } else {
         _logger.w('⚠️ No valid symbols found for WebSocket subscription');
@@ -230,7 +231,7 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       await _priceSubscription!.cancel();
       _priceSubscription = null;
     }
-    
+
     if (_currentPortfolio.isNotEmpty) {
       final symbols = <String>[];
       for (final token in _currentPortfolio) {
@@ -243,13 +244,13 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
         _binanceWebSocketService.unsubscribeFromSymbols(symbols);
       }
     }
-    
+
     _currentWalletAddress = null;
   }
 
   void _handleTickerUpdate(TokenTicker ticker) {
     _logger.i('🔄 WebSocket ticker update for ${ticker.symbol}: \$${ticker.price}');
-    
+
     // Convert TokenTicker to TokenPrice domain model
     final currentPrice = double.parse(ticker.price);
     final changePercent = double.parse(ticker.changePercent);
@@ -263,35 +264,38 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       volume24h: double.parse(ticker.volume),
       lastUpdated: DateTime.fromMillisecondsSinceEpoch(ticker.eventTime),
     );
-    
+
     // Find the token in current portfolio and update its price
     var hasUpdates = false;
-    final updatedPortfolio = _currentPortfolio.map((token) {
-      final binanceSymbol = _mapToBinanceSymbol(token.symbol);
-      if (binanceSymbol == ticker.symbol) {
-        hasUpdates = true;
-        _logger.i('💎 REAL-TIME UPDATE: ${token.symbol} price \$${token.price} → \$${tokenPrice.price}');
-        return token.copyWith(
-          price: tokenPrice.price,
-          change24h: tokenPrice.change24h,
-          changePercent24h: tokenPrice.changePercent24h,
-          totalValue: token.balance * tokenPrice.price,
-          lastUpdated: tokenPrice.lastUpdated,
-        );
-      }
-      return token;
-    }).toList();
-    
+    final updatedPortfolio =
+        _currentPortfolio.map((token) {
+          final binanceSymbol = _mapToBinanceSymbol(token.symbol);
+          if (binanceSymbol == ticker.symbol) {
+            hasUpdates = true;
+            _logger.i('💎 REAL-TIME UPDATE: ${token.symbol} price \$${token.price} → \$${tokenPrice.price}');
+            return token.copyWith(
+              price: tokenPrice.price,
+              change24h: tokenPrice.change24h,
+              changePercent24h: tokenPrice.changePercent24h,
+              totalValue: token.balance * tokenPrice.price,
+              lastUpdated: tokenPrice.lastUpdated,
+            );
+          }
+          return token;
+        }).toList();
+
     if (hasUpdates) {
       // Re-sort by total value
       updatedPortfolio.sort((a, b) => b.totalValue.compareTo(a.totalValue));
       _currentPortfolio = updatedPortfolio;
-      
+
       // CRITICAL: Emit to stream for immediate UI update
       _portfolioController?.add(_currentPortfolio);
       _logger.i('📺 UI UPDATED: Portfolio streamed with WebSocket data - should see in real-time!');
     } else {
-      _logger.w('⚠️ No matching token found for ${tokenPrice.symbol} in portfolio: ${_currentPortfolio.map((t) => t.symbol).join(', ')}');
+      _logger.w(
+        '⚠️ No matching token found for ${tokenPrice.symbol} in portfolio: ${_currentPortfolio.map((t) => t.symbol).join(', ')}',
+      );
     }
   }
 
@@ -338,4 +342,4 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
     _portfolioController = null;
     _currentPortfolio.clear();
   }
-} 
+}

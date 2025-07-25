@@ -9,11 +9,7 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_change.dart';
 
 class TokenListItemDesktop extends StatelessWidget {
-  const TokenListItemDesktop({
-    super.key,
-    required this.token,
-    this.onTap,
-  });
+  const TokenListItemDesktop({super.key, required this.token, this.onTap});
 
   final PortfolioToken token;
   final VoidCallback? onTap;
@@ -21,10 +17,7 @@ class TokenListItemDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
       child: ListTile(
         onTap: onTap,
         leading: TokenIcon(token: token),
@@ -40,4 +33,4 @@ class TokenListItemDesktop extends StatelessWidget {
       ),
     );
   }
-} 
+}

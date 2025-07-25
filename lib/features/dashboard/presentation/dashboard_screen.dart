@@ -18,31 +18,26 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(dashboardLoadingProvider);
-    
+
     return Scaffold(
-      appBar: const SharedAppBar(
-        title: AppConstants.dashboardLabel,
-        icon: Icons.dashboard_rounded,
-      ),
+      appBar: const SharedAppBar(title: AppConstants.dashboardLabel, icon: Icons.dashboard_rounded),
       body: AdaptiveScaffold(
         currentRoute: AppConstants.dashboardRoute,
-        body: isLoading
-            ? const ResponsiveContainer(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(AppSpacing.lg),
-                  child: DashboardLoadingLayout(),
-                ),
-              )
-            : ResponsiveContainer(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: ResponsiveBuilder(
-                    mobile: (context, constraints) => const DashboardMobileLayout(),
-                    tablet: (context, constraints) => const DashboardTabletLayout(),
-                    desktop: (context, constraints) => const DashboardDesktopLayout(),
+        body:
+            isLoading
+                ? const ResponsiveContainer(
+                  child: SingleChildScrollView(padding: EdgeInsets.all(AppSpacing.lg), child: DashboardLoadingLayout()),
+                )
+                : ResponsiveContainer(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: ResponsiveBuilder(
+                      mobile: (context, constraints) => const DashboardMobileLayout(),
+                      tablet: (context, constraints) => const DashboardTabletLayout(),
+                      desktop: (context, constraints) => const DashboardDesktopLayout(),
+                    ),
                   ),
                 ),
-              ),
       ),
     );
   }

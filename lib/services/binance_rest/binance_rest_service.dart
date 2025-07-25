@@ -12,13 +12,9 @@ abstract class BinanceRestService {
 
   /// Get latest prices for symbols
   @GET('/api/v3/ticker/price')
-  Future<List<SimplePrice>> getPrices({
-    @Query('symbols') required String symbols,
-  });
+  Future<List<SimplePrice>> getPrices({@Query('symbols') required String symbols});
 
   /// Get 24hr ticker statistics for symbols
   @GET('/api/v3/ticker/24hr')
-  Future<List<Ticker24hr>> getTicker24hr({
-    @Query('symbols') required String symbols,
-  });
+  Future<List<Ticker24hr>> getTicker24hr({@Query('symbols') required String symbols});
 }

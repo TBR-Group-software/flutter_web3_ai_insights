@@ -8,11 +8,7 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_price.dart';
 
 class TokenListItemTablet extends StatelessWidget {
-  const TokenListItemTablet({
-    super.key,
-    required this.token,
-    this.onTap,
-  });
+  const TokenListItemTablet({super.key, required this.token, this.onTap});
 
   final PortfolioToken token;
   final VoidCallback? onTap;
@@ -20,22 +16,14 @@ class TokenListItemTablet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
       child: ListTile(
         onTap: onTap,
         leading: TokenIcon(token: token),
-        title: Row(
-          children: [
-            Expanded(child: TokenTitle(token: token)),
-            TokenPrice(token: token),
-          ],
-        ),
+        title: Row(children: [Expanded(child: TokenTitle(token: token)), TokenPrice(token: token)]),
         subtitle: TokenSubtitle(token: token),
         trailing: TokenTrailing(token: token),
       ),
     );
   }
-} 
+}

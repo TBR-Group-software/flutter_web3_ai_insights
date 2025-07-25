@@ -8,18 +8,12 @@ class PortfolioSummaryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          Icons.account_balance_wallet_outlined,
-          size: 32,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        Icon(Icons.account_balance_wallet_outlined, size: 32, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Text(
             'Portfolio Summary',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
       ],

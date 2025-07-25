@@ -23,54 +23,37 @@ class RecentTransactionsCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.history_rounded,
-                  color: theme.colorScheme.primary,
-                  size: 24,
-                ),
+                Icon(Icons.history_rounded, color: theme.colorScheme.primary, size: 24),
                 const SizedBox(width: AppSpacing.sm),
-                Text(
-                  'Recent Transactions',
-                  style: theme.textTheme.titleMedium,
-                ),
+                Text('Recent Transactions', style: theme.textTheme.titleMedium),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
             walletStateAsync.when(
               data: (walletState) {
                 if (walletState.isConnected) {
-                  return Column(
-                    children: transactions.map((tx) => TransactionItem(transaction: tx)).toList(),
-                  );
+                  return Column(children: transactions.map((tx) => TransactionItem(transaction: tx)).toList());
                 } else {
                   return Container(
                     height: 120,
                     alignment: Alignment.center,
                     child: Text(
                       'Connect wallet to view transactions',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     ),
                   );
                 }
               },
-              loading: () => const SizedBox(
-                height: 120,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-              error: (_, _) => Container(
-                height: 120,
-                alignment: Alignment.center,
-                child: Text(
-                  'Error loading wallet state',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.error,
+              loading: () => const SizedBox(height: 120, child: Center(child: CircularProgressIndicator())),
+              error:
+                  (_, _) => Container(
+                    height: 120,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Error loading wallet state',
+                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
+                    ),
                   ),
-                ),
-              ),
             ),
           ],
         ),

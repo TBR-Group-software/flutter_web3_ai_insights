@@ -4,7 +4,6 @@ part 'token_balance.g.dart';
 
 @JsonSerializable()
 class TokenBalance {
-
   const TokenBalance({
     required this.symbol,
     required this.name,
@@ -40,4 +39,4 @@ class TokenBalance {
       logoUri: logoUri ?? this.logoUri,
     );
   }
-} 
+}

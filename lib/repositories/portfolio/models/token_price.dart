@@ -4,7 +4,6 @@ part 'token_price.g.dart';
 
 @JsonSerializable()
 class TokenPrice {
-
   const TokenPrice({
     required this.symbol,
     required this.price,
@@ -48,4 +47,4 @@ class TokenPrice {
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
-} 
+}
