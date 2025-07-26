@@ -4,7 +4,6 @@ part 'ticker_24hr.g.dart';
 
 @JsonSerializable()
 class Ticker24hr {
-
   const Ticker24hr({
     required this.symbol,
     required this.lastPrice,
@@ -24,4 +23,4 @@ class Ticker24hr {
   final String volume;
   final int closeTime;
   Map<String, dynamic> toJson() => _$Ticker24hrToJson(this);
-} 
+}

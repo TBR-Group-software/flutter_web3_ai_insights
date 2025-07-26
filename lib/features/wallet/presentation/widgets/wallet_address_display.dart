@@ -18,7 +18,7 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
   Future<void> _copyAddress(String address) async {
     await Clipboard.setData(ClipboardData(text: address));
     setState(() => _isCopied = true);
-    
+
     // Reset copied state after 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
@@ -33,9 +33,7 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
           width: 280,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       );
     }
@@ -64,22 +62,13 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.account_balance_wallet_rounded,
-                      size: 20,
-                      color: theme.colorScheme.primary,
-                    ),
+                    Icon(Icons.account_balance_wallet_rounded, size: 20, color: theme.colorScheme.primary),
                     const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      'Wallet Details',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    Text('Wallet Details', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
-                
+
                 // Address section
                 WalletInfoRow(
                   label: 'Address',
@@ -88,24 +77,18 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
                   onCopy: () => _copyAddress(walletInfo.address),
                   isCopied: _isCopied,
                 ),
-                
+
                 const SizedBox(height: AppSpacing.md),
-                
+
                 // Balance section
                 if (walletInfo.balance != null) ...[
-                  WalletInfoRow(
-                    label: 'Balance',
-                    value: walletInfo.formattedBalance,
-                  ),
+                  WalletInfoRow(label: 'Balance', value: walletInfo.formattedBalance),
                   const SizedBox(height: AppSpacing.md),
                 ],
-                
+
                 // Network section
                 if (walletInfo.networkName != null) ...[
-                  WalletInfoRow(
-                    label: 'Network',
-                    value: walletInfo.networkName!,
-                  ),
+                  WalletInfoRow(label: 'Network', value: walletInfo.networkName!),
                 ],
               ],
             ),
@@ -115,5 +98,4 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
       orElse: () => const SizedBox.shrink(),
     );
   }
-
 }

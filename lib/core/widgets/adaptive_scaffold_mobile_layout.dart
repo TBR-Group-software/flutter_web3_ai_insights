@@ -6,7 +6,6 @@ import 'package:web3_ai_assistant/core/widgets/shared_app_bar.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
 
 class AdaptiveScaffoldMobileLayout extends ConsumerWidget {
-
   const AdaptiveScaffoldMobileLayout({
     super.key,
     required this.currentRoute,
@@ -22,20 +21,15 @@ class AdaptiveScaffoldMobileLayout extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = _getCurrentIndex();
-    
+
     // Update navigation state when route changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(selectedNavigationIndexProvider.notifier).state = currentIndex;
     });
 
     return Scaffold(
-      appBar: title != null
-          ? SharedAppBar(
-              title: title!,
-              icon: _getIconForRoute(currentRoute),
-              actions: actions,
-            )
-          : null,
+      appBar:
+          title != null ? SharedAppBar(title: title!, icon: _getIconForRoute(currentRoute), actions: actions) : null,
       body: body,
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
@@ -108,4 +102,4 @@ class AdaptiveScaffoldMobileLayout extends ConsumerWidget {
         return null;
     }
   }
-} 
+}

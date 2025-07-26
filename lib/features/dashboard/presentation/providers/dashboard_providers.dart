@@ -16,44 +16,19 @@ final mockPortfolioValueProvider = Provider<double>((ref) {
 /// This will be replaced with real data later
 final mockRecentTransactionsProvider = Provider<List<MockTransaction>>((ref) {
   return [
-    MockTransaction(
-      type: 'Received',
-      amount: '0.5 ETH',
-      time: '2 hours ago',
-      status: TransactionStatus.completed,
-    ),
-    MockTransaction(
-      type: 'Sent',
-      amount: '100 USDC',
-      time: '5 hours ago',
-      status: TransactionStatus.completed,
-    ),
-    MockTransaction(
-      type: 'Swap',
-      amount: '0.1 ETH → 350 USDC',
-      time: '1 day ago',
-      status: TransactionStatus.pending,
-    ),
+    MockTransaction(type: 'Received', amount: '0.5 ETH', time: '2 hours ago', status: TransactionStatus.completed),
+    MockTransaction(type: 'Sent', amount: '100 USDC', time: '5 hours ago', status: TransactionStatus.completed),
+    MockTransaction(type: 'Swap', amount: '0.1 ETH → 350 USDC', time: '1 day ago', status: TransactionStatus.pending),
   ];
 });
 
 /// Mock transaction model
 class MockTransaction {
-
-  MockTransaction({
-    required this.type,
-    required this.amount,
-    required this.time,
-    required this.status,
-  });
+  MockTransaction({required this.type, required this.amount, required this.time, required this.status});
   final String type;
   final String amount;
   final String time;
   final TransactionStatus status;
 }
 
-enum TransactionStatus {
-  pending,
-  completed,
-  failed,
-}
+enum TransactionStatus { pending, completed, failed }

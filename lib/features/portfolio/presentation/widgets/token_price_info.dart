@@ -4,10 +4,7 @@ import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_change_indicator.dart';
 
 class TokenPriceInfo extends StatelessWidget {
-  const TokenPriceInfo({
-    super.key,
-    required this.token,
-  });
+  const TokenPriceInfo({super.key, required this.token});
 
   final PortfolioToken token;
 
@@ -24,18 +21,16 @@ class TokenPriceInfo extends StatelessWidget {
         children: [
           Text(
             'Current Price',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.sm),
           Row(
             children: [
               Text(
                 '\$${token.price.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(width: AppSpacing.md),
               TokenChangeIndicator(token: token),

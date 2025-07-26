@@ -3,10 +3,7 @@ import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_change_indicator.dart';
 
 class TokenChange extends StatelessWidget {
-  const TokenChange({
-    super.key,
-    required this.token,
-  });
+  const TokenChange({super.key, required this.token});
 
   final PortfolioToken token;
 
@@ -14,4 +11,4 @@ class TokenChange extends StatelessWidget {
   Widget build(BuildContext context) {
     return TokenChangeIndicator(token: token);
   }
-} 
+}

@@ -4,7 +4,6 @@ part 'token_ticker.g.dart';
 
 @JsonSerializable()
 class TokenTicker {
-
   const TokenTicker({
     required this.symbol,
     required this.price,
@@ -18,22 +17,22 @@ class TokenTicker {
   factory TokenTicker.fromJson(Map<String, dynamic> json) => _$TokenTickerFromJson(json);
   @JsonKey(name: 's')
   final String symbol;
-  
+
   @JsonKey(name: 'c')
   final String price;
-  
+
   @JsonKey(name: 'P')
   final String changePercent;
-  
+
   @JsonKey(name: 'h')
   final String high;
-  
+
   @JsonKey(name: 'l')
   final String low;
-  
+
   @JsonKey(name: 'q')
   final String volume;
-  
+
   @JsonKey(name: 'E')
   final int eventTime;
   Map<String, dynamic> toJson() => _$TokenTickerToJson(this);
@@ -57,4 +56,4 @@ class TokenTicker {
       eventTime: eventTime ?? this.eventTime,
     );
   }
-} 
+}

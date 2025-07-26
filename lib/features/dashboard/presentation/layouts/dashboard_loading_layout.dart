@@ -77,15 +77,9 @@ class _DesktopLoadingLayout extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              flex: 2,
-              child: LoadingSkeleton.card(height: 180),
-            ),
+            Expanded(flex: 2, child: LoadingSkeleton.card(height: 180)),
             const SizedBox(width: AppSpacing.md),
-            Expanded(
-              flex: 3,
-              child: LoadingSkeleton.card(height: 180),
-            ),
+            Expanded(flex: 3, child: LoadingSkeleton.card(height: 180)),
           ],
         ),
         const SizedBox(height: AppSpacing.md),

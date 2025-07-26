@@ -6,10 +6,7 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_details_dialog.dart';
 
 class PortfolioContentWidget extends StatelessWidget {
-  const PortfolioContentWidget({
-    super.key,
-    required this.tokens,
-  });
+  const PortfolioContentWidget({super.key, required this.tokens});
 
   final List<PortfolioToken> tokens;
 
@@ -17,18 +14,12 @@ class PortfolioContentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(
-          child: PortfolioSummaryCard(tokens: tokens),
-        ),
-        const SliverToBoxAdapter(
-          child: SizedBox(height: AppSpacing.md),
-        ),
+        SliverToBoxAdapter(child: PortfolioSummaryCard(tokens: tokens)),
+        const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
         SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, index) => TokenListItem(
-              token: tokens[index],
-              onTap: () => _showTokenDetails(context, tokens[index]),
-            ),
+            (context, index) =>
+                TokenListItem(token: tokens[index], onTap: () => _showTokenDetails(context, tokens[index])),
             childCount: tokens.length,
           ),
         ),
@@ -37,9 +28,6 @@ class PortfolioContentWidget extends StatelessWidget {
   }
 
   void _showTokenDetails(BuildContext context, PortfolioToken token) {
-    showDialog(
-      context: context,
-      builder: (context) => TokenDetailsDialog(token: token),
-    );
+    showDialog(context: context, builder: (context) => TokenDetailsDialog(token: token));
   }
-} 
+}

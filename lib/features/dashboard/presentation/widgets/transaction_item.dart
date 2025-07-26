@@ -3,11 +3,7 @@ import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
 
 class TransactionItem extends StatelessWidget {
-
-  const TransactionItem({
-    super.key,
-    required this.transaction,
-  });
+  const TransactionItem({super.key, required this.transaction});
   final MockTransaction transaction;
 
   @override
@@ -60,42 +56,25 @@ class TransactionItem extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
-              color: getBackgroundColor(),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              getIcon(),
-              color: getColor(),
-              size: 20,
-            ),
+            decoration: BoxDecoration(color: getBackgroundColor(), borderRadius: BorderRadius.circular(12)),
+            child: Icon(getIcon(), color: getColor(), size: 20),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  transaction.amount,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text(transaction.amount, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
                 Text(
                   transaction.time,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
           ),
           if (transaction.status == TransactionStatus.pending)
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.xs,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
               decoration: BoxDecoration(
                 color: theme.colorScheme.secondaryContainer,
                 borderRadius: BorderRadius.circular(8),
@@ -109,13 +88,9 @@ class TransactionItem extends StatelessWidget {
               ),
             )
           else if (transaction.status == TransactionStatus.completed)
-            Icon(
-              Icons.check_circle,
-              color: theme.colorScheme.tertiary,
-              size: 20,
-            ),
+            Icon(Icons.check_circle, color: theme.colorScheme.tertiary, size: 20),
         ],
       ),
     );
   }
-} 
+}

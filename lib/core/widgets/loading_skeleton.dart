@@ -3,37 +3,14 @@ import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 
 /// A loading skeleton widget that shows a shimmer effect
 class LoadingSkeleton extends StatefulWidget {
+  const LoadingSkeleton({super.key, this.width, this.height, this.borderRadius, this.margin});
 
-  const LoadingSkeleton({
-    super.key,
-    this.width,
-    this.height,
-    this.borderRadius,
-    this.margin,
-  });
-
-  factory LoadingSkeleton.card({
-    double? height = 200,
-    EdgeInsets? margin,
-  }) {
-    return LoadingSkeleton(
-      height: height,
-      borderRadius: BorderRadius.circular(16),
-      margin: margin,
-    );
+  factory LoadingSkeleton.card({double? height = 200, EdgeInsets? margin}) {
+    return LoadingSkeleton(height: height, borderRadius: BorderRadius.circular(16), margin: margin);
   }
 
-  factory LoadingSkeleton.text({
-    double? width = 200,
-    double height = 16,
-    EdgeInsets? margin,
-  }) {
-    return LoadingSkeleton(
-      width: width,
-      height: height,
-      borderRadius: BorderRadius.circular(4),
-      margin: margin,
-    );
+  factory LoadingSkeleton.text({double? width = 200, double height = 16, EdgeInsets? margin}) {
+    return LoadingSkeleton(width: width, height: height, borderRadius: BorderRadius.circular(4), margin: margin);
   }
   final double? width;
   final double? height;
@@ -44,22 +21,15 @@ class LoadingSkeleton extends StatefulWidget {
   State<LoadingSkeleton> createState() => _LoadingSkeletonState();
 }
 
-class _LoadingSkeletonState extends State<LoadingSkeleton>
-    with SingleTickerProviderStateMixin {
+class _LoadingSkeletonState extends State<LoadingSkeleton> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat();
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _controller = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this)..repeat();
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
   }
 
   @override
@@ -86,11 +56,7 @@ class _LoadingSkeletonState extends State<LoadingSkeleton>
             gradient: LinearGradient(
               begin: Alignment(-1.0 - _animation.value * 2, 0),
               end: Alignment(1.0 - _animation.value * 2, 0),
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               stops: const [0.0, 0.5, 1.0],
             ),
           ),
@@ -102,7 +68,6 @@ class _LoadingSkeletonState extends State<LoadingSkeleton>
 
 /// A group of loading skeletons for common patterns
 class LoadingSkeletonGroup extends StatelessWidget {
-
   const LoadingSkeletonGroup({
     super.key,
     this.itemCount = 3,
@@ -115,20 +80,12 @@ class LoadingSkeletonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = List.generate(
-      itemCount,
-      (index) => LoadingSkeleton.text(
-        width: index == itemCount - 1 ? 150 : null,
-      ),
-    );
+    final items = List.generate(itemCount, (index) => LoadingSkeleton.text(width: index == itemCount - 1 ? 150 : null));
 
     if (direction == Axis.horizontal) {
       return Row(
         children: [
-          for (int i = 0; i < items.length; i++) ...[
-            if (i > 0) SizedBox(width: spacing),
-            Expanded(child: items[i]),
-          ],
+          for (int i = 0; i < items.length; i++) ...[if (i > 0) SizedBox(width: spacing), Expanded(child: items[i])],
         ],
       );
     }
@@ -136,10 +93,7 @@ class LoadingSkeletonGroup extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (int i = 0; i < items.length; i++) ...[
-          if (i > 0) SizedBox(height: spacing),
-          items[i],
-        ],
+        for (int i = 0; i < items.length; i++) ...[if (i > 0) SizedBox(height: spacing), items[i]],
       ],
     );
   }

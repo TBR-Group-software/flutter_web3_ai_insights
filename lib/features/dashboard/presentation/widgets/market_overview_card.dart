@@ -19,39 +19,17 @@ class MarketOverviewCard extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.trending_up_rounded,
-                  color: theme.colorScheme.primary,
-                  size: 24,
-                ),
+                Icon(Icons.trending_up_rounded, color: theme.colorScheme.primary, size: 24),
                 const SizedBox(width: AppSpacing.sm),
-                Text(
-                  'Market Overview',
-                  style: theme.textTheme.titleMedium,
-                ),
+                Text('Market Overview', style: theme.textTheme.titleMedium),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            const MarketItem(
-              symbol: 'BTC',
-              price: r'$67,245.32',
-              change: '+2.45%',
-              isPositive: true,
-            ),
+            const MarketItem(symbol: 'BTC', price: r'$67,245.32', change: '+2.45%', isPositive: true),
             const SizedBox(height: AppSpacing.md),
-            const MarketItem(
-              symbol: 'ETH',
-              price: r'$3,421.18',
-              change: '-0.82%',
-              isPositive: false,
-            ),
+            const MarketItem(symbol: 'ETH', price: r'$3,421.18', change: '-0.82%', isPositive: false),
             const SizedBox(height: AppSpacing.md),
-            const MarketItem(
-              symbol: 'BNB',
-              price: r'$582.64',
-              change: '+5.21%',
-              isPositive: true,
-            ),
+            const MarketItem(symbol: 'BNB', price: r'$582.64', change: '+5.21%', isPositive: true),
           ],
         ),
       ),

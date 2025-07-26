@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_theme.dart';
 import 'package:web3_ai_assistant/routes/app_router.dart';
 
-void main() {
+Future<void> main() async {
+  // Load environment variables
+  await dotenv.load();
+
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Set system UI overlay style
   AppTheme.setSystemUIOverlayStyle(true); // Default to dark theme
-  
-  runApp(
-    const ProviderScope(
-      child: MainApp(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends ConsumerWidget {
@@ -23,19 +23,18 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = AppRouter.createRouter();
-    
+
     return MaterialApp.router(
       title: 'Web3 AI Assistant',
       debugShowCheckedModeBanner: false,
-      
+
       // Theme configuration
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark, // Default to dark theme for Web3 aesthetic
-      
+      themeMode: ThemeMode.dark, // Default to dark theme
       // Router configuration
       routerConfig: router,
-      
+
       // App configuration
       builder: (context, child) {
         return MediaQuery(

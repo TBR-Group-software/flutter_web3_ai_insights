@@ -4,7 +4,6 @@ part 'portfolio_token.g.dart';
 
 @JsonSerializable()
 class PortfolioToken {
-
   const PortfolioToken({
     required this.symbol,
     required this.name,
@@ -60,4 +59,4 @@ class PortfolioToken {
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
-} 
+}

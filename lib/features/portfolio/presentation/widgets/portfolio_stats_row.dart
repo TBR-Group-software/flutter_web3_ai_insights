@@ -4,10 +4,7 @@ import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/stat_item.dart';
 
 class PortfolioStatsRow extends StatelessWidget {
-  const PortfolioStatsRow({
-    super.key,
-    required this.tokens,
-  });
+  const PortfolioStatsRow({super.key, required this.tokens});
 
   final List<PortfolioToken> tokens;
 
@@ -20,11 +17,7 @@ class PortfolioStatsRow extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: StatItem(
-            label: 'Total Value',
-            value: '\$${totalValue.toStringAsFixed(2)}',
-            icon: Icons.attach_money,
-          ),
+          child: StatItem(label: 'Total Value', value: '\$${totalValue.toStringAsFixed(2)}', icon: Icons.attach_money),
         ),
         const SizedBox(width: AppSpacing.xl),
         Expanded(
@@ -32,19 +25,11 @@ class PortfolioStatsRow extends StatelessWidget {
             label: '24h Change',
             value: '${averageChange >= 0 ? '+' : ''}${averageChange.toStringAsFixed(2)}%',
             icon: averageChange >= 0 ? Icons.trending_up : Icons.trending_down,
-            color: averageChange >= 0
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.error,
+            color: averageChange >= 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.error,
           ),
         ),
         const SizedBox(width: AppSpacing.xl),
-        Expanded(
-          child: StatItem(
-            label: 'Tokens',
-            value: '${tokens.length}',
-            icon: Icons.token,
-          ),
-        ),
+        Expanded(child: StatItem(label: 'Tokens', value: '${tokens.length}', icon: Icons.token)),
       ],
     );
   }

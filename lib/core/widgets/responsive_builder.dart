@@ -3,14 +3,7 @@ import 'package:web3_ai_assistant/core/theme/breakpoints.dart';
 
 /// A widget that builds different layouts based on screen size
 class ResponsiveBuilder extends StatelessWidget {
-
-  const ResponsiveBuilder({
-    super.key,
-    required this.mobile,
-    this.tablet,
-    this.desktop,
-    this.largeDesktop,
-  });
+  const ResponsiveBuilder({super.key, required this.mobile, this.tablet, this.desktop, this.largeDesktop});
   final Widget Function(BuildContext context, BoxConstraints constraints) mobile;
   final Widget Function(BuildContext context, BoxConstraints constraints)? tablet;
   final Widget Function(BuildContext context, BoxConstraints constraints)? desktop;
@@ -40,14 +33,7 @@ class ResponsiveBuilder extends StatelessWidget {
 
 /// Simplified responsive builder that just needs widgets, not builders
 class ResponsiveWidget extends StatelessWidget {
-
-  const ResponsiveWidget({
-    super.key,
-    required this.mobile,
-    this.tablet,
-    this.desktop,
-    this.largeDesktop,
-  });
+  const ResponsiveWidget({super.key, required this.mobile, this.tablet, this.desktop, this.largeDesktop});
   final Widget mobile;
   final Widget? tablet;
   final Widget? desktop;

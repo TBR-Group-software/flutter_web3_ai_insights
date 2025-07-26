@@ -50,7 +50,7 @@ class AppSpacing {
   // Responsive spacing getters
   static double getResponsiveSpacing(BuildContext context, double baseSpacing) {
     final width = MediaQuery.of(context).size.width;
-    
+
     if (width < 600) {
       // Mobile - slightly smaller spacing
       return baseSpacing * 0.8;
@@ -65,7 +65,7 @@ class AppSpacing {
 
   static double getScreenPadding(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    
+
     if (width < 600) {
       return lg; // 16
     } else if (width < 1200) {
@@ -77,7 +77,7 @@ class AppSpacing {
 
   static double getSectionSpacing(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    
+
     if (width < 600) {
       return xl; // 20
     } else if (width < 1200) {

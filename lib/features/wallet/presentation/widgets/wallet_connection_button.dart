@@ -9,7 +9,7 @@ class WalletConnectionButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final walletState = ref.watch(walletNotifierProvider);
     final theme = Theme.of(context);
-    
+
     return walletState.when(
       data: (state) {
         if (state.isConnected) {
@@ -25,48 +25,44 @@ class WalletConnectionButton extends ConsumerWidget {
             ),
           );
         }
-        
+
         return FilledButton.icon(
-          onPressed: state.isLoading
-              ? null
-              : () async {
-                  await ref.read(walletNotifierProvider.notifier).connect();
-                },
-          icon: state.isLoading
-              ? SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                )
-              : const Icon(Icons.account_balance_wallet_rounded),
+          onPressed:
+              state.isLoading
+                  ? null
+                  : () async {
+                    await ref.read(walletNotifierProvider.notifier).connect();
+                  },
+          icon:
+              state.isLoading
+                  ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: theme.colorScheme.onPrimary),
+                  )
+                  : const Icon(Icons.account_balance_wallet_rounded),
           label: Text(state.isLoading ? 'Connecting...' : 'Connect MetaMask'),
         );
       },
-      loading: () => FilledButton.icon(
-        onPressed: null,
-        icon: SizedBox(
-          width: 16,
-          height: 16,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: theme.colorScheme.onSurfaceVariant,
+      loading:
+          () => FilledButton.icon(
+            onPressed: null,
+            icon: SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2, color: theme.colorScheme.onSurfaceVariant),
+            ),
+            label: const Text('Loading...'),
           ),
-        ),
-        label: const Text('Loading...'),
-      ),
-      error: (error, _) => FilledButton.icon(
-        onPressed: () async {
-          await ref.read(walletNotifierProvider.notifier).connect();
-        },
-        icon: const Icon(Icons.refresh_rounded),
-        label: const Text('Retry Connection'),
-        style: FilledButton.styleFrom(
-          backgroundColor: theme.colorScheme.error,
-        ),
-      ),
+      error:
+          (error, _) => FilledButton.icon(
+            onPressed: () async {
+              await ref.read(walletNotifierProvider.notifier).connect();
+            },
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Retry Connection'),
+            style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.error),
+          ),
     );
   }
 }

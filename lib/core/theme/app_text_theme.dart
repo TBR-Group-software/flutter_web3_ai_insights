@@ -126,16 +126,13 @@ class AppTextTheme {
 
   // Light text theme (for future use or contrast scenarios)
   static TextTheme lightTextTheme(ColorScheme colorScheme) {
-    return darkTextTheme(colorScheme).apply(
-      bodyColor: colorScheme.onSurface,
-      displayColor: colorScheme.onSurface,
-    );
+    return darkTextTheme(colorScheme).apply(bodyColor: colorScheme.onSurface, displayColor: colorScheme.onSurface);
   }
 
   // Responsive text scaling
   static double getResponsiveTextScale(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    
+
     if (width < 600) {
       // Mobile
       return 0.9;
@@ -153,12 +150,11 @@ class AppTextTheme {
     fontSize: 24,
     fontWeight: FontWeight.w600,
     height: 1.2,
-    foreground: Paint()
-      ..shader = LinearGradient(
-        colors: [colorScheme.primary, colorScheme.secondary],
-      ).createShader(
-        const Rect.fromLTWH(0, 0, 200, 70),
-      ),
+    foreground:
+        Paint()
+          ..shader = LinearGradient(
+            colors: [colorScheme.primary, colorScheme.secondary],
+          ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
     fontFamily: fontFamily,
   );
 

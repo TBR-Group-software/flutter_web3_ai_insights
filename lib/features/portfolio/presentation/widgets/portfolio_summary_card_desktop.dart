@@ -7,11 +7,7 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfo
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/top_performer_card.dart';
 
 class PortfolioSummaryCardDesktop extends StatelessWidget {
-  const PortfolioSummaryCardDesktop({
-    super.key,
-    required this.tokens,
-    this.isLoading = false,
-  });
+  const PortfolioSummaryCardDesktop({super.key, required this.tokens, this.isLoading = false});
 
   final List<PortfolioToken> tokens;
   final bool isLoading;
@@ -22,22 +18,22 @@ class PortfolioSummaryCardDesktop extends StatelessWidget {
       margin: const EdgeInsets.all(AppSpacing.lg),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
-        child: isLoading
-            ? const LoadingSkeletonSummaryCard()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const PortfolioSummaryHeader(),
-                  const SizedBox(height: AppSpacing.xl),
-                  PortfolioStatsRow(tokens: tokens),
-                  const SizedBox(height: AppSpacing.lg),
-                  TopPerformerCard(tokens: tokens),
-                ],
-              ),
+        child:
+            isLoading
+                ? const LoadingSkeletonSummaryCard()
+                : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const PortfolioSummaryHeader(),
+                    const SizedBox(height: AppSpacing.xl),
+                    PortfolioStatsRow(tokens: tokens),
+                    const SizedBox(height: AppSpacing.lg),
+                    TopPerformerCard(tokens: tokens),
+                  ],
+                ),
       ),
     );
   }
-
 }
 
 class LoadingSkeletonSummaryCard extends StatelessWidget {
@@ -52,9 +48,7 @@ class LoadingSkeletonSummaryCard extends StatelessWidget {
           children: [
             LoadingSkeleton(width: 32, height: 32),
             SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: LoadingSkeleton(width: 250, height: 28),
-            ),
+            Expanded(child: LoadingSkeleton(width: 250, height: 28)),
           ],
         ),
         SizedBox(height: AppSpacing.xl),
@@ -72,4 +66,4 @@ class LoadingSkeletonSummaryCard extends StatelessWidget {
       ],
     );
   }
-} 
+}

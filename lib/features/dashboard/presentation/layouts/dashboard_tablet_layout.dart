@@ -17,13 +17,9 @@ class DashboardTabletLayout extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: PortfolioSummaryCard(),
-              ),
+              Expanded(child: PortfolioSummaryCard()),
               SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: MarketOverviewCard(),
-              ),
+              Expanded(child: MarketOverviewCard()),
             ],
           ),
         ),
@@ -32,13 +28,9 @@ class DashboardTabletLayout extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: RecentTransactionsCard(),
-              ),
+              Expanded(child: RecentTransactionsCard()),
               SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: AiInsightsPreviewCard(),
-              ),
+              Expanded(child: AiInsightsPreviewCard()),
             ],
           ),
         ),

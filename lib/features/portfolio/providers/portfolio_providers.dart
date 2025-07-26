@@ -22,15 +22,15 @@ class PortfolioNotifier extends _$PortfolioNotifier {
     final currentWalletState = walletRepository.currentWalletState;
     if (currentWalletState.isConnected && currentWalletState.walletInfo != null) {
       final walletAddress = currentWalletState.walletInfo!.address;
-      
+
       // Get initial portfolio data
       final portfolio = await portfolioRepository.getPortfolio(walletAddress);
-      
+
       // Subscribe to real-time updates after getting initial data
       if (portfolio.isNotEmpty) {
         await portfolioRepository.subscribeToPortfolioUpdates(walletAddress);
       }
-      
+
       return portfolio;
     }
 
@@ -68,21 +68,21 @@ class PortfolioNotifier extends _$PortfolioNotifier {
 Stream<List<PortfolioToken>> portfolioStream(PortfolioStreamRef ref) async* {
   final walletRepository = ref.watch(walletRepositoryProvider);
   final portfolioRepository = ref.watch(portfolioRepositoryProvider);
-  
+
   // Dispose subscription when provider is disposed
   ref.onDispose(portfolioRepository.unsubscribeFromPortfolioUpdates);
-  
+
   final currentWalletState = walletRepository.currentWalletState;
   if (currentWalletState.isConnected && currentWalletState.walletInfo != null) {
     final walletAddress = currentWalletState.walletInfo!.address;
-    
+
     // Get initial portfolio data
     final initialPortfolio = await portfolioRepository.getPortfolio(walletAddress);
     yield initialPortfolio;
-    
+
     // Subscribe to updates for real-time changes
     await portfolioRepository.subscribeToPortfolioUpdates(walletAddress);
-    
+
     // Continue yielding updates from the stream
     yield* portfolioRepository.portfolioStream;
   } else {

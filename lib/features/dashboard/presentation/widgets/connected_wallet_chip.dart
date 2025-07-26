@@ -6,11 +6,7 @@ import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/core/theme/breakpoints.dart';
 
 class ConnectedWalletChip extends StatelessWidget {
-  const ConnectedWalletChip({
-    super.key,
-    required this.address,
-    required this.onDisconnect,
-  });
+  const ConnectedWalletChip({super.key, required this.address, required this.onDisconnect});
 
   final String address;
   final VoidCallback onDisconnect;
@@ -32,63 +28,44 @@ class ConnectedWalletChip extends StatelessWidget {
     final isMobile = AppBreakpoints.isMobile(MediaQuery.of(context).size.width);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.sm,
-        horizontal: AppSpacing.md,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.md),
       child: PopupMenuButton<String>(
         offset: const Offset(0, 40),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        itemBuilder: (BuildContext context) => [
-          PopupMenuItem<String>(
-            value: 'view',
-            child: Row(
-              children: [
-                Icon(
-                  Icons.account_balance_wallet,
-                  size: 20,
-                  color: theme.colorScheme.onSurface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        itemBuilder:
+            (BuildContext context) => [
+              PopupMenuItem<String>(
+                value: 'view',
+                child: Row(
+                  children: [
+                    Icon(Icons.account_balance_wallet, size: 20, color: theme.colorScheme.onSurface),
+                    const SizedBox(width: AppSpacing.sm),
+                    const Text('View Wallet'),
+                  ],
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                const Text('View Wallet'),
-              ],
-            ),
-          ),
-          PopupMenuItem<String>(
-            value: 'copy',
-            child: Row(
-              children: [
-                Icon(
-                  Icons.copy,
-                  size: 20,
-                  color: theme.colorScheme.onSurface,
+              ),
+              PopupMenuItem<String>(
+                value: 'copy',
+                child: Row(
+                  children: [
+                    Icon(Icons.copy, size: 20, color: theme.colorScheme.onSurface),
+                    const SizedBox(width: AppSpacing.sm),
+                    const Text('Copy Address'),
+                  ],
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                const Text('Copy Address'),
-              ],
-            ),
-          ),
-          const PopupMenuDivider(),
-          PopupMenuItem<String>(
-            value: 'disconnect',
-            child: Row(
-              children: [
-                Icon(
-                  Icons.logout,
-                  size: 20,
-                  color: theme.colorScheme.error,
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem<String>(
+                value: 'disconnect',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, size: 20, color: theme.colorScheme.error),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text('Disconnect', style: TextStyle(color: theme.colorScheme.error)),
+                  ],
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Text(
-                  'Disconnect',
-                  style: TextStyle(color: theme.colorScheme.error),
-                ),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
         onSelected: (String value) {
           switch (value) {
             case 'view':
@@ -113,20 +90,14 @@ class ConnectedWalletChip extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.tertiary,
-                      shape: BoxShape.circle,
-                    ),
+                    decoration: BoxDecoration(color: theme.colorScheme.tertiary, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Text(
@@ -137,11 +108,7 @@ class ConnectedWalletChip extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  Icon(
-                    Icons.expand_more,
-                    size: 18,
-                    color: theme.colorScheme.primary,
-                  ),
+                  Icon(Icons.expand_more, size: 18, color: theme.colorScheme.primary),
                 ],
               ),
             ),
@@ -150,4 +117,4 @@ class ConnectedWalletChip extends StatelessWidget {
       ),
     );
   }
-} 
+}

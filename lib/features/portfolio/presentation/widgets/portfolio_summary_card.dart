@@ -6,12 +6,8 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfo
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfolio_summary_card_desktop.dart';
 
 class PortfolioSummaryCard extends StatelessWidget {
-  const PortfolioSummaryCard({
-    super.key,
-    required this.tokens,
-    this.isLoading = false,
-  });
-  
+  const PortfolioSummaryCard({super.key, required this.tokens, this.isLoading = false});
+
   final List<PortfolioToken> tokens;
   final bool isLoading;
 
@@ -23,4 +19,4 @@ class PortfolioSummaryCard extends StatelessWidget {
       desktop: PortfolioSummaryCardDesktop(tokens: tokens, isLoading: isLoading),
     );
   }
-} 
+}

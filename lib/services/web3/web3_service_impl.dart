@@ -70,7 +70,6 @@ class Web3ServiceImpl implements Web3Service {
         networkName: chainId != null ? _getNetworkName(chainId) : 'Unknown',
       );
 
-
       final status = WalletConnectionStatus.connected(walletInfo);
       _updateStatus(status);
 
@@ -317,7 +316,6 @@ class Web3ServiceImpl implements Web3Service {
               decimals: token['decimals'] as int,
             );
             tokenBalances.add(tokenBalance);
-          } else {
           }
         } catch (e) {
           // Continue with other tokens if one fails

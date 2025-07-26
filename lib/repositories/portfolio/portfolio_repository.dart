@@ -9,6 +9,6 @@ abstract class PortfolioRepository {
   Future<void> refreshPortfolio(String walletAddress);
   Future<void> subscribeToPortfolioUpdates(String walletAddress);
   Future<void> unsubscribeFromPortfolioUpdates();
-  
+
   void dispose();
-} 
+}
