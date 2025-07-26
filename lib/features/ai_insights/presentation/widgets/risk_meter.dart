@@ -21,7 +21,14 @@ class RiskMeter extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.shield_outlined, color: _getRiskColor(riskAssessment.level)),
+                Icon(
+                  Icons.shield_outlined,
+                  color: riskAssessment.level == RiskLevel.low
+                      ? theme.colorScheme.primary
+                      : riskAssessment.level == RiskLevel.medium
+                          ? theme.colorScheme.onErrorContainer
+                          : theme.colorScheme.error,
+                ),
                 const SizedBox(width: AppSpacing.sm),
                 Text('Risk Assessment', style: theme.textTheme.headlineSmall),
               ],
@@ -61,14 +68,4 @@ class RiskMeter extends StatelessWidget {
     );
   }
 
-  Color _getRiskColor(RiskLevel level) {
-    switch (level) {
-      case RiskLevel.low:
-        return Colors.green;
-      case RiskLevel.medium:
-        return Colors.orange;
-      case RiskLevel.high:
-        return Colors.red;
-    }
-  }
 }

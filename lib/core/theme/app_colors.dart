@@ -21,7 +21,7 @@ class Palette {
   static const LinearGradient gradient = LinearGradient(colors: <Color>[Color(0xFF00A0AF), Color(0xFF6BE7C8)]);
 
   static const Color errorRed = Color(0xFFFF3B30);
-  static const Color lightRed = Color(0xFFFF6057);
+  static const Color lightRed = Color.fromARGB(255, 255, 165, 87);
   static const Color accentBlue = Color(0xFF6BD1E7);
   static const Color accentDarkBlue = Color(0xFF6B9DE7);
 
