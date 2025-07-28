@@ -63,9 +63,18 @@ dev_dependencies:
   json_serializable: ^6.9.5
   retrofit_generator: ^9.1.4
   build_runner: ^2.4.13
+  flutter_launcher_icons: ^0.14.3
 
 flutter:
   uses-material-design: true
   generate: true
   assets:
     - .env
+    - assets/
+
+flutter_launcher_icons:
+  web:
+    generate: true
+    image_path: "assets/ai_insigts_logo.jpg"
+    background_color: "#0C0B09"
+    theme_color: "#6BE7C8"
