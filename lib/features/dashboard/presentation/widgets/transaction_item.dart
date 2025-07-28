@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
-import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'package:web3_ai_assistant/repositories/transaction/models/transaction.dart';
 
 class TransactionItem extends StatelessWidget {
   const TransactionItem({super.key, required this.transaction});
-  final MockTransaction transaction;
+  final Transaction transaction;
 
   @override
   Widget build(BuildContext context) {
@@ -12,39 +12,45 @@ class TransactionItem extends StatelessWidget {
 
     IconData getIcon() {
       switch (transaction.type) {
-        case 'Received':
+        case TransactionType.received:
           return Icons.arrow_downward_rounded;
-        case 'Sent':
+        case TransactionType.sent:
           return Icons.arrow_upward_rounded;
-        case 'Swap':
+        case TransactionType.swap:
           return Icons.swap_horiz_rounded;
-        default:
+        case TransactionType.contract:
+          return Icons.code_rounded;
+        case TransactionType.unknown:
           return Icons.circle;
       }
     }
 
     Color getColor() {
       switch (transaction.type) {
-        case 'Received':
+        case TransactionType.received:
           return theme.colorScheme.tertiary;
-        case 'Sent':
+        case TransactionType.sent:
           return theme.colorScheme.error;
-        case 'Swap':
+        case TransactionType.swap:
           return theme.colorScheme.primary;
-        default:
+        case TransactionType.contract:
+          return theme.colorScheme.secondary;
+        case TransactionType.unknown:
           return theme.colorScheme.onSurfaceVariant;
       }
     }
 
     Color getBackgroundColor() {
       switch (transaction.type) {
-        case 'Received':
+        case TransactionType.received:
           return theme.colorScheme.tertiaryContainer;
-        case 'Sent':
+        case TransactionType.sent:
           return theme.colorScheme.errorContainer;
-        case 'Swap':
+        case TransactionType.swap:
           return theme.colorScheme.primaryContainer;
-        default:
+        case TransactionType.contract:
+          return theme.colorScheme.secondaryContainer;
+        case TransactionType.unknown:
           return theme.colorScheme.surfaceContainer;
       }
     }
@@ -64,9 +70,9 @@ class TransactionItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transaction.amount, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                Text(transaction.displayAmount, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
                 Text(
-                  transaction.time,
+                  transaction.timeAgo,
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ],

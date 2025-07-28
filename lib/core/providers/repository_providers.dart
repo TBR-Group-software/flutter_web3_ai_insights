@@ -7,6 +7,10 @@ import 'package:web3_ai_assistant/repositories/ai_insights/ai_insights_repositor
 import 'package:web3_ai_assistant/repositories/ai_insights/ai_insights_repository_impl.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights_storage/ai_insights_storage_repository.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights_storage/ai_insights_storage_repository_impl.dart';
+import 'package:web3_ai_assistant/repositories/transaction/transaction_repository.dart';
+import 'package:web3_ai_assistant/repositories/transaction/transaction_repository_impl.dart';
+import 'package:web3_ai_assistant/repositories/market/market_repository.dart';
+import 'package:web3_ai_assistant/repositories/market/market_repository_impl.dart';
 import 'package:web3_ai_assistant/core/providers/service_providers.dart';
 
 part 'repository_providers.g.dart';
@@ -49,4 +53,24 @@ AiInsightsRepository aiInsightsRepository(AiInsightsRepositoryRef ref) {
 AiInsightsStorageRepository aiInsightsStorageRepository(AiInsightsStorageRepositoryRef ref) {
   final storageService = ref.watch(aiInsightsStorageServiceProvider);
   return AiInsightsStorageRepositoryImpl(storageService: storageService);
+}
+
+@riverpod
+TransactionRepository transactionRepository(TransactionRepositoryRef ref) {
+  final web3Service = ref.watch(web3ServiceProvider);
+  final repository = TransactionRepositoryImpl(web3Service: web3Service);
+  ref.onDispose(repository.dispose);
+  return repository;
+}
+
+@riverpod
+MarketRepository marketRepository(MarketRepositoryRef ref) {
+  final binanceRestService = ref.watch(binanceRestServiceProvider);
+  final binanceWebSocketService = ref.watch(binanceWebSocketServiceProvider);
+  final repository = MarketRepositoryImpl(
+    binanceRestService: binanceRestService,
+    binanceWebSocketService: binanceWebSocketService,
+  );
+  ref.onDispose(repository.dispose);
+  return repository;
 }

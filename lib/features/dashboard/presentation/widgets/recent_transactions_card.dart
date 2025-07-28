@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
+import 'package:web3_ai_assistant/core/widgets/loading_skeleton.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/widgets/transaction_item.dart';
@@ -11,7 +12,7 @@ class RecentTransactionsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final transactions = ref.watch(mockRecentTransactionsProvider);
+    final transactionsAsync = ref.watch(recentTransactionsProvider);
     final walletStateAsync = ref.watch(walletNotifierProvider);
 
     return Card(
@@ -32,7 +33,40 @@ class RecentTransactionsCard extends ConsumerWidget {
             walletStateAsync.when(
               data: (walletState) {
                 if (walletState.isConnected) {
-                  return Column(children: transactions.map((tx) => TransactionItem(transaction: tx)).toList());
+                  return transactionsAsync.when(
+                    data: (transactions) {
+                      if (transactions.isEmpty) {
+                        return Container(
+                          height: 120,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No recent transactions',
+                            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                          ),
+                        );
+                      }
+                      return Column(children: transactions.map((tx) => TransactionItem(transaction: tx)).toList());
+                    },
+                    loading:
+                        () => Column(
+                          children: [
+                            LoadingSkeleton.text(width: double.infinity, height: 60),
+                            const SizedBox(height: AppSpacing.sm),
+                            LoadingSkeleton.text(width: double.infinity, height: 60),
+                            const SizedBox(height: AppSpacing.sm),
+                            LoadingSkeleton.text(width: double.infinity, height: 60),
+                          ],
+                        ),
+                    error:
+                        (error, _) => Container(
+                          height: 120,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Error loading transactions',
+                            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
+                          ),
+                        ),
+                  );
                 } else {
                   return Container(
                     height: 120,
@@ -44,9 +78,18 @@ class RecentTransactionsCard extends ConsumerWidget {
                   );
                 }
               },
-              loading: () => const SizedBox(height: 120, child: Center(child: CircularProgressIndicator())),
+              loading:
+                  () => Column(
+                    children: [
+                      LoadingSkeleton.text(width: double.infinity, height: 60),
+                      const SizedBox(height: AppSpacing.sm),
+                      LoadingSkeleton.text(width: double.infinity, height: 60),
+                      const SizedBox(height: AppSpacing.sm),
+                      LoadingSkeleton.text(width: double.infinity, height: 60),
+                    ],
+                  ),
               error:
-                  (_, _) => Container(
+                  (error, _) => Container(
                     height: 120,
                     alignment: Alignment.center,
                     child: Text(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:web3_ai_assistant/services/web3/models/wallet_connection_status.dart';
 import 'package:web3_ai_assistant/services/web3/models/token_balance.dart';
+import 'package:web3_ai_assistant/services/web3/models/transaction_info.dart';
 
 abstract class Web3Service {
   Stream<WalletConnectionStatus> get connectionStatusStream;
@@ -12,6 +13,7 @@ abstract class Web3Service {
   Future<int?> getChainId();
   Future<String?> getNetworkName(int chainId);
   Future<List<TokenBalance>> getTokenBalances(String walletAddress);
+  Future<List<TransactionInfo>> getRecentTransactions(String walletAddress, {int limit = 10});
 
   void dispose();
 }

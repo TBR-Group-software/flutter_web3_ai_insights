@@ -4,6 +4,7 @@ import 'package:web3_ai_assistant/services/web3/models/wallet_connection_status.
 import 'package:web3_ai_assistant/services/web3/models/wallet_info.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
 import 'package:web3_ai_assistant/services/web3/models/token_balance.dart';
+import 'package:web3_ai_assistant/services/web3/models/transaction_info.dart';
 
 // JS interop definitions
 @JS('window')
@@ -333,6 +334,254 @@ class Web3ServiceImpl implements Web3Service {
   void _updateStatus(WalletConnectionStatus status) {
     _currentStatus = status;
     _connectionStatusController.add(status);
+  }
+
+  @override
+  Future<List<TransactionInfo>> getRecentTransactions(String walletAddress, {int limit = 10}) async {
+    try {
+      if (!_isMetaMaskAvailable()) {
+        return [];
+      }
+
+      final ethereum = _getEthereum();
+      final transactions = <TransactionInfo>[];
+
+      // Get current block number
+      final blockNumberParams = {'method': 'eth_blockNumber'}.jsify()! as JSObject;
+      final currentBlockHex = await ethereum.request(blockNumberParams).toDart;
+      
+      if (currentBlockHex == null) {
+        return [];
+      }
+      
+      final currentBlock = int.parse(currentBlockHex.toString(), radix: 16);
+      final fromBlock = (currentBlock - 1000).clamp(0, currentBlock); // Look back ~1000 blocks
+      
+      // Create filter for Transfer events (ERC-20 tokens)
+      // Transfer event signature: Transfer(address,address,uint256)
+      const transferEventSignature = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+      
+      // Get logs for incoming transfers
+      final incomingLogsParams = {
+        'method': 'eth_getLogs',
+        'params': [
+          {
+            'fromBlock': '0x${fromBlock.toRadixString(16)}',
+            'toBlock': '0x${currentBlock.toRadixString(16)}',
+            'topics': [
+              transferEventSignature, // Event signature
+              null, // from (any)
+              '0x000000000000000000000000${walletAddress.substring(2).toLowerCase()}', // to (padded address)
+            ],
+          }
+        ],
+      }.jsify()! as JSObject;
+      
+      // Get logs for outgoing transfers
+      final outgoingLogsParams = {
+        'method': 'eth_getLogs',
+        'params': [
+          {
+            'fromBlock': '0x${fromBlock.toRadixString(16)}',
+            'toBlock': '0x${currentBlock.toRadixString(16)}',
+            'topics': [
+              transferEventSignature, // Event signature
+              '0x000000000000000000000000${walletAddress.substring(2).toLowerCase()}', // from (padded address)
+              null, // to (any)
+            ],
+          }
+        ],
+      }.jsify()! as JSObject;
+      
+      // Fetch logs
+      final [incomingLogsResponse, outgoingLogsResponse] = await Future.wait([
+        ethereum.request(incomingLogsParams).toDart,
+        ethereum.request(outgoingLogsParams).toDart,
+      ]);
+      
+      // Process incoming transfers
+      if (incomingLogsResponse != null) {
+        final incomingLogs = incomingLogsResponse.dartify() as List? ?? [];
+        for (final log in incomingLogs) {
+          final transaction = await _parseTransferLog(log as Map<String, dynamic>, ethereum, false);
+          if (transaction != null) {
+            transactions.add(transaction);
+          }
+        }
+      }
+      
+      // Process outgoing transfers
+      if (outgoingLogsResponse != null) {
+        final outgoingLogs = outgoingLogsResponse.dartify() as List? ?? [];
+        for (final log in outgoingLogs) {
+          final transaction = await _parseTransferLog(log as Map<String, dynamic>, ethereum, true);
+          if (transaction != null) {
+            transactions.add(transaction);
+          }
+        }
+      }
+      
+      // Sort by block number (most recent first)
+      transactions.sort((a, b) => b.blockNumber.compareTo(a.blockNumber));
+      
+      // Return limited results
+      return transactions.take(limit).toList();
+    } catch (e) {
+      // Return empty list on error
+      return [];
+    }
+  }
+
+  Future<TransactionInfo?> _parseTransferLog(
+    Map<String, dynamic> log,
+    Ethereum ethereum,
+    bool isOutgoing,
+  ) async {
+    try {
+      final txHash = log['transactionHash'] as String;
+      final blockNumber = int.parse(log['blockNumber'] as String, radix: 16);
+      final contractAddress = log['address'] as String;
+      final topics = log['topics'] as List;
+      final data = log['data'] as String;
+      
+      // Parse addresses from topics
+      final fromAddress = '0x${(topics[1] as String).substring(26)}';
+      final toAddress = '0x${(topics[2] as String).substring(26)}';
+      
+      // Parse amount from data
+      final amount = BigInt.parse(data.substring(2), radix: 16);
+      
+      // Get block details for timestamp
+      final blockParams = {
+        'method': 'eth_getBlockByNumber',
+        'params': [log['blockNumber'], false],
+      }.jsify()! as JSObject;
+      
+      final blockResponse = await ethereum.request(blockParams).toDart;
+      final block = blockResponse.dartify() as Map<String, dynamic>?;
+      final timestamp = block != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              int.parse(block['timestamp'] as String, radix: 16) * 1000,
+            )
+          : DateTime.now();
+      
+      // Get token info (simplified - in production would cache token metadata)
+      final tokenSymbol = await _getTokenSymbol(contractAddress, ethereum);
+      final tokenDecimals = await _getTokenDecimals(contractAddress, ethereum);
+      
+      return TransactionInfo(
+        hash: txHash,
+        from: fromAddress,
+        to: toAddress,
+        value: BigInt.zero, // ERC-20 transfers don't have ETH value
+        timestamp: timestamp,
+        blockNumber: blockNumber,
+        gasUsed: BigInt.zero, // Would need to fetch transaction receipt
+        status: TransactionStatus.success, // Logs only exist for successful transactions
+        contractAddress: contractAddress,
+        tokenTransfers: [
+          TokenTransfer(
+            tokenAddress: contractAddress,
+            from: fromAddress,
+            to: toAddress,
+            value: amount,
+            tokenSymbol: tokenSymbol,
+            tokenDecimals: tokenDecimals,
+          ),
+        ],
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<String> _getTokenSymbol(String contractAddress, Ethereum ethereum) async {
+    try {
+      // ERC-20 symbol() method signature
+      const symbolSignature = '0x95d89b41';
+      
+      final params = {
+        'method': 'eth_call',
+        'params': [
+          {
+            'to': contractAddress,
+            'data': symbolSignature,
+          },
+          'latest',
+        ],
+      }.jsify()! as JSObject;
+      
+      final response = await ethereum.request(params).toDart;
+      if (response != null && response.toString() != '0x') {
+        // Parse the string from the response (simplified)
+        return _parseStringFromHex(response.toString());
+      }
+    } catch (e) {
+      // Ignore errors
+    }
+    
+    // Return a default based on known contracts
+    final knownTokens = {
+      '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',
+      '0xa0b86991c5040be1dc552d61ff7e8bfc7ae3e2b4': 'USDC',
+      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'WETH',
+    };
+    
+    return knownTokens[contractAddress.toLowerCase()] ?? 'TOKEN';
+  }
+
+  Future<int> _getTokenDecimals(String contractAddress, Ethereum ethereum) async {
+    try {
+      // ERC-20 decimals() method signature
+      const decimalsSignature = '0x313ce567';
+      
+      final params = {
+        'method': 'eth_call',
+        'params': [
+          {
+            'to': contractAddress,
+            'data': decimalsSignature,
+          },
+          'latest',
+        ],
+      }.jsify()! as JSObject;
+      
+      final response = await ethereum.request(params).toDart;
+      if (response != null && response.toString() != '0x') {
+        return int.parse(response.toString().substring(2), radix: 16);
+      }
+    } catch (e) {
+      // Ignore errors
+    }
+    
+    // Default to 18 decimals
+    return 18;
+  }
+
+  String _parseStringFromHex(String hex) {
+    try {
+      if (hex.length < 130) {
+        return 'TOKEN'; // Not enough data
+      }
+      
+      // Skip 0x prefix and first 64 chars (offset)
+      // Next 64 chars contain length
+      final lengthHex = hex.substring(66, 130);
+      final length = int.parse(lengthHex, radix: 16);
+      
+      // Get the actual string data
+      final dataHex = hex.substring(130, 130 + (length * 2));
+      
+      // Convert hex to string
+      final bytes = <int>[];
+      for (var i = 0; i < dataHex.length; i += 2) {
+        bytes.add(int.parse(dataHex.substring(i, i + 2), radix: 16));
+      }
+      
+      return String.fromCharCodes(bytes);
+    } catch (e) {
+      return 'TOKEN';
+    }
   }
 
   @override

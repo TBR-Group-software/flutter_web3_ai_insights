@@ -85,5 +85,44 @@ final aiInsightsStorageRepositoryProvider =
 // ignore: unused_element
 typedef AiInsightsStorageRepositoryRef =
     AutoDisposeProviderRef<AiInsightsStorageRepository>;
+String _$transactionRepositoryHash() =>
+    r'0222245dd7854dc1ab3048a094814b3ef6315ac2';
+
+/// See also [transactionRepository].
+@ProviderFor(transactionRepository)
+final transactionRepositoryProvider =
+    AutoDisposeProvider<TransactionRepository>.internal(
+      transactionRepository,
+      name: r'transactionRepositoryProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$transactionRepositoryHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef TransactionRepositoryRef =
+    AutoDisposeProviderRef<TransactionRepository>;
+String _$marketRepositoryHash() => r'68ad1227e399a7d9c8a5a806555a4153db152c72';
+
+/// See also [marketRepository].
+@ProviderFor(marketRepository)
+final marketRepositoryProvider = AutoDisposeProvider<MarketRepository>.internal(
+  marketRepository,
+  name: r'marketRepositoryProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$marketRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MarketRepositoryRef = AutoDisposeProviderRef<MarketRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -114,9 +114,17 @@ class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
         _logger.d('🔄 Real-time ticker update: ${ticker.symbol} = \$${ticker.price}');
         _tickerController?.add(ticker);
       }
-    } catch (e) {
-      _logger.e('Error parsing WebSocket message: $e');
-      _logger.e('Raw message: $message');
+    } catch (e, stackTrace) {
+      // Ensure error message is properly formatted
+      final errorMessage = e.toString();
+      _logger.e('Error parsing WebSocket message', error: errorMessage, stackTrace: stackTrace);
+      
+      // Log raw message separately to avoid issues with complex strings
+      if (message.length > 1000) {
+        _logger.d('Raw message too long to display (${message.length} characters)');
+      } else {
+        _logger.d('Raw message: $message');
+      }
     }
   }
 
@@ -149,9 +157,15 @@ class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
       if (_isConnected) {
         try {
-          _webSocketChannel?.sink.add(jsonEncode({'method': 'ping'}));
+          // Binance doesn't require explicit ping messages for stream endpoints
+          // The connection is kept alive automatically
+          // We'll just check if the channel is still active
+          if (_webSocketChannel == null) {
+            _isConnected = false;
+            _scheduleReconnect();
+          }
         } catch (e) {
-          _logger.e('Heartbeat failed: $e');
+          _logger.e('Heartbeat check failed: $e');
           _isConnected = false;
           _scheduleReconnect();
         }
