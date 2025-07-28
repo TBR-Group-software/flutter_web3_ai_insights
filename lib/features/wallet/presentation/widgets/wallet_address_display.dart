@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/features/wallet/presentation/widgets/wallet_info_row.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class WalletAddressDisplay extends ConsumerStatefulWidget {
   const WalletAddressDisplay({super.key});
@@ -27,9 +28,10 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
     });
 
     if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Address copied to clipboard'),
+          content: Text(l10n.walletAddressCopied),
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
           width: 280,
@@ -41,6 +43,7 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final walletState = ref.watch(walletNotifierProvider);
     final theme = Theme.of(context);
 
@@ -64,14 +67,14 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
                   children: [
                     Icon(Icons.account_balance_wallet_rounded, size: 20, color: theme.colorScheme.primary),
                     const SizedBox(width: AppSpacing.sm),
-                    Text('Wallet Details', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+                    Text(l10n.navigationWallet, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
 
                 // Address section
                 WalletInfoRow(
-                  label: 'Address',
+                  label: l10n.walletAddress,
                   value: walletInfo.shortAddress,
                   fullValue: walletInfo.address,
                   onCopy: () => _copyAddress(walletInfo.address),
@@ -82,13 +85,13 @@ class _WalletAddressDisplayState extends ConsumerState<WalletAddressDisplay> {
 
                 // Balance section
                 if (walletInfo.balance != null) ...[
-                  WalletInfoRow(label: 'Balance', value: walletInfo.formattedBalance),
+                  WalletInfoRow(label: l10n.walletBalance, value: walletInfo.formattedBalance),
                   const SizedBox(height: AppSpacing.md),
                 ],
 
                 // Network section
                 if (walletInfo.networkName != null) ...[
-                  WalletInfoRow(label: 'Network', value: walletInfo.networkName!),
+                  WalletInfoRow(label: l10n.walletNetwork, value: walletInfo.networkName!),
                 ],
               ],
             ),

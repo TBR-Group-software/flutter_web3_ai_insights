@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:web3_ai_assistant/core/constants/app_constants.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/core/theme/breakpoints.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class ConnectedWalletChip extends StatelessWidget {
   const ConnectedWalletChip({super.key, required this.address, required this.onDisconnect});
@@ -24,6 +25,7 @@ class ConnectedWalletChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isMobile = AppBreakpoints.isMobile(MediaQuery.of(context).size.width);
 
@@ -40,7 +42,7 @@ class ConnectedWalletChip extends StatelessWidget {
                   children: [
                     Icon(Icons.account_balance_wallet, size: 20, color: theme.colorScheme.onSurface),
                     const SizedBox(width: AppSpacing.sm),
-                    const Text('View Wallet'),
+                    Text(l10n.walletViewWallet),
                   ],
                 ),
               ),
@@ -50,7 +52,7 @@ class ConnectedWalletChip extends StatelessWidget {
                   children: [
                     Icon(Icons.copy, size: 20, color: theme.colorScheme.onSurface),
                     const SizedBox(width: AppSpacing.sm),
-                    const Text('Copy Address'),
+                    Text(l10n.walletCopyAddress),
                   ],
                 ),
               ),
@@ -61,7 +63,7 @@ class ConnectedWalletChip extends StatelessWidget {
                   children: [
                     Icon(Icons.logout, size: 20, color: theme.colorScheme.error),
                     const SizedBox(width: AppSpacing.sm),
-                    Text('Disconnect', style: TextStyle(color: theme.colorScheme.error)),
+                    Text(l10n.walletDisconnect, style: TextStyle(color: theme.colorScheme.error)),
                   ],
                 ),
               ),
@@ -73,9 +75,9 @@ class ConnectedWalletChip extends StatelessWidget {
             case 'copy':
               Clipboard.setData(ClipboardData(text: address));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Address copied to clipboard'),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(l10n.walletAddressCopied),
+                  duration: const Duration(seconds: 2),
                   behavior: SnackBarBehavior.floating,
                   width: 280,
                 ),

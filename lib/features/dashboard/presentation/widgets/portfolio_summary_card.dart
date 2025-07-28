@@ -5,12 +5,14 @@ import 'package:web3_ai_assistant/core/widgets/loading_skeleton.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/widgets/realtime_indicator.dart';
 import 'package:web3_ai_assistant/features/portfolio/providers/portfolio_providers.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class PortfolioSummaryCard extends ConsumerWidget {
   const PortfolioSummaryCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final portfolioStreamAsync = ref.watch(portfolioStreamProvider);
     final walletStateAsync = ref.watch(walletNotifierProvider);
@@ -36,7 +38,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                       children: [
                         Icon(Icons.account_balance_wallet_rounded, color: theme.colorScheme.primary, size: 24),
                         const SizedBox(width: AppSpacing.sm),
-                        Text('Portfolio Value', style: theme.textTheme.titleMedium),
+                        Text(l10n.portfolioValue, style: theme.textTheme.titleMedium),
                         const Spacer(),
                         if (walletState.isConnected)
                           Container(
@@ -55,7 +57,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                                 ),
                                 const SizedBox(width: AppSpacing.xs),
                                 Text(
-                                  'Connected',
+                                  l10n.walletConnected,
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: theme.colorScheme.tertiary,
                                     fontWeight: FontWeight.w600,
@@ -82,7 +84,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '\$${totalValue.toStringAsFixed(2)}',
+                                l10n.currencyValue(totalValue.toStringAsFixed(2)),
                                 style: theme.textTheme.headlineLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.onSurface,
@@ -98,7 +100,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: AppSpacing.xs),
                                   Text(
-                                    '${changePercent >= 0 ? '+' : ''}${changePercent.toStringAsFixed(2)}% (24h)',
+                                    l10n.percentageChange('${changePercent >= 0 ? '+' : ''}${changePercent.toStringAsFixed(2)}'),
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       color: changePercent >= 0 ? theme.colorScheme.tertiary : theme.colorScheme.error,
                                       fontWeight: FontWeight.w600,
@@ -124,7 +126,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                           ],
                         ),
                         error: (error, _) => Text(
-                          'Error loading portfolio',
+                          l10n.portfolioErrorLoading,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: theme.colorScheme.error,
                           ),
@@ -139,12 +141,12 @@ class PortfolioSummaryCard extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'No wallet connected',
+                              l10n.walletNoConnection,
                               style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             Text(
-                              'Connect your wallet to view portfolio',
+                              l10n.walletConnectToView,
                               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                             ),
                           ],
@@ -165,7 +167,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                     children: [
                       Icon(Icons.account_balance_wallet_rounded, color: theme.colorScheme.primary, size: 24),
                       const SizedBox(width: AppSpacing.sm),
-                      Text('Portfolio Value', style: theme.textTheme.titleMedium),
+                      Text(l10n.portfolioValue, style: theme.textTheme.titleMedium),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -176,9 +178,9 @@ class PortfolioSummaryCard extends ConsumerWidget {
               ),
             ),
         error:
-            (error, _) => const Padding(
-              padding: EdgeInsets.all(AppSpacing.lg),
-              child: Center(child: Text('Error loading wallet state')),
+            (error, _) => Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Center(child: Text(l10n.errorLoadingWalletState)),
             ),
       ),
     );

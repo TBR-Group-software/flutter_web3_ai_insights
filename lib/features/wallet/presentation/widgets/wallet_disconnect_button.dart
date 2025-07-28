@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class WalletDisconnectButton extends ConsumerWidget {
   const WalletDisconnectButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final walletState = ref.watch(walletNotifierProvider);
     final theme = Theme.of(context);
 
@@ -19,7 +21,7 @@ class WalletDisconnectButton extends ConsumerWidget {
         return TextButton.icon(
           onPressed: () => _showDisconnectDialog(context, ref),
           icon: const Icon(Icons.logout_rounded),
-          label: const Text('Disconnect Wallet'),
+          label: Text(l10n.walletDisconnect),
           style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
         );
       },
@@ -33,15 +35,16 @@ class WalletDisconnectButton extends ConsumerWidget {
     final result = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('Disconnect Wallet'),
-          content: const Text('Are you sure you want to disconnect your wallet? You can reconnect at any time.'),
+          title: Text(l10n.walletDisconnectConfirmTitle),
+          content: Text(l10n.walletDisconnectConfirmMessage),
           actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.cancel)),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.error),
-              child: const Text('Disconnect'),
+              child: Text(l10n.walletDisconnect),
             ),
           ],
         );

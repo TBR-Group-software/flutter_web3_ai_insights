@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class TopPerformerCard extends StatelessWidget {
   const TopPerformerCard({super.key, required this.tokens});
@@ -9,6 +10,7 @@ class TopPerformerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (tokens.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -26,7 +28,7 @@ class TopPerformerCard extends StatelessWidget {
           Icon(Icons.star, color: Theme.of(context).colorScheme.primary, size: 20),
           const SizedBox(width: AppSpacing.sm),
           Text(
-            'Top Performer: ',
+            l10n.portfolioTopPerformer,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),

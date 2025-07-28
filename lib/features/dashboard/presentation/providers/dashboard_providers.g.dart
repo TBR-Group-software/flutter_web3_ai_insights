@@ -28,7 +28,7 @@ final marketOverviewProvider =
 // ignore: unused_element
 typedef MarketOverviewRef = AutoDisposeFutureProviderRef<List<MarketData>>;
 String _$marketOverviewStreamHash() =>
-    r'6f62b25e2e10b6ae057d4ce57651caabb4ce03bc';
+    r'981d277857e2ee5c0294f0c331f1f40de8091887';
 
 /// Market overview stream provider - provides real-time market data updates
 ///

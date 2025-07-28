@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class TokenHoldingsInfo extends StatelessWidget {
   const TokenHoldingsInfo({super.key, required this.token});
@@ -9,6 +10,7 @@ class TokenHoldingsInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -19,14 +21,14 @@ class TokenHoldingsInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Holdings',
+            l10n.portfolioHoldings,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '${token.balance.toStringAsFixed(6)} ${token.symbol}',
+            l10n.tokenBalance(token.balance.toStringAsFixed(6), token.symbol),
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],

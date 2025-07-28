@@ -8,6 +8,7 @@ import 'package:web3_ai_assistant/features/ai_insights/presentation/widgets/reco
 import 'package:web3_ai_assistant/features/ai_insights/presentation/widgets/risk_meter.dart';
 import 'package:web3_ai_assistant/features/ai_insights/providers/ai_insights_providers.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights/models/portfolio_analysis.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class AiInsightsLoadedView extends ConsumerWidget {
   const AiInsightsLoadedView({
@@ -21,6 +22,7 @@ class AiInsightsLoadedView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final analysis = history[currentIndex];
     
     return SingleChildScrollView(
@@ -45,7 +47,7 @@ class AiInsightsLoadedView extends ConsumerWidget {
             child: FilledButton.icon(
               onPressed: () => ref.read(aiInsightsProvider.notifier).generateAnalysis(),
               icon: const Icon(Icons.auto_awesome),
-              label: const Text('Generate New Report'),
+              label: Text(l10n.aiGenerateNewReport),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

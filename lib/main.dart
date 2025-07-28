@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:web3_ai_assistant/core/theme/app_theme.dart';
 import 'package:web3_ai_assistant/routes/app_router.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 Future<void> main() async {
   // Load environment variables
@@ -32,6 +34,18 @@ class MainApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark, // Default to dark theme
+      
+      // Localization configuration
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+      ],
+      
       // Router configuration
       routerConfig: router,
 

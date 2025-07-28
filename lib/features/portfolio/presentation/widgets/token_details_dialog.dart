@@ -5,6 +5,7 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_price_info.dart';
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_holdings_info.dart';
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/token_total_value.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class TokenDetailsDialog extends StatelessWidget {
   const TokenDetailsDialog({super.key, required this.token});
@@ -13,6 +14,7 @@ class TokenDetailsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
@@ -32,7 +34,7 @@ class TokenDetailsDialog extends StatelessWidget {
             const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
-              child: FilledButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
+              child: FilledButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.close)),
             ),
           ],
         ),

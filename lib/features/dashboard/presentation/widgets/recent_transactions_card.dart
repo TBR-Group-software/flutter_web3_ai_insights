@@ -5,12 +5,14 @@ import 'package:web3_ai_assistant/core/widgets/loading_skeleton.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/widgets/transaction_item.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class RecentTransactionsCard extends ConsumerWidget {
   const RecentTransactionsCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final transactionsAsync = ref.watch(recentTransactionsProvider);
     final walletStateAsync = ref.watch(walletNotifierProvider);
@@ -26,7 +28,7 @@ class RecentTransactionsCard extends ConsumerWidget {
               children: [
                 Icon(Icons.history_rounded, color: theme.colorScheme.primary, size: 24),
                 const SizedBox(width: AppSpacing.sm),
-                Text('Recent Transactions', style: theme.textTheme.titleMedium),
+                Text(l10n.transactionsRecent, style: theme.textTheme.titleMedium),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
@@ -40,7 +42,7 @@ class RecentTransactionsCard extends ConsumerWidget {
                           height: 120,
                           alignment: Alignment.center,
                           child: Text(
-                            'No recent transactions',
+                            l10n.transactionsNone,
                             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                           ),
                         );
@@ -62,7 +64,7 @@ class RecentTransactionsCard extends ConsumerWidget {
                           height: 120,
                           alignment: Alignment.center,
                           child: Text(
-                            'Error loading transactions',
+                            l10n.transactionsErrorLoading,
                             style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
                           ),
                         ),
@@ -72,7 +74,7 @@ class RecentTransactionsCard extends ConsumerWidget {
                     height: 120,
                     alignment: Alignment.center,
                     child: Text(
-                      'Connect wallet to view transactions',
+                      l10n.transactionsConnectWallet,
                       style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     ),
                   );
@@ -93,7 +95,7 @@ class RecentTransactionsCard extends ConsumerWidget {
                     height: 120,
                     alignment: Alignment.center,
                     child: Text(
-                      'Error loading wallet state',
+                      l10n.errorLoadingWalletState,
                       style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
                     ),
                   ),
