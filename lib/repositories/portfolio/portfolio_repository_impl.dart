@@ -28,6 +28,8 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   List<PortfolioToken> _currentPortfolio = [];
   StreamController<List<PortfolioToken>>? _portfolioController;
   StreamSubscription<TokenTicker>? _priceSubscription;
+  final Map<String, PortfolioToken> _portfolioMap = {};
+  final Set<String> _subscribedSymbols = {};
   String? _currentWalletAddress;
 
   @override
@@ -165,6 +167,12 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       portfolioTokens.sort((a, b) => b.totalValue.compareTo(a.totalValue));
 
       _currentPortfolio = portfolioTokens;
+      
+      // Update portfolio map for WebSocket updates
+      _portfolioMap.clear();
+      for (final token in portfolioTokens) {
+        _portfolioMap[token.symbol] = token;
+      }
 
       // Immediately emit to stream for real-time UI updates
       _portfolioController ??= StreamController<List<PortfolioToken>>.broadcast();
@@ -210,6 +218,10 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       if (symbols.isNotEmpty) {
         _logger.i('📡 Subscribing to WebSocket price updates for ${symbols.length} symbols: $symbols');
         _binanceWebSocketService.subscribeToSymbols(symbols);
+        
+        // Track subscribed symbols
+        _subscribedSymbols.clear();
+        _subscribedSymbols.addAll(symbols);
 
         _priceSubscription = _binanceWebSocketService.tickerStream.listen(
           _handleTickerUpdate,
@@ -232,17 +244,9 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       _priceSubscription = null;
     }
 
-    if (_currentPortfolio.isNotEmpty) {
-      final symbols = <String>[];
-      for (final token in _currentPortfolio) {
-        final binanceSymbol = _mapToBinanceSymbol(token.symbol);
-        if (binanceSymbol != null) {
-          symbols.add(binanceSymbol);
-        }
-      }
-      if (symbols.isNotEmpty) {
-        _binanceWebSocketService.unsubscribeFromSymbols(symbols);
-      }
+    if (_subscribedSymbols.isNotEmpty) {
+      _binanceWebSocketService.unsubscribeFromSymbols(_subscribedSymbols.toList());
+      _subscribedSymbols.clear();
     }
 
     _currentWalletAddress = null;
@@ -265,36 +269,42 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       lastUpdated: DateTime.fromMillisecondsSinceEpoch(ticker.eventTime),
     );
 
-    // Find the token in current portfolio and update its price
-    var hasUpdates = false;
-    final updatedPortfolio =
-        _currentPortfolio.map((token) {
-          final binanceSymbol = _mapToBinanceSymbol(token.symbol);
-          if (binanceSymbol == ticker.symbol) {
-            hasUpdates = true;
-            _logger.i('💎 REAL-TIME UPDATE: ${token.symbol} price \$${token.price} → \$${tokenPrice.price}');
-            return token.copyWith(
-              price: tokenPrice.price,
-              change24h: tokenPrice.change24h,
-              changePercent24h: tokenPrice.changePercent24h,
-              totalValue: token.balance * tokenPrice.price,
-              lastUpdated: tokenPrice.lastUpdated,
-            );
-          }
-          return token;
-        }).toList();
-
-    if (hasUpdates) {
-      // Re-sort by total value
-      updatedPortfolio.sort((a, b) => b.totalValue.compareTo(a.totalValue));
-      _currentPortfolio = updatedPortfolio;
-
+    // Find the matching token by reverse-mapping the Binance symbol
+    String? tokenSymbol;
+    for (final entry in _portfolioMap.entries) {
+      final binanceSymbol = _mapToBinanceSymbol(entry.key);
+      if (binanceSymbol == ticker.symbol) {
+        tokenSymbol = entry.key;
+        break;
+      }
+    }
+    
+    if (tokenSymbol != null && _portfolioMap.containsKey(tokenSymbol)) {
+      final token = _portfolioMap[tokenSymbol]!;
+      _logger.i('💎 REAL-TIME UPDATE: $tokenSymbol price \$${token.price} → \$${tokenPrice.price}');
+      
+      // Update the token with new price data
+      final updatedToken = token.copyWith(
+        price: tokenPrice.price,
+        change24h: tokenPrice.change24h,
+        changePercent24h: tokenPrice.changePercent24h,
+        totalValue: token.balance * tokenPrice.price,
+        lastUpdated: tokenPrice.lastUpdated,
+      );
+      
+      // Update the map
+      _portfolioMap[tokenSymbol] = updatedToken;
+      
+      // Rebuild the portfolio list from the map
+      _currentPortfolio = _portfolioMap.values.toList()
+        ..sort((a, b) => b.totalValue.compareTo(a.totalValue));
+      
       // CRITICAL: Emit to stream for immediate UI update
       _portfolioController?.add(_currentPortfolio);
       _logger.i('📺 UI UPDATED: Portfolio streamed with WebSocket data - should see in real-time!');
     } else {
       _logger.w(
-        '⚠️ No matching token found for ${tokenPrice.symbol} in portfolio: ${_currentPortfolio.map((t) => t.symbol).join(', ')}',
+        '⚠️ No matching token found for ${ticker.symbol} in portfolio: ${_portfolioMap.keys.join(', ')}',
       );
     }
   }

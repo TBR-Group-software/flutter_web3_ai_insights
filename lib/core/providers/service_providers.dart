@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service_impl.dart';
@@ -29,7 +30,16 @@ BinanceRestService binanceRestService(BinanceRestServiceRef ref) {
 
 @riverpod
 BinanceWebSocketService binanceWebSocketService(BinanceWebSocketServiceRef ref) {
-  final service = BinanceWebSocketServiceImpl();
+  final logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 5,
+      lineLength: 80,
+      colors: false,
+      dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
+    ),
+  );
+  final service = BinanceWebSocketServiceImpl(logger: logger);
   ref.onDispose(service.dispose);
   return service;
 }

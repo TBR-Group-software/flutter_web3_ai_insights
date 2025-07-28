@@ -7,12 +7,14 @@ import 'package:web3_ai_assistant/core/widgets/adaptive_scaffold.dart';
 import 'package:web3_ai_assistant/core/widgets/responsive_padding.dart';
 import 'package:web3_ai_assistant/features/wallet/presentation/widgets/wallet_info_card.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class WalletScreen extends ConsumerWidget {
   const WalletScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final walletState = ref.watch(walletNotifierProvider);
 
@@ -38,7 +40,7 @@ class WalletScreen extends ConsumerWidget {
 
                     // Title
                     Text(
-                      state.isConnected ? 'Wallet Connected' : 'Connect Your Wallet',
+                      state.isConnected ? l10n.walletConnected : l10n.navigationWallet,
                       style: theme.textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -65,7 +67,7 @@ class WalletScreen extends ConsumerWidget {
                     if (state.isConnected && state.walletInfo != null) ...[
                       // Address
                       WalletInfoCard(
-                        title: 'Address',
+                        title: l10n.walletAddress,
                         value: state.walletInfo!.shortAddress,
                         fullValue: state.walletInfo!.address,
                         onCopy: () => _copyToClipboard(context, state.walletInfo!.address),
@@ -73,12 +75,12 @@ class WalletScreen extends ConsumerWidget {
                       const SizedBox(height: AppSpacing.md),
 
                       // Balance
-                      WalletInfoCard(title: 'Balance', value: state.walletInfo!.formattedBalance),
+                      WalletInfoCard(title: l10n.walletBalance, value: state.walletInfo!.formattedBalance),
                       const SizedBox(height: AppSpacing.md),
 
                       // Network
                       if (state.walletInfo!.networkName != null)
-                        WalletInfoCard(title: 'Network', value: state.walletInfo!.networkName!),
+                        WalletInfoCard(title: l10n.walletNetwork, value: state.walletInfo!.networkName!),
                     ],
 
                     const SizedBox(height: AppSpacing.xxl),
@@ -100,7 +102,7 @@ class WalletScreen extends ConsumerWidget {
                                   child: CircularProgressIndicator(strokeWidth: 2, color: theme.colorScheme.onPrimary),
                                 )
                                 : const Icon(Icons.link_rounded),
-                        label: Text(state.isLoading ? 'Connecting...' : 'Connect MetaMask'),
+                        label: Text(state.isLoading ? l10n.walletConnecting : l10n.walletConnect),
                       ),
                   ],
                 );
@@ -111,7 +113,7 @@ class WalletScreen extends ConsumerWidget {
                     children: [
                       CircularProgressIndicator(color: theme.colorScheme.primary),
                       const SizedBox(height: AppSpacing.xl),
-                      Text('Loading wallet...', style: theme.textTheme.bodyLarge),
+                      Text(l10n.walletLoading, style: theme.textTheme.bodyLarge),
                     ],
                   ),
               error:
@@ -120,7 +122,7 @@ class WalletScreen extends ConsumerWidget {
                     children: [
                       Icon(Icons.error_outline_rounded, size: 80, color: theme.colorScheme.error),
                       const SizedBox(height: AppSpacing.xl),
-                      Text('Error', style: theme.textTheme.headlineMedium),
+                      Text(l10n.walletError, style: theme.textTheme.headlineMedium),
                       const SizedBox(height: AppSpacing.md),
                       Text(
                         error.toString(),
@@ -133,7 +135,7 @@ class WalletScreen extends ConsumerWidget {
                           await ref.read(walletNotifierProvider.notifier).connect();
                         },
                         icon: const Icon(Icons.refresh_rounded),
-                        label: const Text('Try Again'),
+                        label: Text(l10n.tryAgain),
                       ),
                     ],
                   ),
@@ -147,9 +149,9 @@ class WalletScreen extends ConsumerWidget {
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Address copied to clipboard'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.walletAddressCopied),
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
         width: 280,
       ),

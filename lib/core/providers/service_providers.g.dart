@@ -43,7 +43,7 @@ final binanceRestServiceProvider =
 // ignore: unused_element
 typedef BinanceRestServiceRef = AutoDisposeProviderRef<BinanceRestService>;
 String _$binanceWebSocketServiceHash() =>
-    r'ab71c1778069405adc6745e34ff4fb38acec972b';
+    r'aabce0ec54e072ae0f4462d26306027f50b9e632';
 
 /// See also [binanceWebSocketService].
 @ProviderFor(binanceWebSocketService)

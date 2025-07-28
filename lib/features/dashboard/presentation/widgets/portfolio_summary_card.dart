@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
-import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'package:web3_ai_assistant/core/widgets/loading_skeleton.dart';
+import 'package:web3_ai_assistant/features/dashboard/presentation/widgets/realtime_indicator.dart';
+import 'package:web3_ai_assistant/features/portfolio/providers/portfolio_providers.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class PortfolioSummaryCard extends ConsumerWidget {
   const PortfolioSummaryCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final portfolioValue = ref.watch(mockPortfolioValueProvider);
+    final portfolioStreamAsync = ref.watch(portfolioStreamProvider);
     final walletStateAsync = ref.watch(walletNotifierProvider);
 
     return Card(
@@ -34,7 +38,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                       children: [
                         Icon(Icons.account_balance_wallet_rounded, color: theme.colorScheme.primary, size: 24),
                         const SizedBox(width: AppSpacing.sm),
-                        Text('Portfolio Value', style: theme.textTheme.titleMedium),
+                        Text(l10n.portfolioValue, style: theme.textTheme.titleMedium),
                         const Spacer(),
                         if (walletState.isConnected)
                           Container(
@@ -53,7 +57,7 @@ class PortfolioSummaryCard extends ConsumerWidget {
                                 ),
                                 const SizedBox(width: AppSpacing.xs),
                                 Text(
-                                  'Connected',
+                                  l10n.walletConnected,
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: theme.colorScheme.tertiary,
                                     fontWeight: FontWeight.w600,
@@ -62,30 +66,71 @@ class PortfolioSummaryCard extends ConsumerWidget {
                               ],
                             ),
                           ),
+                        if (portfolioStreamAsync.hasValue) ...[
+                          const SizedBox(width: AppSpacing.sm),
+                          const RealtimeIndicator(),
+                        ],
                       ],
                     ),
                     const SizedBox(height: AppSpacing.md),
                     if (walletState.isConnected) ...[
-                      Text(
-                        '\$${portfolioValue.toStringAsFixed(2)}',
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Row(
-                        children: [
-                          Icon(Icons.trending_up, color: theme.colorScheme.tertiary, size: 16),
-                          const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            '+12.5% (24h)',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.tertiary,
-                              fontWeight: FontWeight.w600,
+                      portfolioStreamAsync.when(
+                        data: (portfolio) {
+                          final totalValue = portfolio.fold<double>(0, (sum, token) => sum + token.totalValue);
+                          final totalChange = portfolio.fold<double>(0, (sum, token) => sum + (token.balance * token.change24h));
+                          final changePercent = totalValue > 0 ? (totalChange / (totalValue - totalChange)) * 100 : 0.0;
+                          
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.currencyValue(totalValue.toStringAsFixed(2)),
+                                style: theme.textTheme.headlineLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              Row(
+                                children: [
+                                  Icon(
+                                    changePercent >= 0 ? Icons.trending_up : Icons.trending_down,
+                                    color: changePercent >= 0 ? theme.colorScheme.tertiary : theme.colorScheme.error,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                  Text(
+                                    l10n.percentageChange('${changePercent >= 0 ? '+' : ''}${changePercent.toStringAsFixed(2)}'),
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: changePercent >= 0 ? theme.colorScheme.tertiary : theme.colorScheme.error,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                        loading: () => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            LoadingSkeleton.text(
+                              width: 150,
+                              height: 40, // headlineLarge: 32px * 1.25 = 40px
                             ),
+                            const SizedBox(height: AppSpacing.xs),
+                            LoadingSkeleton.text(
+                              width: 100,
+                              height: 20, // bodyMedium: 14px * 1.43 = 20px
+                            ),
+                          ],
+                        ),
+                        error: (error, _) => Text(
+                          l10n.portfolioErrorLoading,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.error,
                           ),
-                        ],
+                        ),
                       ),
                     ] else ...[
                       Container(
@@ -96,12 +141,12 @@ class PortfolioSummaryCard extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'No wallet connected',
+                              l10n.walletNoConnection,
                               style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                             ),
                             const SizedBox(height: AppSpacing.xs),
                             Text(
-                              'Connect your wallet to view portfolio',
+                              l10n.walletConnectToView,
                               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                             ),
                           ],
@@ -113,14 +158,29 @@ class PortfolioSummaryCard extends ConsumerWidget {
               ),
             ),
         loading:
-            () => const Padding(
-              padding: EdgeInsets.all(AppSpacing.lg),
-              child: Center(child: CircularProgressIndicator()),
+            () => Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.account_balance_wallet_rounded, color: theme.colorScheme.primary, size: 24),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(l10n.portfolioValue, style: theme.textTheme.titleMedium),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  LoadingSkeleton.text(width: 150, height: 40), // headlineLarge
+                  const SizedBox(height: AppSpacing.xs),
+                  LoadingSkeleton.text(width: 100, height: 20), // bodyMedium
+                ],
+              ),
             ),
         error:
-            (_, _) => const Padding(
-              padding: EdgeInsets.all(AppSpacing.lg),
-              child: Center(child: Text('Error loading wallet state')),
+            (error, _) => Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Center(child: Text(l10n.errorLoadingWalletState)),
             ),
       ),
     );

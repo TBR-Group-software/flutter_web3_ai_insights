@@ -1,0 +1,381 @@
+{
+  "@@locale": "en",
+  
+  "@appName": {
+    "description": "The application name"
+  },
+  "appName": "Web3 AI Insights",
+  
+  "@appTitle": {
+    "description": "The application title"
+  },
+  "appTitle": "Web3 AI Assistant",
+  
+  "@navigationDashboard": {
+    "description": "Dashboard navigation label"
+  },
+  "navigationDashboard": "Dashboard",
+  
+  "@navigationWallet": {
+    "description": "Wallet navigation label"
+  },
+  "navigationWallet": "Wallet",
+  
+  "@navigationPortfolio": {
+    "description": "Portfolio navigation label"
+  },
+  "navigationPortfolio": "Portfolio",
+  
+  "@navigationAiInsights": {
+    "description": "AI Insights navigation label"
+  },
+  "navigationAiInsights": "AI Insights",
+  
+  "@walletConnect": {
+    "description": "Connect wallet button text"
+  },
+  "walletConnect": "Connect MetaMask",
+  
+  "@walletConnecting": {
+    "description": "Wallet connecting state"
+  },
+  "walletConnecting": "Connecting...",
+  
+  "@walletDisconnect": {
+    "description": "Disconnect wallet button text"
+  },
+  "walletDisconnect": "Disconnect",
+  
+  "@walletDisconnectConfirmTitle": {
+    "description": "Disconnect wallet confirmation dialog title"
+  },
+  "walletDisconnectConfirmTitle": "Disconnect Wallet",
+  
+  "@walletDisconnectConfirmMessage": {
+    "description": "Disconnect wallet confirmation dialog message"
+  },
+  "walletDisconnectConfirmMessage": "Are you sure you want to disconnect your wallet? You can reconnect at any time.",
+  
+  "@walletLoading": {
+    "description": "Wallet loading state"
+  },
+  "walletLoading": "Loading...",
+  
+  "@walletRetryConnection": {
+    "description": "Retry wallet connection button text"
+  },
+  "walletRetryConnection": "Retry Connection",
+  
+  "@walletError": {
+    "description": "Wallet error label"
+  },
+  "walletError": "Wallet Error",
+  
+  "@walletConnected": {
+    "description": "Wallet connected status"
+  },
+  "walletConnected": "Connected",
+  
+  "@walletNoConnection": {
+    "description": "No wallet connected message"
+  },
+  "walletNoConnection": "No wallet connected",
+  
+  "@walletConnectToView": {
+    "description": "Connect wallet to view message"
+  },
+  "walletConnectToView": "Connect your wallet to view portfolio",
+  
+  "@walletAddressCopied": {
+    "description": "Address copied to clipboard message"
+  },
+  "walletAddressCopied": "Address copied to clipboard",
+  
+  "@walletAddress": {
+    "description": "Wallet address label"
+  },
+  "walletAddress": "Address",
+  
+  "@walletBalance": {
+    "description": "Wallet balance label"
+  },
+  "walletBalance": "Balance",
+  
+  "@walletNetwork": {
+    "description": "Wallet network label"
+  },
+  "walletNetwork": "Network",
+  
+  "@walletViewWallet": {
+    "description": "View wallet action"
+  },
+  "walletViewWallet": "View Wallet",
+  
+  "@walletCopyAddress": {
+    "description": "Copy address action"
+  },
+  "walletCopyAddress": "Copy Address",
+  
+  "@portfolioSummary": {
+    "description": "Portfolio summary header"
+  },
+  "portfolioSummary": "Portfolio Summary",
+  
+  "@portfolioValue": {
+    "description": "Portfolio value label"
+  },
+  "portfolioValue": "Portfolio Value",
+  
+  "@portfolioTotalValue": {
+    "description": "Total value label"
+  },
+  "portfolioTotalValue": "Total Value",
+  
+  "@portfolio24hChange": {
+    "description": "24 hour change label"
+  },
+  "portfolio24hChange": "24h Change",
+  
+  "@portfolioTokens": {
+    "description": "Tokens count label"
+  },
+  "portfolioTokens": "Tokens",
+  
+  "@portfolioTopPerformer": {
+    "description": "Top performer label"
+  },
+  "portfolioTopPerformer": "Top Performer: ",
+  
+  "@portfolioNoTokens": {
+    "description": "No tokens found title"
+  },
+  "portfolioNoTokens": "No Tokens Found",
+  
+  "@portfolioNoTokensDescription": {
+    "description": "No tokens found description"
+  },
+  "portfolioNoTokensDescription": "Your wallet doesn't contain any supported tokens yet",
+  
+  "@portfolioHoldings": {
+    "description": "Holdings label"
+  },
+  "portfolioHoldings": "Holdings",
+  
+  "@portfolioErrorLoading": {
+    "description": "Error loading portfolio"
+  },
+  "portfolioErrorLoading": "Error loading portfolio",
+  
+  "@portfolioConnectWallet": {
+    "description": "Connect wallet message for portfolio"
+  },
+  "portfolioConnectWallet": "Connect wallet to view transactions",
+  
+  "@transactionsRecent": {
+    "description": "Recent transactions header"
+  },
+  "transactionsRecent": "Recent Transactions",
+  
+  "@transactionsNone": {
+    "description": "No recent transactions message"
+  },
+  "transactionsNone": "No recent transactions",
+  
+  "@transactionsErrorLoading": {
+    "description": "Error loading transactions"
+  },
+  "transactionsErrorLoading": "Error loading transactions",
+  
+  "@transactionsConnectWallet": {
+    "description": "Connect wallet to view transactions"
+  },
+  "transactionsConnectWallet": "Connect wallet to view transactions",
+  
+  "@aiGenerateReport": {
+    "description": "Generate AI report button"
+  },
+  "aiGenerateReport": "Generate AI Report",
+  
+  "@aiGeneratingReport": {
+    "description": "Generating report state"
+  },
+  "aiGeneratingReport": "Generating Report...",
+  
+  "@aiGenerateNewReport": {
+    "description": "Generate new report button"
+  },
+  "aiGenerateNewReport": "Generate New Report",
+  
+  "@aiGenerateFullReport": {
+    "description": "Generate full report button"
+  },
+  "aiGenerateFullReport": "Generate Full Report",
+  
+  "@aiRequirements": {
+    "description": "AI analysis requirements"
+  },
+  "aiRequirements": "To generate AI insights, you need:",
+  
+  "@aiRequirement1": {
+    "description": "First requirement"
+  },
+  "aiRequirement1": "1. Connected wallet",
+  
+  "@aiRequirement2": {
+    "description": "Second requirement"
+  },
+  "aiRequirement2": "2. Token holdings data",
+  
+  "@aiDescription": {
+    "description": "AI insights feature description"
+  },
+  "aiDescription": "Get AI-powered insights for your Web3 portfolio",
+  
+  "@aiProcessingTime": {
+    "description": "AI processing time message"
+  },
+  "aiProcessingTime": "This may take a few moments",
+  
+  "@aiOverview": {
+    "description": "AI analysis overview section"
+  },
+  "aiOverview": "Overview",
+  
+  "@aiPerformanceSummary": {
+    "description": "AI performance summary section"
+  },
+  "aiPerformanceSummary": "Performance Summary",
+  
+  "@aiConcentrationRisks": {
+    "description": "Concentration risks section"
+  },
+  "aiConcentrationRisks": "Concentration Risks",
+  
+  "@aiVolatilityRisks": {
+    "description": "Volatility risks section"
+  },
+  "aiVolatilityRisks": "Volatility Risks",
+  
+  "@aiMitigationStrategies": {
+    "description": "Mitigation strategies section"
+  },
+  "aiMitigationStrategies": "Mitigation Strategies",
+  
+  "@aiContinueMonitoring": {
+    "description": "Continue monitoring recommendation"
+  },
+  "aiContinueMonitoring": "Continue Monitoring",
+  
+  "@aiMarketAnalysis": {
+    "description": "Market analysis section"
+  },
+  "aiMarketAnalysis": "Market Analysis",
+  
+  "@riskLow": {
+    "description": "Low risk level"
+  },
+  "riskLow": "LOW RISK",
+  
+  "@riskMedium": {
+    "description": "Medium risk level"
+  },
+  "riskMedium": "MEDIUM RISK",
+  
+  "@riskHigh": {
+    "description": "High risk level"
+  },
+  "riskHigh": "HIGH RISK",
+  
+  "@priorityLow": {
+    "description": "Low priority"
+  },
+  "priorityLow": "LOW",
+  
+  "@priorityMedium": {
+    "description": "Medium priority"
+  },
+  "priorityMedium": "MEDIUM",
+  
+  "@priorityHigh": {
+    "description": "High priority"
+  },
+  "priorityHigh": "HIGH",
+  
+  "@errorSomethingWrong": {
+    "description": "Generic error message"
+  },
+  "errorSomethingWrong": "Something went wrong",
+  
+  "@errorLoadingWalletState": {
+    "description": "Error loading wallet state"
+  },
+  "errorLoadingWalletState": "Error loading wallet state",
+  
+  "@tryAgain": {
+    "description": "Try again button"
+  },
+  "tryAgain": "Try Again",
+  
+  "@close": {
+    "description": "Close button"
+  },
+  "close": "Close",
+  
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "cancel": "Cancel",
+  
+  "@goToDashboard": {
+    "description": "Go to dashboard button"
+  },
+  "goToDashboard": "Go to Dashboard",
+  
+  "@percentageChange": {
+    "description": "Percentage change format with sign",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "example": "+2.45"
+      }
+    }
+  },
+  "percentageChange": "{value}% (24h)",
+  
+  "@currencyValue": {
+    "description": "Currency value format",
+    "placeholders": {
+      "value": {
+        "type": "String",
+        "example": "1234.56"
+      }
+    }
+  },
+  "currencyValue": "${value}",
+  
+  "@tokenBalance": {
+    "description": "Token balance format",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "100.123456"
+      },
+      "symbol": {
+        "type": "String",
+        "example": "ETH"
+      }
+    }
+  },
+  "tokenBalance": "{amount} {symbol}",
+  
+  "@riskScore": {
+    "description": "Risk score format",
+    "placeholders": {
+      "score": {
+        "type": "int",
+        "example": "75"
+      }
+    }
+  },
+  "riskScore": "{score}/100"
+}

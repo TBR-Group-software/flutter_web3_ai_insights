@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class GenerateReportButton extends StatelessWidget {
   const GenerateReportButton({super.key, required this.onPressed, this.isLoading = false, this.isEnabled = true});
@@ -10,6 +11,7 @@ class GenerateReportButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return FilledButton.icon(
@@ -27,7 +29,7 @@ class GenerateReportButton extends StatelessWidget {
               : const Icon(Icons.psychology),
       label: AnimatedSize(
         duration: const Duration(milliseconds: 200),
-        child: Text(isLoading ? 'Generating Report...' : 'Generate AI Report'),
+        child: Text(isLoading ? l10n.aiGeneratingReport : l10n.aiGenerateReport),
       ),
       style: FilledButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),

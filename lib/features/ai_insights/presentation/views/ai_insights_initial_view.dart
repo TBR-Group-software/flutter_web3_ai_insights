@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/features/ai_insights/presentation/widgets/generate_report_button.dart';
 import 'package:web3_ai_assistant/features/ai_insights/providers/ai_insights_providers.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class AiInsightsInitialView extends ConsumerWidget {
   const AiInsightsInitialView({super.key, required this.canGenerate});
@@ -11,6 +12,7 @@ class AiInsightsInitialView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Center(
@@ -19,10 +21,10 @@ class AiInsightsInitialView extends ConsumerWidget {
         children: [
           Icon(Icons.auto_awesome_rounded, size: 80, color: theme.colorScheme.primary),
           const SizedBox(height: AppSpacing.xl),
-          Text('AI Portfolio Analysis', style: theme.textTheme.headlineMedium),
+          Text(l10n.navigationAiInsights, style: theme.textTheme.headlineMedium),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Get AI-powered insights for your Web3 portfolio',
+            l10n.aiDescription,
             style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
@@ -36,10 +38,10 @@ class AiInsightsInitialView extends ConsumerWidget {
                   if (!canGenerate) ...[
                     Icon(Icons.info_outline, size: 48, color: theme.colorScheme.onSurfaceVariant),
                     const SizedBox(height: AppSpacing.md),
-                    Text('Portfolio analysis requires:', style: theme.textTheme.titleMedium),
+                    Text(l10n.aiRequirements, style: theme.textTheme.titleMedium),
                     const SizedBox(height: AppSpacing.sm),
-                    const Text('1. Connected wallet'),
-                    const Text('2. Token holdings data'),
+                    Text(l10n.aiRequirement1),
+                    Text(l10n.aiRequirement2),
                     const SizedBox(height: AppSpacing.md),
                   ],
                   GenerateReportButton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class ErrorStateWidget extends StatelessWidget {
   const ErrorStateWidget({super.key, required this.error, required this.onRetry});
@@ -9,6 +10,7 @@ class ErrorStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -18,7 +20,7 @@ class ErrorStateWidget extends StatelessWidget {
             Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'Something went wrong',
+              l10n.errorSomethingWrong,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -30,7 +32,7 @@ class ErrorStateWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.xl),
-            FilledButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: const Text('Try Again')),
+            FilledButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: Text(l10n.tryAgain)),
           ],
         ),
       ),

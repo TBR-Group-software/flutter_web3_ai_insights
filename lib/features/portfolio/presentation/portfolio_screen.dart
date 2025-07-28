@@ -10,6 +10,7 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfo
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/error_state_widget.dart';
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfolio_content_widget.dart';
 import 'package:web3_ai_assistant/core/providers/repository_providers.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class PortfolioScreen extends ConsumerWidget {
   const PortfolioScreen({super.key});
@@ -55,6 +56,7 @@ class _DisconnectedPortfolioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Center(
@@ -63,10 +65,10 @@ class _DisconnectedPortfolioView extends StatelessWidget {
         children: [
           Icon(Icons.pie_chart_rounded, size: 80, color: theme.colorScheme.primary),
           const SizedBox(height: AppSpacing.xl),
-          Text('Your Portfolio', style: theme.textTheme.headlineMedium),
+          Text(l10n.navigationPortfolio, style: theme.textTheme.headlineMedium),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Connect your wallet to view your token holdings',
+            l10n.walletConnectToView,
             style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
@@ -78,11 +80,11 @@ class _DisconnectedPortfolioView extends StatelessWidget {
                 children: [
                   Icon(Icons.account_balance_wallet_outlined, size: 48, color: theme.colorScheme.onSurfaceVariant),
                   const SizedBox(height: AppSpacing.md),
-                  Text('No wallet connected', style: theme.textTheme.bodyLarge),
+                  Text(l10n.walletNoConnection, style: theme.textTheme.bodyLarge),
                   const SizedBox(height: AppSpacing.sm),
                   FilledButton(
                     onPressed: () => context.goNamed(AppConstants.walletRouteName),
-                    child: const Text('Connect Wallet'),
+                    child: Text(l10n.walletConnect),
                   ),
                 ],
               ),
@@ -151,6 +153,7 @@ class _EmptyPortfolioState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -158,12 +161,12 @@ class _EmptyPortfolioState extends StatelessWidget {
           Icon(Icons.account_balance_wallet_outlined, size: 64, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'No Tokens Found',
+            l10n.portfolioNoTokens,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            "Your wallet doesn't contain any supported tokens yet",
+            l10n.portfolioNoTokensDescription,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
