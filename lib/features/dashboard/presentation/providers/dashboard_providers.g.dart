@@ -6,7 +6,7 @@ part of 'dashboard_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$marketOverviewHash() => r'b2b3e04afff44f1366710e3a6ac08cb737f28e41';
+String _$marketOverviewHash() => r'3bc19011fc979a746a4a5ba3e23c15f9d7125f0c';
 
 /// Market overview provider - fetches real market data
 ///
@@ -51,7 +51,7 @@ final marketOverviewStreamProvider =
 typedef MarketOverviewStreamRef =
     AutoDisposeStreamProviderRef<List<MarketData>>;
 String _$recentTransactionsHash() =>
-    r'9bf911c4c7231ef31d7a46b1b02ecf8feb3914ff';
+    r'4d1f35cc49999ca3d45863df1cbeab70ef9ca68f';
 
 /// Recent transactions provider - fetches real transaction data
 ///

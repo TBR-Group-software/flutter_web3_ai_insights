@@ -8,7 +8,10 @@ part of 'wallet_provider.dart';
 
 String _$walletStateStreamHash() => r'641e2e7fe77310ba7ebd8e65b87c0a2f3dfb3919';
 
-/// See also [walletStateStream].
+/// Provider for wallet state stream from repository
+/// Used internally by WalletNotifier to react to state changes
+///
+/// Copied from [walletStateStream].
 @ProviderFor(walletStateStream)
 final walletStateStreamProvider =
     AutoDisposeStreamProvider<WalletState>.internal(
@@ -27,7 +30,10 @@ final walletStateStreamProvider =
 typedef WalletStateStreamRef = AutoDisposeStreamProviderRef<WalletState>;
 String _$walletNotifierHash() => r'6325484345b5eafa79eb461c7096674a095b8a48';
 
-/// See also [WalletNotifier].
+/// State notifier for wallet connection management
+/// Handles wallet connection, disconnection, and state updates
+///
+/// Copied from [WalletNotifier].
 @ProviderFor(WalletNotifier)
 final walletNotifierProvider =
     AutoDisposeAsyncNotifierProvider<WalletNotifier, WalletState>.internal(

@@ -15,6 +15,7 @@ import 'package:web3_ai_assistant/core/providers/service_providers.dart';
 
 part 'repository_providers.g.dart';
 
+/// Provides WalletRepository instance with proper lifecycle management
 @riverpod
 WalletRepository walletRepository(WalletRepositoryRef ref) {
   final web3Service = ref.watch(web3ServiceProvider);
@@ -23,6 +24,7 @@ WalletRepository walletRepository(WalletRepositoryRef ref) {
   return repository;
 }
 
+/// Provides PortfolioRepository with all required services
 @riverpod
 PortfolioRepository portfolioRepository(PortfolioRepositoryRef ref) {
   final binanceRestService = ref.watch(binanceRestServiceProvider);
@@ -37,6 +39,7 @@ PortfolioRepository portfolioRepository(PortfolioRepositoryRef ref) {
   return repository;
 }
 
+/// Provides AiInsightsRepository with Gemini API configuration
 @riverpod
 AiInsightsRepository aiInsightsRepository(AiInsightsRepositoryRef ref) {
   final geminiService = ref.watch(geminiServiceProvider);
@@ -49,12 +52,14 @@ AiInsightsRepository aiInsightsRepository(AiInsightsRepositoryRef ref) {
   return repository;
 }
 
+/// Provides storage repository for AI insights history
 @riverpod
 AiInsightsStorageRepository aiInsightsStorageRepository(AiInsightsStorageRepositoryRef ref) {
   final storageService = ref.watch(aiInsightsStorageServiceProvider);
   return AiInsightsStorageRepositoryImpl(storageService: storageService);
 }
 
+/// Provides TransactionRepository for wallet transaction history
 @riverpod
 TransactionRepository transactionRepository(TransactionRepositoryRef ref) {
   final web3Service = ref.watch(web3ServiceProvider);
@@ -63,6 +68,7 @@ TransactionRepository transactionRepository(TransactionRepositoryRef ref) {
   return repository;
 }
 
+/// Provides MarketRepository for real-time market data
 @riverpod
 MarketRepository marketRepository(MarketRepositoryRef ref) {
   final binanceRestService = ref.watch(binanceRestServiceProvider);

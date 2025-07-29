@@ -8,7 +8,10 @@ part of 'portfolio_providers.dart';
 
 String _$portfolioStreamHash() => r'8164863a0f92b5abcd4ff36092c825adc7e3c6b7';
 
-/// See also [portfolioStream].
+/// Stream provider for real-time portfolio updates
+/// Combines initial data fetch with WebSocket price updates
+///
+/// Copied from [portfolioStream].
 @ProviderFor(portfolioStream)
 final portfolioStreamProvider =
     AutoDisposeStreamProvider<List<PortfolioToken>>.internal(
@@ -27,7 +30,9 @@ final portfolioStreamProvider =
 typedef PortfolioStreamRef = AutoDisposeStreamProviderRef<List<PortfolioToken>>;
 String _$isPortfolioEmptyHash() => r'483dc286d7f5291b0335f5875ea50933179560b7';
 
-/// See also [isPortfolioEmpty].
+/// Computed provider to check if portfolio is empty
+///
+/// Copied from [isPortfolioEmpty].
 @ProviderFor(isPortfolioEmpty)
 final isPortfolioEmptyProvider = AutoDisposeProvider<bool>.internal(
   isPortfolioEmpty,
@@ -46,7 +51,9 @@ typedef IsPortfolioEmptyRef = AutoDisposeProviderRef<bool>;
 String _$totalPortfolioValueHash() =>
     r'2602af82785259f1ad276af9f5c3ac61bd5ebe75';
 
-/// See also [totalPortfolioValue].
+/// Computes total portfolio value in USD
+///
+/// Copied from [totalPortfolioValue].
 @ProviderFor(totalPortfolioValue)
 final totalPortfolioValueProvider = AutoDisposeProvider<double>.internal(
   totalPortfolioValue,
@@ -65,7 +72,9 @@ typedef TotalPortfolioValueRef = AutoDisposeProviderRef<double>;
 String _$totalPortfolioChangeHash() =>
     r'1036b3a432196eff914f4ea99d76a1b4f10259f6';
 
-/// See also [totalPortfolioChange].
+/// Computes total portfolio change in USD (24h)
+///
+/// Copied from [totalPortfolioChange].
 @ProviderFor(totalPortfolioChange)
 final totalPortfolioChangeProvider = AutoDisposeProvider<double>.internal(
   totalPortfolioChange,
@@ -84,7 +93,9 @@ typedef TotalPortfolioChangeRef = AutoDisposeProviderRef<double>;
 String _$totalPortfolioChangePercentHash() =>
     r'a3751a2475789a250a514b448ce3608457abae41';
 
-/// See also [totalPortfolioChangePercent].
+/// Computes total portfolio change percentage (24h)
+///
+/// Copied from [totalPortfolioChangePercent].
 @ProviderFor(totalPortfolioChangePercent)
 final totalPortfolioChangePercentProvider =
     AutoDisposeProvider<double>.internal(
@@ -104,7 +115,9 @@ typedef TotalPortfolioChangePercentRef = AutoDisposeProviderRef<double>;
 String _$topPerformingTokensHash() =>
     r'f0db4690b236a84e69ea43f5149dfb81994987c0';
 
-/// See also [topPerformingTokens].
+/// Returns top 5 performing tokens by percentage change
+///
+/// Copied from [topPerformingTokens].
 @ProviderFor(topPerformingTokens)
 final topPerformingTokensProvider =
     AutoDisposeProvider<List<PortfolioToken>>.internal(
@@ -123,7 +136,9 @@ final topPerformingTokensProvider =
 typedef TopPerformingTokensRef = AutoDisposeProviderRef<List<PortfolioToken>>;
 String _$topValueTokensHash() => r'f51e3073cf2c2edbb72755cbb03514542ab4fb6c';
 
-/// See also [topValueTokens].
+/// Returns top 10 tokens by total USD value
+///
+/// Copied from [topValueTokens].
 @ProviderFor(topValueTokens)
 final topValueTokensProvider =
     AutoDisposeProvider<List<PortfolioToken>>.internal(
@@ -142,7 +157,10 @@ final topValueTokensProvider =
 typedef TopValueTokensRef = AutoDisposeProviderRef<List<PortfolioToken>>;
 String _$portfolioNotifierHash() => r'4c2e0d2d10f64919add481eba5f024f19fecd324';
 
-/// See also [PortfolioNotifier].
+/// State notifier for portfolio management
+/// Fetches token balances and subscribes to real-time price updates
+///
+/// Copied from [PortfolioNotifier].
 @ProviderFor(PortfolioNotifier)
 final portfolioNotifierProvider = AutoDisposeAsyncNotifierProvider<
   PortfolioNotifier,

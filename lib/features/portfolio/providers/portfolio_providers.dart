@@ -4,6 +4,8 @@ import 'package:web3_ai_assistant/core/providers/repository_providers.dart';
 
 part 'portfolio_providers.g.dart';
 
+/// State notifier for portfolio management
+/// Fetches token balances and subscribes to real-time price updates
 @riverpod
 class PortfolioNotifier extends _$PortfolioNotifier {
   @override
@@ -64,6 +66,8 @@ class PortfolioNotifier extends _$PortfolioNotifier {
   }
 }
 
+/// Stream provider for real-time portfolio updates
+/// Combines initial data fetch with WebSocket price updates
 @riverpod
 Stream<List<PortfolioToken>> portfolioStream(PortfolioStreamRef ref) async* {
   final walletRepository = ref.watch(walletRepositoryProvider);
@@ -91,12 +95,14 @@ Stream<List<PortfolioToken>> portfolioStream(PortfolioStreamRef ref) async* {
   }
 }
 
+/// Computed provider to check if portfolio is empty
 @riverpod
 bool isPortfolioEmpty(IsPortfolioEmptyRef ref) {
   final portfolioAsync = ref.watch(portfolioNotifierProvider);
   return portfolioAsync.maybeWhen(data: (tokens) => tokens.isEmpty, orElse: () => true);
 }
 
+/// Computes total portfolio value in USD
 @riverpod
 double totalPortfolioValue(TotalPortfolioValueRef ref) {
   final portfolioAsync = ref.watch(portfolioNotifierProvider);
@@ -106,6 +112,7 @@ double totalPortfolioValue(TotalPortfolioValueRef ref) {
   );
 }
 
+/// Computes total portfolio change in USD (24h)
 @riverpod
 double totalPortfolioChange(TotalPortfolioChangeRef ref) {
   final portfolioAsync = ref.watch(portfolioNotifierProvider);
@@ -115,6 +122,7 @@ double totalPortfolioChange(TotalPortfolioChangeRef ref) {
   );
 }
 
+/// Computes total portfolio change percentage (24h)
 @riverpod
 double totalPortfolioChangePercent(TotalPortfolioChangePercentRef ref) {
   final totalValue = ref.watch(totalPortfolioValueProvider);
@@ -122,6 +130,7 @@ double totalPortfolioChangePercent(TotalPortfolioChangePercentRef ref) {
   return totalValue > 0 ? (totalChange / totalValue) * 100 : 0.0;
 }
 
+/// Returns top 5 performing tokens by percentage change
 @riverpod
 List<PortfolioToken> topPerformingTokens(TopPerformingTokensRef ref) {
   final portfolioAsync = ref.watch(portfolioNotifierProvider);
@@ -135,6 +144,7 @@ List<PortfolioToken> topPerformingTokens(TopPerformingTokensRef ref) {
   );
 }
 
+/// Returns top 10 tokens by total USD value
 @riverpod
 List<PortfolioToken> topValueTokens(TopValueTokensRef ref) {
   final portfolioAsync = ref.watch(portfolioNotifierProvider);

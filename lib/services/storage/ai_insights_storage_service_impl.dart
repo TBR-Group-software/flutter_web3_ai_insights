@@ -4,13 +4,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights/models/portfolio_analysis.dart';
 import 'package:web3_ai_assistant/services/storage/ai_insights_storage_service.dart';
 
+/// Local storage implementation for AI insights history
+/// Uses SharedPreferences to persist analysis results across app sessions
 class AiInsightsStorageServiceImpl implements AiInsightsStorageService {
   AiInsightsStorageServiceImpl({Logger? logger}) : _logger = logger ?? Logger();
 
   final Logger _logger;
 
   static const String _storageKey = 'ai_insights_history';
-  static const int _maxHistorySize = 5;
+  static const int _maxHistorySize = 5; // Keep only recent analyses to save space
 
   @override
   Future<List<PortfolioAnalysis>> loadHistory() async {

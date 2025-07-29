@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:logger/logger.dart';
+import 'package:web3_ai_assistant/core/constants/api_constants.dart';
+import 'package:web3_ai_assistant/core/utils/validators.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/portfolio_repository.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.dart';
 import 'package:web3_ai_assistant/repositories/portfolio/models/token_price.dart';
@@ -9,6 +11,8 @@ import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_s
 import 'package:web3_ai_assistant/services/binance_websocket/models/token_ticker.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
 
+/// Manages portfolio data by combining Web3 token balances with real-time prices
+/// Provides both REST API initial data and WebSocket streaming updates
 class PortfolioRepositoryImpl implements PortfolioRepository {
   PortfolioRepositoryImpl({
     required BinanceRestService binanceRestService,
@@ -40,6 +44,12 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
 
   @override
   Future<List<PortfolioToken>> getPortfolio(String walletAddress) async {
+    // Validate wallet address
+    if (!Validators.isValidEthereumAddress(walletAddress)) {
+      _logger.e('Invalid wallet address format: $walletAddress');
+      return [];
+    }
+    
     try {
       _logger.i('Fetching portfolio for wallet: $walletAddress');
 
@@ -73,6 +83,12 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       for (final ticker in tickers) {
         final originalSymbol = symbolMapping[ticker.symbol];
         if (originalSymbol != null) {
+          // Validate ticker data
+          if (!Validators.isPositiveNumber(ticker.lastPrice)) {
+            _logger.w('Invalid price data for ${ticker.symbol}');
+            continue;
+          }
+          
           // Convert Ticker24hr to TokenPrice domain model
           final tokenPrice = TokenPrice(
             symbol: ticker.symbol,
@@ -110,16 +126,16 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
         );
 
         // Special handling for USDT - it's always worth $1.00
-        if (balance.symbol.toUpperCase() == 'USDT') {
+        if (balance.symbol.toUpperCase() == ApiConstants.stablecoinUsdt) {
           final portfolioToken = PortfolioToken(
             symbol: balance.symbol,
             name: balance.name,
             contractAddress: balance.contractAddress,
             balance: balanceDouble,
             decimals: balance.decimals,
-            price: 1, // USDT is pegged to $1
-            change24h: 0, // Stable coin doesn't change much
-            changePercent24h: 0,
+            price: ApiConstants.stablecoinPrice, // USDT is pegged to $1
+            change24h: ApiConstants.stablecoinChange, // Stable coin doesn't change much
+            changePercent24h: ApiConstants.stablecoinChange,
             totalValue: balanceDouble * 1.0,
             logoUri: balance.logoUri,
             lastUpdated: DateTime.now(),
@@ -182,6 +198,8 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
       return portfolioTokens;
     } catch (e) {
       _logger.e('Error fetching portfolio: $e');
+      // Return empty list but could throw for better error handling upstream
+      // Consider: rethrow; to let UI handle the error
       return [];
     }
   }
@@ -310,39 +328,22 @@ class PortfolioRepositoryImpl implements PortfolioRepository {
   }
 
   /// Map Web3 token symbols to valid Binance trading pairs
+  /// Returns null for USDT since it's the quote currency
   String? _mapToBinanceSymbol(String tokenSymbol) {
-    switch (tokenSymbol.toUpperCase()) {
-      case 'ETH':
-        return 'ETHUSDT';
-      case 'WETH':
-        return 'ETHUSDT'; // WETH uses same price as ETH on Binance
-      case 'BTC':
-      case 'WBTC':
-        return 'BTCUSDT'; // Both BTC and WBTC use BTC price
-      case 'USDC':
-        return 'USDCUSDT';
-      case 'USDT':
-        return null; // USDT is the quote currency, no need to fetch its price vs itself
-      case 'BNB':
-        return 'BNBUSDT';
-      case 'ADA':
-        return 'ADAUSDT';
-      case 'DOT':
-        return 'DOTUSDT';
-      case 'LINK':
-        return 'LINKUSDT';
-      case 'UNI':
-        return 'UNIUSDT';
-      case 'MATIC':
-        return 'MATICUSDT';
-      case 'AVAX':
-        return 'AVAXUSDT';
-      case 'SOL':
-        return 'SOLUSDT';
-      default:
-        // For unknown tokens, try adding USDT suffix
-        return '${tokenSymbol.toUpperCase()}USDT';
+    final upperSymbol = tokenSymbol.toUpperCase();
+    
+    // Special case for USDT - it's the quote currency
+    if (upperSymbol == ApiConstants.stablecoinUsdt) {
+      return null;
     }
+    
+    // Check if we have a predefined mapping
+    if (ApiConstants.binanceSymbolMap.containsKey(upperSymbol)) {
+      return ApiConstants.binanceSymbolMap[upperSymbol];
+    }
+    
+    // For unknown tokens adding USDT suffix
+    return '${upperSymbol}USDT';
   }
 
   @override

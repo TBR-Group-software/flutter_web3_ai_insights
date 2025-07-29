@@ -4,13 +4,15 @@ import 'package:web3_ai_assistant/repositories/wallet/models/wallet_state.dart';
 
 part 'wallet_provider.g.dart';
 
+/// State notifier for wallet connection management
+/// Handles wallet connection, disconnection, and state updates
 @riverpod
 class WalletNotifier extends _$WalletNotifier {
   @override
   Future<WalletState> build() async {
     final repository = ref.watch(walletRepositoryProvider);
 
-    // Listen to wallet state changes
+    // Listen to wallet state changes from repository stream
     ref.listen(walletStateStreamProvider, (previous, next) {
       next.when(
         data: (walletState) {
@@ -27,6 +29,7 @@ class WalletNotifier extends _$WalletNotifier {
     return repository.currentWalletState;
   }
 
+  /// Initiates wallet connection flow (MetaMask)
   Future<void> connect() async {
     state = const AsyncValue.loading();
     try {
@@ -38,6 +41,7 @@ class WalletNotifier extends _$WalletNotifier {
     }
   }
 
+  /// Disconnects current wallet and clears state
   Future<void> disconnect() async {
     state = const AsyncValue.loading();
     try {
@@ -49,6 +53,7 @@ class WalletNotifier extends _$WalletNotifier {
     }
   }
 
+  /// Refreshes wallet balance and network info
   Future<void> refresh() async {
     try {
       final repository = ref.read(walletRepositoryProvider);
@@ -59,6 +64,8 @@ class WalletNotifier extends _$WalletNotifier {
   }
 }
 
+/// Provider for wallet state stream from repository
+/// Used internally by WalletNotifier to react to state changes
 @riverpod
 Stream<WalletState> walletStateStream(WalletStateStreamRef ref) {
   final repository = ref.watch(walletRepositoryProvider);

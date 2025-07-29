@@ -8,7 +8,9 @@ part of 'repository_providers.dart';
 
 String _$walletRepositoryHash() => r'309ac53d3970ce566e5169a4b5e9a73f88178e97';
 
-/// See also [walletRepository].
+/// Provides WalletRepository instance with proper lifecycle management
+///
+/// Copied from [walletRepository].
 @ProviderFor(walletRepository)
 final walletRepositoryProvider = AutoDisposeProvider<WalletRepository>.internal(
   walletRepository,
@@ -27,7 +29,9 @@ typedef WalletRepositoryRef = AutoDisposeProviderRef<WalletRepository>;
 String _$portfolioRepositoryHash() =>
     r'366dd9f58f29488669d96665d4b2d910ae11061b';
 
-/// See also [portfolioRepository].
+/// Provides PortfolioRepository with all required services
+///
+/// Copied from [portfolioRepository].
 @ProviderFor(portfolioRepository)
 final portfolioRepositoryProvider =
     AutoDisposeProvider<PortfolioRepository>.internal(
@@ -47,7 +51,9 @@ typedef PortfolioRepositoryRef = AutoDisposeProviderRef<PortfolioRepository>;
 String _$aiInsightsRepositoryHash() =>
     r'b04257e66276f9c96b554b2864fd8f1795523d2d';
 
-/// See also [aiInsightsRepository].
+/// Provides AiInsightsRepository with Gemini API configuration
+///
+/// Copied from [aiInsightsRepository].
 @ProviderFor(aiInsightsRepository)
 final aiInsightsRepositoryProvider =
     AutoDisposeProvider<AiInsightsRepository>.internal(
@@ -67,7 +73,9 @@ typedef AiInsightsRepositoryRef = AutoDisposeProviderRef<AiInsightsRepository>;
 String _$aiInsightsStorageRepositoryHash() =>
     r'5a631f7142cb8f12624266a5d6b8b8c2b8dade84';
 
-/// See also [aiInsightsStorageRepository].
+/// Provides storage repository for AI insights history
+///
+/// Copied from [aiInsightsStorageRepository].
 @ProviderFor(aiInsightsStorageRepository)
 final aiInsightsStorageRepositoryProvider =
     AutoDisposeProvider<AiInsightsStorageRepository>.internal(
@@ -88,7 +96,9 @@ typedef AiInsightsStorageRepositoryRef =
 String _$transactionRepositoryHash() =>
     r'0222245dd7854dc1ab3048a094814b3ef6315ac2';
 
-/// See also [transactionRepository].
+/// Provides TransactionRepository for wallet transaction history
+///
+/// Copied from [transactionRepository].
 @ProviderFor(transactionRepository)
 final transactionRepositoryProvider =
     AutoDisposeProvider<TransactionRepository>.internal(
@@ -108,7 +118,9 @@ typedef TransactionRepositoryRef =
     AutoDisposeProviderRef<TransactionRepository>;
 String _$marketRepositoryHash() => r'68ad1227e399a7d9c8a5a806555a4153db152c72';
 
-/// See also [marketRepository].
+/// Provides MarketRepository for real-time market data
+///
+/// Copied from [marketRepository].
 @ProviderFor(marketRepository)
 final marketRepositoryProvider = AutoDisposeProvider<MarketRepository>.internal(
   marketRepository,

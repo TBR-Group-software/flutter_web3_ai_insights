@@ -1,5 +1,7 @@
 import 'package:logger/logger.dart';
 import 'package:uuid/uuid.dart';
+import 'package:web3_ai_assistant/core/constants/api_constants.dart';
+import 'package:web3_ai_assistant/core/utils/validators.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights/ai_insights_repository.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights/models/portfolio_analysis.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights/models/risk_assessment.dart';
@@ -11,6 +13,8 @@ import 'package:web3_ai_assistant/services/gemini/models/generate_content_reques
 import 'package:web3_ai_assistant/repositories/ai_insights/parsers/gemini_response_parser.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights/prompts/portfolio_analysis_prompts.dart';
 
+/// Generates AI-powered portfolio analysis using Gemini API
+/// Includes caching to reduce API calls and response parsing
 class AiInsightsRepositoryImpl implements AiInsightsRepository {
   AiInsightsRepositoryImpl({
     required GeminiService geminiService,
@@ -30,15 +34,25 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
   final GeminiResponseParser _responseParser;
   final _uuid = const Uuid();
 
-  // Simple in-memory cache
+  // Simple in-memory cache to reduce API calls
   final Map<String, PortfolioAnalysis> _analysisCache = {};
-  static const _cacheDuration = Duration(minutes: 5);
+  static const Duration _cacheDuration = ApiConstants.aiInsightsCacheDuration;
 
   @override
   Future<PortfolioAnalysis> generatePortfolioAnalysis(List<PortfolioToken> tokens) async {
     try {
       if (tokens.isEmpty) {
         throw Exception('Cannot analyze empty portfolio');
+      }
+      
+      // Validate token data
+      for (final token in tokens) {
+        if (!Validators.isValidTokenSymbol(token.symbol)) {
+          _logger.w('Invalid token symbol: ${token.symbol}');
+        }
+        if (!Validators.isPositiveNumber(token.balance)) {
+          _logger.w('Invalid balance for ${token.symbol}: ${token.balance}');
+        }
       }
 
       // Check cache first
@@ -59,7 +73,12 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
         contents: [
           Content(parts: [Part(text: prompt)]),
         ],
-        generationConfig: const GenerationConfig(temperature: 0.7, topP: 0.95, topK: 40, maxOutputTokens: 2048),
+        generationConfig: const GenerationConfig(
+          temperature: ApiConstants.aiTemperature,
+          topP: ApiConstants.aiTopP,
+          topK: ApiConstants.aiTopK,
+          maxOutputTokens: ApiConstants.aiMaxOutputTokens,
+        ),
       );
 
       // Call Gemini API
@@ -107,7 +126,10 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
         contents: [
           Content(parts: [Part(text: prompt)]),
         ],
-        generationConfig: const GenerationConfig(temperature: 0.5, maxOutputTokens: 200),
+        generationConfig: const GenerationConfig(
+          temperature: ApiConstants.aiQuickInsightTemperature,
+          maxOutputTokens: ApiConstants.aiQuickInsightMaxTokens,
+        ),
       );
 
       // Call Gemini API
@@ -246,13 +268,8 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
   }
 
   RiskAssessment _parseRiskAssessment(String text) {
-    // Determine risk level
-    var level = RiskLevel.medium;
-    if (text.toLowerCase().contains('high risk') || text.toLowerCase().contains('significant risk')) {
-      level = RiskLevel.high;
-    } else if (text.toLowerCase().contains('low risk') || text.toLowerCase().contains('minimal risk')) {
-      level = RiskLevel.low;
-    }
+    // Determine risk level using keyword mapping
+    final level = _determineRiskLevel(text.toLowerCase());
 
     // Extract risk factors
     final concentrationRisks = <String>[];
@@ -369,21 +386,12 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
       final lowerTitle = title.toLowerCase();
       final lowerDesc = description.toLowerCase();
       
-      if (lowerTitle.contains('buy') || lowerTitle.contains('increase') || 
-          lowerDesc.contains('buy') || lowerDesc.contains('increase')) {
-        type = RecommendationType.buy;
-      } else if (lowerTitle.contains('sell') || lowerTitle.contains('reduce') ||
-                 lowerDesc.contains('sell') || lowerDesc.contains('reduce')) {
-        type = RecommendationType.sell;
-      } else if (lowerTitle.contains('rebalanc') || lowerDesc.contains('rebalanc')) {
-        type = RecommendationType.rebalance;
-      } else if (lowerTitle.contains('diversif') || lowerDesc.contains('diversif')) {
-        type = RecommendationType.diversify;
-      }
+      // Determine recommendation type using keyword mapping
+      type = _determineRecommendationType(lowerTitle, lowerDesc);
 
       recommendations.add(
         InvestmentRecommendation(
-          title: title.length > 60 ? '${title.substring(0, 57)}...' : title,
+          title: title.length > ApiConstants.maxTitleLength ? '${title.substring(0, ApiConstants.maxTitleLength - 3)}...' : title,
           description: description,
           type: type,
           priority: priority,
@@ -404,7 +412,7 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
       );
     }
 
-    return recommendations.take(5).toList();  // Limit to 5 recommendations
+    return recommendations.take(ApiConstants.maxRecommendations).toList();  // Limit recommendations
   }
 
   List<MarketInsight> _parseMarketInsights(String text) {
@@ -465,23 +473,12 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
         continue;
       }
 
-      // Determine insight type
-      var type = InsightType.trend;
-      final lowerText = '$title $description'.toLowerCase();
-      
-      if (lowerText.contains('opportunity') || lowerText.contains('potential gain')) {
-        type = InsightType.opportunity;
-      } else if (lowerText.contains('warning') || lowerText.contains('caution') || 
-                 lowerText.contains('risk') || lowerText.contains('concern')) {
-        type = InsightType.warning;
-      } else if (lowerText.contains('news') || lowerText.contains('announcement') ||
-                 lowerText.contains('update')) {
-        type = InsightType.news;
-      }
+      // Determine insight type using keyword mapping
+      final type = _determineInsightType('$title $description'.toLowerCase());
 
       insights.add(
         MarketInsight(
-          title: title.length > 60 ? '${title.substring(0, 57)}...' : title,
+          title: title.length > ApiConstants.maxTitleLength ? '${title.substring(0, ApiConstants.maxTitleLength - 3)}...' : title,
           description: description.isNotEmpty ? description : title,
           type: type,
           impact: impact.isNotEmpty ? impact : null,
@@ -500,6 +497,66 @@ class AiInsightsRepositoryImpl implements AiInsightsRepository {
       );
     }
 
-    return insights.take(5).toList();  // Limit to 5 insights
+    return insights.take(ApiConstants.maxMarketInsights).toList();  // Limit insights
+  }
+
+  /// Determines the insight type based on keywords in the text
+  InsightType _determineInsightType(String lowerText) {
+    // Define keyword mappings for each insight type
+    const insightKeywords = {
+      InsightType.opportunity: ['opportunity', 'potential gain'],
+      InsightType.warning: ['warning', 'caution', 'risk', 'concern'],
+      InsightType.news: ['news', 'announcement', 'update'],
+    };
+
+    // Check each type's keywords
+    for (final entry in insightKeywords.entries) {
+      if (entry.value.any((keyword) => lowerText.contains(keyword))) {
+        return entry.key;
+      }
+    }
+
+    // Default to trend if no keywords match
+    return InsightType.trend;
+  }
+
+  RecommendationType _determineRecommendationType(String lowerTitle, String lowerDesc) {
+    // Define keyword mappings for each recommendation type
+    const recommendationKeywords = {
+      RecommendationType.buy: ['buy', 'increase', 'up', 'grow', 'boost', 'accelerate'],
+      RecommendationType.sell: ['sell', 'reduce', 'down', 'decline', 'decrease', 'cut'],
+      RecommendationType.rebalance: ['rebalance', 're-balance', 're-balancing', 're-balanced'],
+      RecommendationType.diversify: ['diversify', 'diversification', 'diversified'],
+    };
+
+    // Check each type's keywords
+    for (final entry in recommendationKeywords.entries) {
+      if (entry.value.any((keyword) => lowerTitle.contains(keyword)) ||
+          entry.value.any((keyword) => lowerDesc.contains(keyword))) {
+        return entry.key;
+      }
+    }
+
+    // Default to hold if no keywords match
+    return RecommendationType.hold;
+  }
+
+  RiskLevel _determineRiskLevel(String lowerText) {
+    // Define keyword mappings for each risk level
+    const riskKeywords = {
+      RiskLevel.high: ['high risk', 'significant risk', 'risky', 'volatile', 'unstable'],
+      RiskLevel.medium: ['medium risk', 'moderate risk', 'balanced', 'stable', 'normal'],
+      RiskLevel.low: ['low risk', 'minimal risk', 'safe', 'stable', 'normal'],
+    };
+
+    // Check each level's keywords
+    for (final entry in riskKeywords.entries) {
+      if (entry.value.any((keyword) => lowerText.contains(keyword))) {
+        return entry.key;
+      }
+    }
+
+    // Default to medium if no keywords match
+    return RiskLevel.medium;
   }
 }

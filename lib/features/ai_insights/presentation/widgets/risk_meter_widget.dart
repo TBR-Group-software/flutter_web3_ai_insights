@@ -3,6 +3,8 @@ import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/repositories/ai_insights/models/risk_assessment.dart';
 import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
+/// Visual risk meter displaying portfolio risk level and score
+/// Uses color-coded progress bar: green (low), orange (medium), red (high)
 class RiskMeterWidget extends StatelessWidget {
   const RiskMeterWidget({super.key, required this.riskAssessment});
 
@@ -50,6 +52,7 @@ class RiskMeterWidget extends StatelessWidget {
     );
   }
 
+  /// Maps risk level to appropriate color
   Color _getRiskColor(RiskLevel level) {
     switch (level) {
       case RiskLevel.low:
@@ -61,6 +64,7 @@ class RiskMeterWidget extends StatelessWidget {
     }
   }
 
+  /// Returns localized label for risk level
   String _getRiskLabel(BuildContext context, RiskLevel level) {
     final l10n = AppLocalizations.of(context)!;
     switch (level) {

@@ -6,18 +6,22 @@ import 'package:web3_ai_assistant/repositories/portfolio/models/portfolio_token.
 
 part 'ai_insights_providers.g.dart';
 
+/// Base state for AI insights feature
 sealed class AiInsightsState {
   const AiInsightsState();
 }
 
+/// Initial state before any analysis is generated
 class AiInsightsInitial extends AiInsightsState {
   const AiInsightsInitial();
 }
 
+/// Loading state while AI analysis is being generated
 class AiInsightsLoading extends AiInsightsState {
   const AiInsightsLoading();
 }
 
+/// State containing analysis history with navigation
 class AiInsightsWithHistory extends AiInsightsState {
   const AiInsightsWithHistory({
     required this.history,
@@ -37,11 +41,14 @@ class AiInsightsWithHistory extends AiInsightsState {
   int get historyCount => history.length;
 }
 
+/// Error state with user-friendly message
 class AiInsightsError extends AiInsightsState {
   const AiInsightsError(this.message);
   final String message;
 }
 
+/// Main provider for AI insights feature
+/// Manages analysis generation and history navigation
 @Riverpod(keepAlive: true)
 class AiInsights extends _$AiInsights {
   @override

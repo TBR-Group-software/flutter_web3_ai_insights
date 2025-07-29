@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web3_ai_assistant/features/portfolio/providers/portfolio_providers.dart';
 import 'package:web3_ai_assistant/core/providers/repository_providers.dart';
@@ -34,12 +35,14 @@ final dashboardPortfolioChangePercentProvider = Provider<double>((ref) {
 @riverpod
 Future<List<MarketData>> marketOverview(MarketOverviewRef ref) async {
   final marketRepository = ref.watch(marketRepositoryProvider);
+  final logger = Logger();
   
   try {
     // Fetch prices for major cryptocurrencies
     return await marketRepository.getMarketData(['BTC', 'ETH', 'BNB']);
   } catch (e) {
     // Return empty list on error
+    logger.e('Error fetching market overview: $e');
     return [];
   }
 }
@@ -70,6 +73,7 @@ Stream<List<MarketData>> marketOverviewStream(MarketOverviewStreamRef ref) async
 Future<List<Transaction>> recentTransactions(RecentTransactionsRef ref) async {
   final transactionRepository = ref.watch(transactionRepositoryProvider);
   final walletState = ref.watch(walletNotifierProvider).valueOrNull;
+  final logger = Logger();
   
   if (walletState == null || !walletState.isConnected || walletState.walletInfo == null) {
     return [];
@@ -82,6 +86,7 @@ Future<List<Transaction>> recentTransactions(RecentTransactionsRef ref) async {
     );
   } catch (e) {
     // Return empty list on error
+    logger.e('Error fetching recent transactions: $e');
     return [];
   }
 }

@@ -6,6 +6,8 @@ import 'package:web3_ai_assistant/core/theme/app_spacing.dart';
 import 'package:web3_ai_assistant/features/wallet/providers/wallet_provider.dart';
 import 'package:web3_ai_assistant/features/ai_insights/providers/ai_insights_providers.dart';
 
+/// Dashboard card showing AI insights preview
+/// Displays quick insight when wallet connected, prompts connection when not
 class AiInsightsPreviewCard extends ConsumerWidget {
   const AiInsightsPreviewCard({super.key});
 

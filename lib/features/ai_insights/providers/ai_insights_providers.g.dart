@@ -43,7 +43,10 @@ final canGenerateAnalysisProvider = AutoDisposeProvider<bool>.internal(
 typedef CanGenerateAnalysisRef = AutoDisposeProviderRef<bool>;
 String _$aiInsightsHash() => r'e589167e1b6a3025029fc0c71d55de7f54a68e62';
 
-/// See also [AiInsights].
+/// Main provider for AI insights feature
+/// Manages analysis generation and history navigation
+///
+/// Copied from [AiInsights].
 @ProviderFor(AiInsights)
 final aiInsightsProvider =
     AsyncNotifierProvider<AiInsights, AiInsightsState>.internal(

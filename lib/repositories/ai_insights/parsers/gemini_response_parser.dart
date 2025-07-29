@@ -1,6 +1,8 @@
 import 'package:logger/logger.dart';
+import 'package:web3_ai_assistant/core/utils/validators.dart';
 import 'package:web3_ai_assistant/services/gemini/models/generate_content_response.dart';
 
+/// Parses and validates responses from Gemini AI API
 class GeminiResponseParser {
   GeminiResponseParser({Logger? logger}) : _logger = logger ?? Logger();
 
@@ -8,6 +10,12 @@ class GeminiResponseParser {
 
   String? parseTextResponse(GenerateContentResponse response) {
     try {
+      // Validate response structure
+      if (response.candidates.isEmpty) {
+        _logger.w('No candidates in response');
+        return null;
+      }
+      
       // Check for prompt feedback issues
       if (response.promptFeedback?.blockReason != null) {
         _logger.w('Prompt was blocked: ${response.promptFeedback!.blockReason}');
@@ -21,7 +29,9 @@ class GeminiResponseParser {
         return null;
       }
 
-      return text.trim();
+      // Sanitize the response text
+      final sanitizedText = Validators.sanitizeInput(text.trim());
+      return sanitizedText;
     } catch (e) {
       _logger.e('Error parsing Gemini response: $e');
       return null;

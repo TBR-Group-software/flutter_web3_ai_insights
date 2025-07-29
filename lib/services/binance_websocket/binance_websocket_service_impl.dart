@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:logger/logger.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web3_ai_assistant/core/constants/api_constants.dart';
 import 'package:web3_ai_assistant/core/constants/app_constants.dart';
 import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_service.dart';
 import 'package:web3_ai_assistant/services/binance_websocket/models/token_ticker.dart';
 
 /// Implementation of BinanceWebSocketService for real-time price streaming
+/// Manages WebSocket connection to Binance with auto-reconnection and heartbeat
 class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
   BinanceWebSocketServiceImpl({Logger? logger}) : _logger = logger ?? Logger();
 
@@ -146,14 +148,15 @@ class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
 
     _reconnectTimer?.cancel();
     _reconnectTimer = Timer(
-      Duration(seconds: 5 + Random().nextInt(10)), // Random backoff
+      Duration(seconds: ApiConstants.reconnectDelay.inSeconds + Random().nextInt(ApiConstants.randomBackoffMax)), // Random backoff
       _connectWebSocket,
     );
   }
 
+  /// Sends periodic heartbeat to keep WebSocket connection alive
   void _startHeartbeat() {
     _heartbeatTimer?.cancel();
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    _heartbeatTimer = Timer.periodic(ApiConstants.heartbeatInterval, (timer) {
       if (_isConnected) {
         try {
           // Binance doesn't require explicit ping messages for stream endpoints

@@ -5,6 +5,8 @@ import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfo
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfolio_summary_card_tablet.dart';
 import 'package:web3_ai_assistant/features/portfolio/presentation/widgets/portfolio_summary_card_desktop.dart';
 
+/// Responsive portfolio summary card that displays total value and statistics
+/// Adapts layout based on screen size for optimal viewing
 class PortfolioSummaryCard extends StatelessWidget {
   const PortfolioSummaryCard({super.key, required this.tokens, this.isLoading = false});
 

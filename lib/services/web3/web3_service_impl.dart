@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:js_interop';
+import 'package:logger/logger.dart';
+import 'package:web3_ai_assistant/core/constants/web3_constants.dart';
+import 'package:web3_ai_assistant/core/utils/validators.dart';
 import 'package:web3_ai_assistant/services/web3/models/wallet_connection_status.dart';
 import 'package:web3_ai_assistant/services/web3/models/wallet_info.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
@@ -22,9 +25,14 @@ extension type Ethereum(JSObject _) implements JSObject {
   external JSPromise<JSAny?> request(JSObject params);
 }
 
+/// Implementation of Web3Service that handles MetaMask wallet interactions
+/// Uses JS interop to communicate with the browser's ethereum provider
 class Web3ServiceImpl implements Web3Service {
-  Web3ServiceImpl();
+  Web3ServiceImpl({Logger? logger}) : _logger = logger ?? Logger();
+  
+  final Logger _logger;
 
+  /// Broadcasts wallet connection state changes to listeners
   final _connectionStatusController = StreamController<WalletConnectionStatus>.broadcast();
   WalletConnectionStatus _currentStatus = WalletConnectionStatus.disconnected();
   String? _currentAddress;
@@ -92,30 +100,32 @@ class Web3ServiceImpl implements Web3Service {
 
   @override
   Future<BigInt?> getBalance(String address) async {
+    // Validate address format
+    if (!Validators.isValidEthereumAddress(address)) {
+      return null;
+    }
+    
     try {
       // For now, let's try to get balance directly via ethereum object
       final ethereum = _getEthereum();
 
-      try {
-        // Try to get balance via eth_getBalance RPC call
-        final params = [address.toJS, 'latest'.toJS].toJS;
-        final requestParams = {'method': 'eth_getBalance', 'params': params}.jsify()! as JSObject;
+      // Try to get balance via eth_getBalance RPC call
+      final params = [address.toJS, 'latest'.toJS].toJS;
+      final requestParams = {'method': 'eth_getBalance', 'params': params}.jsify()! as JSObject;
 
-        final balanceHex = await ethereum.request(requestParams).toDart;
+      final balanceHex = await ethereum.request(requestParams).toDart;
 
-        if (balanceHex != null) {
-          // Convert hex to BigInt
-          final balanceStr = (balanceHex as JSString).toDart;
-          final balance = BigInt.parse(balanceStr.replaceFirst('0x', ''), radix: 16);
-          return balance;
-        }
-      } catch (e) {
-        return null;
+      if (balanceHex != null) {
+        // Convert hex to BigInt
+        final balanceStr = (balanceHex as JSString).toDart;
+        final balance = BigInt.parse(balanceStr.replaceFirst('0x', ''), radix: Web3Constants.hexRadix);
+        return balance;
       }
+      return null;
     } catch (e) {
+      _logger.e('Error getting balance: $e');
       return null;
     }
-    return null;
   }
 
   @override
@@ -131,27 +141,25 @@ class Web3ServiceImpl implements Web3Service {
       try {
         final chainIdHex = ethereum.chainId;
         if (chainIdHex != null) {
-          return int.parse(chainIdHex.replaceFirst('0x', ''), radix: 16);
+          return int.parse(chainIdHex.replaceFirst('0x', ''), radix: Web3Constants.hexRadix);
         }
       } catch (e) {
-        return null;
+        // Property access failed, try RPC method
+        _logger.d('chainId property access failed, falling back to RPC method');
       }
 
-      // Try RPC method
-      try {
-        final requestParams = {'method': 'eth_chainId'}.jsify()! as JSObject;
-        final chainIdHex = await ethereum.request(requestParams).toDart;
+      // Try RPC method as fallback
+      final requestParams = {'method': 'eth_chainId'}.jsify()! as JSObject;
+      final chainIdHex = await ethereum.request(requestParams).toDart;
 
-        if (chainIdHex != null) {
-          final chainIdStr = (chainIdHex as JSString).toDart;
-          return int.parse(chainIdStr.replaceFirst('0x', ''), radix: 16);
-        }
-      } catch (e) {
-        return null;
+      if (chainIdHex != null) {
+        final chainIdStr = (chainIdHex as JSString).toDart;
+        return int.parse(chainIdStr.replaceFirst('0x', ''), radix: Web3Constants.hexRadix);
       }
 
       return null;
     } catch (e) {
+      _logger.e('Error getting chain ID: $e');
       return null;
     }
   }
@@ -161,17 +169,18 @@ class Web3ServiceImpl implements Web3Service {
     return _getNetworkName(chainId);
   }
 
+  /// Maps chain ID to human-readable network name
   String _getNetworkName(int chainId) {
     final networks = {
-      1: 'Ethereum Mainnet',
-      3: 'Ropsten Testnet',
-      4: 'Rinkeby Testnet',
-      5: 'Goerli Testnet',
-      11155111: 'Sepolia Testnet',
-      137: 'Polygon Mainnet',
-      80001: 'Polygon Mumbai',
-      56: 'BSC Mainnet',
-      97: 'BSC Testnet',
+      Web3Constants.ethereumMainnet: 'Ethereum Mainnet',
+      Web3Constants.ropstenTestnet: 'Ropsten Testnet',
+      Web3Constants.rinkebyTestnet: 'Rinkeby Testnet',
+      Web3Constants.goerliTestnet: 'Goerli Testnet',
+      Web3Constants.sepoliaTestnet: 'Sepolia Testnet',
+      Web3Constants.polygonMainnet: 'Polygon Mainnet',
+      Web3Constants.polygonMumbai: 'Polygon Mumbai',
+      Web3Constants.bscMainnet: 'BSC Mainnet',
+      Web3Constants.bscTestnet: 'BSC Testnet',
     };
 
     return networks[chainId] ?? 'Unknown Network (ID: $chainId)';
@@ -188,6 +197,7 @@ class Web3ServiceImpl implements Web3Service {
 
       return isMetaMask;
     } catch (e) {
+      _logger.d('Error checking MetaMask availability: $e');
       return false;
     }
   }
@@ -216,8 +226,16 @@ class Web3ServiceImpl implements Web3Service {
     }
   }
 
+  /// Fetches token balances for common ERC-20 tokens and native ETH
+  /// Returns empty list if MetaMask is not available or on error
   @override
   Future<List<TokenBalance>> getTokenBalances(String walletAddress) async {
+    // Validate address format
+    if (!Validators.isValidEthereumAddress(walletAddress)) {
+      _logger.w('Invalid wallet address format: $walletAddress');
+      return [];
+    }
+    
     try {
       if (!_isMetaMaskAvailable()) {
         return [];
@@ -227,37 +245,38 @@ class Web3ServiceImpl implements Web3Service {
       final tokenBalances = <TokenBalance>[];
 
       // Common ERC-20 tokens with their contract addresses (Ethereum mainnet)
+      // These are checked for balances when fetching portfolio
       final commonTokens = <Map<String, dynamic>>[
         {
           'symbol': 'USDT',
           'name': 'Tether USD',
           'contractAddress': '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-          'decimals': 6,
+          'decimals': Web3Constants.tokenDecimals['USDT'],
         },
         {
           'symbol': 'USDC',
           'name': 'USD Coin',
           'contractAddress': '0xA0b86a33E6441b8a80204c64C41e5b35c38a1A8e',
-          'decimals': 6,
+          'decimals': Web3Constants.tokenDecimals['USDC'],
         },
         {
           'symbol': 'WETH',
           'name': 'Wrapped Ether',
           'contractAddress': '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-          'decimals': 18,
+          'decimals': Web3Constants.tokenDecimals['WETH'],
         },
         {
           'symbol': 'WBTC',
           'name': 'Wrapped Bitcoin',
           'contractAddress': '0x2260FAC5E5542a773Aa44fBcfeDf7C193bc2C599',
-          'decimals': 8,
+          'decimals': Web3Constants.tokenDecimals['WBTC'],
         },
         // Add ETH balance as native token
-        {'symbol': 'ETH', 'name': 'Ethereum', 'contractAddress': 'native', 'decimals': 18},
+        {'symbol': 'ETH', 'name': 'Ethereum', 'contractAddress': 'native', 'decimals': Web3Constants.tokenDecimals['ETH']},
       ];
 
       // ERC-20 balanceOf function signature
-      const balanceOfSignature = '0x70a08231'; // keccak256("balanceOf(address)")[:8]
+      const balanceOfSignature = Web3Constants.balanceOfSignature; // keccak256("balanceOf(address)")[:8]
 
       for (final token in commonTokens) {
         try {
@@ -273,18 +292,19 @@ class Web3ServiceImpl implements Web3Service {
 
               if (result != null) {
                 final balanceHex = (result as JSString).toDart;
-                balance = BigInt.parse(balanceHex.replaceFirst('0x', ''), radix: 16);
+                balance = BigInt.parse(balanceHex.replaceFirst('0x', ''), radix: Web3Constants.hexRadix);
               } else {
                 continue;
               }
             } catch (e) {
+              _logger.e('Failed to get native ETH balance: $e');
               continue;
             }
           } else {
             // Get ERC-20 token balance
             try {
               // Encode the address parameter (remove 0x prefix and pad to 64 chars)
-              final addressParam = walletAddress.replaceFirst('0x', '').padLeft(64, '0');
+              final addressParam = walletAddress.replaceFirst('0x', '').padLeft(Web3Constants.addressPadLength, '0');
               final data = '$balanceOfSignature$addressParam';
               final params =
                   [
@@ -298,11 +318,12 @@ class Web3ServiceImpl implements Web3Service {
 
               if (result != null) {
                 final balanceHex = (result as JSString).toDart;
-                balance = BigInt.parse(balanceHex.replaceFirst('0x', ''), radix: 16);
+                balance = BigInt.parse(balanceHex.replaceFirst('0x', ''), radix: Web3Constants.hexRadix);
               } else {
                 continue;
               }
             } catch (e) {
+              _logger.e('Failed to get ERC-20 balance for ${token['symbol']}: $e');
               continue;
             }
           }
@@ -327,6 +348,7 @@ class Web3ServiceImpl implements Web3Service {
       return tokenBalances;
     } catch (e) {
       // Return empty list on error
+      _logger.e('Error getting token balances: $e');
       return [];
     }
   }
@@ -336,8 +358,23 @@ class Web3ServiceImpl implements Web3Service {
     _connectionStatusController.add(status);
   }
 
+  /// Fetches recent ERC-20 token transfer events for the wallet
+  /// Looks back ~1000 blocks and returns both incoming and outgoing transfers
   @override
-  Future<List<TransactionInfo>> getRecentTransactions(String walletAddress, {int limit = 10}) async {
+  Future<List<TransactionInfo>> getRecentTransactions(String walletAddress, {int limit = Web3Constants.defaultTransactionLimit}) async {
+    // Validate address format
+    if (!Validators.isValidEthereumAddress(walletAddress)) {
+      _logger.w('Invalid wallet address format: $walletAddress');
+      return [];
+    }
+    
+    // Validate limit
+    var effectiveLimit = limit;
+    if (limit <= 0 || limit > 100) {
+      _logger.w('Invalid limit: $limit. Using default.');
+      effectiveLimit = Web3Constants.defaultTransactionLimit;
+    }
+    
     try {
       if (!_isMetaMaskAvailable()) {
         return [];
@@ -355,11 +392,11 @@ class Web3ServiceImpl implements Web3Service {
       }
       
       final currentBlock = int.parse(currentBlockHex.toString(), radix: 16);
-      final fromBlock = (currentBlock - 1000).clamp(0, currentBlock); // Look back ~1000 blocks
+      final fromBlock = (currentBlock - Web3Constants.defaultBlockLookback).clamp(0, currentBlock); // Look back ~1000 blocks
       
       // Create filter for Transfer events (ERC-20 tokens)
       // Transfer event signature: Transfer(address,address,uint256)
-      const transferEventSignature = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+      const transferEventSignature = Web3Constants.transferEventSignature;
       
       // Get logs for incoming transfers
       final incomingLogsParams = {
@@ -425,9 +462,10 @@ class Web3ServiceImpl implements Web3Service {
       transactions.sort((a, b) => b.blockNumber.compareTo(a.blockNumber));
       
       // Return limited results
-      return transactions.take(limit).toList();
+      return transactions.take(effectiveLimit).toList();
     } catch (e) {
       // Return empty list on error
+      _logger.e('Error getting recent transactions: $e');
       return [];
     }
   }
@@ -445,11 +483,11 @@ class Web3ServiceImpl implements Web3Service {
       final data = log['data'] as String;
       
       // Parse addresses from topics
-      final fromAddress = '0x${(topics[1] as String).substring(26)}';
-      final toAddress = '0x${(topics[2] as String).substring(26)}';
+      final fromAddress = '0x${(topics[1] as String).substring(Web3Constants.topicAddressOffset)}';
+      final toAddress = '0x${(topics[2] as String).substring(Web3Constants.topicAddressOffset)}';
       
       // Parse amount from data
-      final amount = BigInt.parse(data.substring(2), radix: 16);
+      final amount = BigInt.parse(data.substring(Web3Constants.hexDataOffset), radix: Web3Constants.hexRadix);
       
       // Get block details for timestamp
       final blockParams = {
@@ -491,6 +529,7 @@ class Web3ServiceImpl implements Web3Service {
         ],
       );
     } catch (e) {
+      _logger.e('Error parsing transfer log: $e');
       return null;
     }
   }
@@ -498,7 +537,7 @@ class Web3ServiceImpl implements Web3Service {
   Future<String> _getTokenSymbol(String contractAddress, Ethereum ethereum) async {
     try {
       // ERC-20 symbol() method signature
-      const symbolSignature = '0x95d89b41';
+      const symbolSignature = Web3Constants.symbolSignature;
       
       final params = {
         'method': 'eth_call',
@@ -517,23 +556,18 @@ class Web3ServiceImpl implements Web3Service {
         return _parseStringFromHex(response.toString());
       }
     } catch (e) {
-      // Ignore errors
+      // Log error but continue with fallback
+      _logger.e('Failed to fetch token symbol for $contractAddress: $e');
     }
     
     // Return a default based on known contracts
-    final knownTokens = {
-      '0xdac17f958d2ee523a2206206994597c13d831ec7': 'USDT',
-      '0xa0b86991c5040be1dc552d61ff7e8bfc7ae3e2b4': 'USDC',
-      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2': 'WETH',
-    };
-    
-    return knownTokens[contractAddress.toLowerCase()] ?? 'TOKEN';
+    return Web3Constants.knownTokenContracts[contractAddress.toLowerCase()] ?? 'TOKEN';
   }
 
   Future<int> _getTokenDecimals(String contractAddress, Ethereum ethereum) async {
     try {
       // ERC-20 decimals() method signature
-      const decimalsSignature = '0x313ce567';
+      const decimalsSignature = Web3Constants.decimalsSignature;
       
       final params = {
         'method': 'eth_call',
@@ -551,11 +585,12 @@ class Web3ServiceImpl implements Web3Service {
         return int.parse(response.toString().substring(2), radix: 16);
       }
     } catch (e) {
-      // Ignore errors
+      // Log error but continue with fallback
+      _logger.e('Failed to fetch token decimals for $contractAddress: $e');
     }
     
     // Default to 18 decimals
-    return 18;
+    return Web3Constants.defaultDecimals;
   }
 
   String _parseStringFromHex(String hex) {
@@ -580,6 +615,7 @@ class Web3ServiceImpl implements Web3Service {
       
       return String.fromCharCodes(bytes);
     } catch (e) {
+      _logger.d('Error parsing hex string: $e');
       return 'TOKEN';
     }
   }

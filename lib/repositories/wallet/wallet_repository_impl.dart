@@ -7,6 +7,8 @@ import 'package:web3_ai_assistant/repositories/wallet/models/wallet_error.dart';
 import 'package:web3_ai_assistant/repositories/wallet/models/wallet_state.dart';
 import 'package:web3_ai_assistant/repositories/wallet/wallet_repository.dart';
 
+/// Implementation of WalletRepository that bridges Web3Service with app state
+/// Manages wallet connection state and provides reactive updates
 class WalletRepositoryImpl implements WalletRepository {
   WalletRepositoryImpl(this._web3Service) {
     _setupConnectionListener();
@@ -17,10 +19,12 @@ class WalletRepositoryImpl implements WalletRepository {
   WalletState _currentState = WalletState.initial();
   StreamSubscription<WalletConnectionStatus>? _connectionStatusSubscription;
 
+  /// Sets up listener for Web3 connection status changes
   void _setupConnectionListener() {
     _connectionStatusSubscription = _web3Service.connectionStatusStream.listen(_handleConnectionStatusChange);
   }
 
+  /// Converts Web3 connection status to app-level wallet state
   void _handleConnectionStatusChange(WalletConnectionStatus status) {
     if (status.isConnecting) {
       _updateState(WalletState.loading());
