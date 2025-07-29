@@ -6,7 +6,7 @@ import 'package:web3_ai_assistant/services/binance_rest/models/ticker_24hr.dart'
 part 'binance_rest_service.g.dart';
 
 /// Retrofit API client for Binance REST endpoints
-@RestApi(baseUrl: 'https://api.binance.com')
+@RestApi()
 abstract class BinanceRestService {
   factory BinanceRestService(Dio dio, {String? baseUrl}) = _BinanceRestService;
 

@@ -5,7 +5,7 @@ import 'package:web3_ai_assistant/services/gemini/models/generate_content_respon
 
 part 'gemini_service.g.dart';
 
-@RestApi(baseUrl: 'https://generativelanguage.googleapis.com')
+@RestApi()
 abstract class GeminiService {
   factory GeminiService(Dio dio, {String? baseUrl}) = _GeminiService;
 

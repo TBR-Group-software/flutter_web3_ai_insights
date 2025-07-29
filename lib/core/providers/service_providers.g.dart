@@ -23,7 +23,7 @@ final web3ServiceProvider = AutoDisposeProvider<Web3Service>.internal(
 // ignore: unused_element
 typedef Web3ServiceRef = AutoDisposeProviderRef<Web3Service>;
 String _$binanceRestServiceHash() =>
-    r'819735cceeef5d736b3be7926dc368730933ca0a';
+    r'a2a5ace218bdb782b0074fa9f41af2b778bb4ea1';
 
 /// See also [binanceRestService].
 @ProviderFor(binanceRestService)
@@ -63,7 +63,7 @@ final binanceWebSocketServiceProvider =
 // ignore: unused_element
 typedef BinanceWebSocketServiceRef =
     AutoDisposeProviderRef<BinanceWebSocketService>;
-String _$geminiServiceHash() => r'f3bd620754bc5f200dd2dd2bf380ac3d7261fff9';
+String _$geminiServiceHash() => r'956d243b44fb380c70e4fe7c82902221a3de2411';
 
 /// See also [geminiService].
 @ProviderFor(geminiService)

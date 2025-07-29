@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:logger/logger.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web3_ai_assistant/core/constants/app_constants.dart';
 import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_service.dart';
 import 'package:web3_ai_assistant/services/binance_websocket/models/token_ticker.dart';
 
@@ -11,8 +12,6 @@ class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
   BinanceWebSocketServiceImpl({Logger? logger}) : _logger = logger ?? Logger();
 
   final Logger _logger;
-
-  static const String _wsUrl = 'wss://stream.binance.com:9443/ws/stream';
 
   // WebSocket related fields
   WebSocketChannel? _webSocketChannel;
@@ -80,7 +79,7 @@ class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
       _tickerController ??= StreamController<TokenTicker>.broadcast();
 
       final streams = _subscribedSymbols.map((symbol) => '$symbol@ticker').join('/');
-      final wsUrl = '$_wsUrl/$streams';
+      final wsUrl = '${AppConstants.binanceWebSocketUrl}/$streams';
 
       _logger.i('Connecting WebSocket to: $wsUrl');
       _webSocketChannel = WebSocketChannel.connect(Uri.parse(wsUrl));

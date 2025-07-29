@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:web3_ai_assistant/core/constants/app_constants.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service.dart';
 import 'package:web3_ai_assistant/services/web3/web3_service_impl.dart';
 import 'package:web3_ai_assistant/services/binance_rest/binance_rest_service.dart';
@@ -25,7 +26,7 @@ BinanceRestService binanceRestService(BinanceRestServiceRef ref) {
   final dio = Dio(
     BaseOptions(connectTimeout: const Duration(seconds: 10), receiveTimeout: const Duration(seconds: 30)),
   );
-  return BinanceRestService(dio);
+  return BinanceRestService(dio, baseUrl: AppConstants.binanceRestApiUrl);
 }
 
 @riverpod
@@ -54,7 +55,7 @@ GeminiService geminiService(GeminiServiceRef ref) {
     ),
   );
 
-  return GeminiService(dio);
+  return GeminiService(dio, baseUrl: AppConstants.geminiApiUrl);
 }
 
 @riverpod

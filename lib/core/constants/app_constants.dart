@@ -24,4 +24,9 @@ class AppConstants {
   static const String walletLabel = 'Wallet';
   static const String portfolioLabel = 'Portfolio';
   static const String aiInsightsLabel = 'AI Insights';
+
+  // API Base URLs
+  static const String binanceRestApiUrl = 'https://api.binance.com';
+  static const String binanceWebSocketUrl = 'wss://stream.binance.com:9443/ws/stream';
+  static const String geminiApiUrl = 'https://generativelanguage.googleapis.com';
 }
