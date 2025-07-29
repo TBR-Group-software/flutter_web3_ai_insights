@@ -10,17 +10,19 @@ import 'package:web3_ai_assistant/features/dashboard/presentation/layouts/dashbo
 import 'package:web3_ai_assistant/features/dashboard/presentation/layouts/dashboard_tablet_layout.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/layouts/dashboard_desktop_layout.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/layouts/dashboard_loading_layout.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final isLoading = ref.watch(dashboardLoadingProvider);
 
     return AdaptiveScaffold(
       currentRoute: AppConstants.dashboardRoute,
-      title: AppConstants.dashboardLabel,
+      title: l10n.navigationDashboard,
       body:
           isLoading
               ? const ResponsiveContainer(

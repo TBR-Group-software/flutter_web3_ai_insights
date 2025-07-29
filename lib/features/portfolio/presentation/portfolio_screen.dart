@@ -17,11 +17,12 @@ class PortfolioScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final walletState = ref.watch(walletRepositoryProvider).currentWalletState;
 
     return AdaptiveScaffold(
       currentRoute: AppConstants.portfolioRoute,
-      title: AppConstants.portfolioLabel,
+      title: l10n.navigationPortfolio,
       body: ResponsivePadding.all(
         child: walletState.isConnected ? const _ConnectedPortfolioView() : const _DisconnectedPortfolioView(),
       ),

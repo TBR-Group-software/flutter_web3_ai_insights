@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:web3_ai_assistant/core/constants/app_constants.dart';
 import 'package:web3_ai_assistant/core/widgets/shared_app_bar.dart';
 import 'package:web3_ai_assistant/features/dashboard/presentation/providers/dashboard_providers.dart';
+import 'package:web3_ai_assistant/l10n/generated/app_localizations.dart';
 
 class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
   const AdaptiveScaffoldTabletLayout({
@@ -20,6 +21,7 @@ class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currentIndex = _getCurrentIndex();
 
     // Update navigation state when route changes
@@ -34,26 +36,26 @@ class AdaptiveScaffoldTabletLayout extends ConsumerWidget {
             selectedIndex: currentIndex,
             onDestinationSelected: (index) => _onNavigate(context, index),
             labelType: NavigationRailLabelType.selected,
-            destinations: const [
+            destinations: [
               NavigationRailDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                selectedIcon: Icon(Icons.dashboard_rounded),
-                label: Text(AppConstants.dashboardLabel),
+                icon: const Icon(Icons.dashboard_outlined),
+                selectedIcon: const Icon(Icons.dashboard_rounded),
+                label: Text(l10n.navigationDashboard),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.account_balance_wallet_outlined),
-                selectedIcon: Icon(Icons.account_balance_wallet_rounded),
-                label: Text(AppConstants.walletLabel),
+                icon: const Icon(Icons.account_balance_wallet_outlined),
+                selectedIcon: const Icon(Icons.account_balance_wallet_rounded),
+                label: Text(l10n.navigationWallet),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.pie_chart_outline),
-                selectedIcon: Icon(Icons.pie_chart_rounded),
-                label: Text(AppConstants.portfolioLabel),
+                icon: const Icon(Icons.pie_chart_outline),
+                selectedIcon: const Icon(Icons.pie_chart_rounded),
+                label: Text(l10n.navigationPortfolio),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.auto_awesome_outlined),
-                selectedIcon: Icon(Icons.auto_awesome_rounded),
-                label: Text(AppConstants.aiInsightsLabel),
+                icon: const Icon(Icons.auto_awesome_outlined),
+                selectedIcon: const Icon(Icons.auto_awesome_rounded),
+                label: Text(l10n.navigationAiInsights),
               ),
             ],
           ),

@@ -20,7 +20,7 @@ class WalletScreen extends ConsumerWidget {
 
     return AdaptiveScaffold(
       currentRoute: AppConstants.walletRoute,
-      title: AppConstants.walletLabel,
+      title: l10n.navigationWallet,
       body: ResponsivePadding.all(
         child: Center(
           child: ConstrainedBox(
