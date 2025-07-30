@@ -295,10 +295,10 @@ class PortfolioSummaryCardDesktop extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: _buildMainValue(context),
+              child: Widget()...
             ),
             const VerticalDivider(),
-            _buildStatsRow(context),
+            Widget()...
           ],
         ),
       ),
