@@ -8,15 +8,15 @@
 <div align = "center">
 
 **Web3 AI Insights** is an open-source Flutter Web application that connects to Web3 wallets, fetches token portfolios in real-time, and provides AI-powered analysis using Google Gemini to deliver comprehensive insights, risk assessments, and investment recommendations.
-
 </div>
 
 <div align="center">
-<img src="demo_images/1.gif" alt="WalletConnection" width="250"/>
-<img src="demo_images/2.gif" alt="PortfolioView" width="250"/>
-<img src="demo_images/3.gif" alt="RealtimeUpdates" width="250"/>
-<img src="demo_images/4.gif" alt="AIAnalysis" width="250"/>
-<img src="demo_images/5.gif" alt="ResponsiveDesign" width="250"/>
+<img src="assets/gifs/connect_wallet.gif" alt="WalletConnection" width="500"/>
+<img src="assets/gifs/dashboard_screen.gif" alt="DashboardScreen" width="500"/>
+<img src="assets/gifs/portfolio_screen.gif" alt="PortfolioScreen" width="500"/>
+<img src="assets/gifs/ai_screen.gif" alt="AIAnalysis" width="500"/>
+<img src="assets/gifs/tablet_layout.png" alt="TabletLayout" width="500"/>
+<img src="assets/gifs/mobile_layout.png" alt="TabletLayout" width="500"/>
 </div>
 
 ---
