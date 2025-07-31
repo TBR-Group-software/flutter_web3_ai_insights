@@ -1,0 +1,194 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'package:logger/logger.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web3_ai_assistant/core/constants/api_constants.dart';
+import 'package:web3_ai_assistant/core/constants/app_constants.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/binance_websocket_service.dart';
+import 'package:web3_ai_assistant/services/binance_websocket/models/token_ticker.dart';
+
+/// Implementation of BinanceWebSocketService for real-time price streaming
+/// Manages WebSocket connection to Binance with auto-reconnection and heartbeat
+class BinanceWebSocketServiceImpl implements BinanceWebSocketService {
+  BinanceWebSocketServiceImpl({Logger? logger}) : _logger = logger ?? Logger();
+
+  final Logger _logger;
+
+  // WebSocket related fields
+  WebSocketChannel? _webSocketChannel;
+  bool _isConnected = false;
+  bool _isReconnecting = false;
+  Timer? _heartbeatTimer;
+  Timer? _reconnectTimer;
+  final Set<String> _subscribedSymbols = {};
+
+  StreamController<TokenTicker>? _tickerController;
+
+  @override
+  Stream<TokenTicker> get tickerStream => _tickerController?.stream ?? const Stream.empty();
+
+  @override
+  Set<String> get subscribedSymbols => Set.unmodifiable(_subscribedSymbols);
+
+  @override
+  bool get isConnected => _isConnected;
+
+  @override
+  void subscribeToSymbols(List<String> symbols) {
+    if (symbols.isEmpty) {
+      _logger.w('No symbols provided for WebSocket subscription');
+      return;
+    }
+
+    _logger.i('📡 Subscribing to WebSocket price updates for: $symbols');
+    for (final symbol in symbols) {
+      _subscribedSymbols.add(symbol.toLowerCase());
+    }
+
+    _connectWebSocket();
+  }
+
+  @override
+  void unsubscribeFromSymbols(List<String> symbols) {
+    if (symbols.isEmpty) {
+      return;
+    }
+
+    for (final symbol in symbols) {
+      _subscribedSymbols.remove(symbol.toLowerCase());
+    }
+
+    if (_subscribedSymbols.isEmpty) {
+      _disconnectWebSocket();
+    } else {
+      _connectWebSocket(); // Reconnect with updated subscriptions
+    }
+  }
+
+  void _connectWebSocket() {
+    if (_isConnected || _isReconnecting || _subscribedSymbols.isEmpty) {
+      _logger.d(
+        'Skipping WebSocket connection: connected=$_isConnected, reconnecting=$_isReconnecting, symbols=${_subscribedSymbols.length}',
+      );
+      return;
+    }
+
+    _isReconnecting = true;
+    _disconnectWebSocket();
+
+    try {
+      _tickerController ??= StreamController<TokenTicker>.broadcast();
+
+      final streams = _subscribedSymbols.map((symbol) => '$symbol@ticker').join('/');
+      final wsUrl = '${AppConstants.binanceWebSocketUrl}/$streams';
+
+      _logger.i('Connecting WebSocket to: $wsUrl');
+      _webSocketChannel = WebSocketChannel.connect(Uri.parse(wsUrl));
+      _isConnected = true;
+      _isReconnecting = false;
+
+      _logger.i('✅ WebSocket connected to Binance for symbols: ${_subscribedSymbols.join(', ')}');
+
+      _webSocketChannel!.stream.listen(
+        (message) => _handleWebSocketMessage(message as String),
+        onError: _handleWebSocketError,
+        onDone: _handleWebSocketDone,
+      );
+
+      _startHeartbeat();
+    } catch (e) {
+      _logger.e('❌ WebSocket connection failed: $e');
+      _isConnected = false;
+      _isReconnecting = false;
+      _scheduleReconnect();
+    }
+  }
+
+  void _handleWebSocketMessage(String message) {
+    try {
+      final data = jsonDecode(message);
+
+      if (data is Map<String, dynamic>) {
+        final ticker = TokenTicker.fromJson(data);
+
+        _logger.d('🔄 Real-time ticker update: ${ticker.symbol} = \$${ticker.price}');
+        _tickerController?.add(ticker);
+      }
+    } catch (e, stackTrace) {
+      // Ensure error message is properly formatted
+      final errorMessage = e.toString();
+      _logger.e('Error parsing WebSocket message', error: errorMessage, stackTrace: stackTrace);
+      
+      // Log raw message separately to avoid issues with complex strings
+      if (message.length > 1000) {
+        _logger.d('Raw message too long to display (${message.length} characters)');
+      } else {
+        _logger.d('Raw message: $message');
+      }
+    }
+  }
+
+  void _handleWebSocketError(Object error) {
+    _logger.e('WebSocket error: $error');
+    _isConnected = false;
+    _scheduleReconnect();
+  }
+
+  void _handleWebSocketDone() {
+    _logger.i('WebSocket connection closed');
+    _isConnected = false;
+    _scheduleReconnect();
+  }
+
+  void _scheduleReconnect() {
+    if (_isReconnecting || _subscribedSymbols.isEmpty) {
+      return;
+    }
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(
+      Duration(seconds: ApiConstants.reconnectDelay.inSeconds + Random().nextInt(ApiConstants.randomBackoffMax)), // Random backoff
+      _connectWebSocket,
+    );
+  }
+
+  /// Sends periodic heartbeat to keep WebSocket connection alive
+  void _startHeartbeat() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = Timer.periodic(ApiConstants.heartbeatInterval, (timer) {
+      if (_isConnected) {
+        try {
+          // Binance doesn't require explicit ping messages for stream endpoints
+          // The connection is kept alive automatically
+          // We'll just check if the channel is still active
+          if (_webSocketChannel == null) {
+            _isConnected = false;
+            _scheduleReconnect();
+          }
+        } catch (e) {
+          _logger.e('Heartbeat check failed: $e');
+          _isConnected = false;
+          _scheduleReconnect();
+        }
+      }
+    });
+  }
+
+  void _disconnectWebSocket() {
+    _heartbeatTimer?.cancel();
+    _reconnectTimer?.cancel();
+    _webSocketChannel?.sink.close();
+    _webSocketChannel = null;
+    _isConnected = false;
+    _isReconnecting = false;
+  }
+
+  @override
+  void dispose() {
+    _disconnectWebSocket();
+    _tickerController?.close();
+    _tickerController = null;
+    _subscribedSymbols.clear();
+  }
+}
