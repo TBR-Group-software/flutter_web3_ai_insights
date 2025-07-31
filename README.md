@@ -11,12 +11,12 @@
 </div>
 
 <div align="center">
-<img src="assets/gifs/connect_wallet.gif" alt="WalletConnection" width="500"/>
-<img src="assets/gifs/dashboard_screen.gif" alt="DashboardScreen" width="500"/>
-<img src="assets/gifs/portfolio_screen.gif" alt="PortfolioScreen" width="500"/>
-<img src="assets/gifs/ai_screen.gif" alt="AIAnalysis" width="500"/>
-<img src="assets/gifs/tablet_layout.png" alt="TabletLayout" width="500"/>
-<img src="assets/gifs/mobile_layout.png" alt="TabletLayout" width="500"/>
+<img src="assets/gifs/connect_wallet.gif" alt="WalletConnection" width="350"/>
+<img src="assets/gifs/dashboard_screen.gif" alt="DashboardScreen" width="350"/>
+<img src="assets/gifs/portfolio_screen.gif" alt="PortfolioScreen" width="350"/>
+<img src="assets/gifs/ai_screen.gif" alt="AIAnalysis" width="350"/>
+<img src="assets/gifs/tablet_layout.png" alt="TabletLayout" width="350"/>
+<img src="assets/gifs/mobile_layout.png" alt="TabletLayout" width="350"/>
 </div>
 
 ---
