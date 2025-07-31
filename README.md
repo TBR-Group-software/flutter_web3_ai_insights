@@ -18,9 +18,11 @@
 </div>
 
 **Tablet Laoyout**
+
 <img src="assets/gifs/tablet_layout.png" alt="TabletLayout" width="500"/>
 
 **Mobile Laoyout**
+
 <img src="assets/gifs/mobile_layout.png" alt="MobileLayout" width="350"/>
 
 ---
