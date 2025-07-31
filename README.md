@@ -12,27 +12,27 @@
 
 <div align="center">
 
-**Wallet Connection:**
+Wallet Connection:
 
-<img src="assets/gifs/connect_wallet.gif" alt="WalletConnection" width="500"/>
+<img src="assets/gifs/connect_wallet.gif" alt="WalletConnection" width="600"/>
 
-**Dashboard Screen:**
+Dashboard Screen:
 
-<img src="assets/gifs/dashboard_screen.gif" alt="DashboardScreen" width="500"/>
+<img src="assets/gifs/dashboard_screen.gif" alt="DashboardScreen" width="600"/>
 
-**Portfolio Screen:**
+Portfolio Screen:
 
-<img src="assets/gifs/portfolio_screen.gif" alt="PortfolioScreen" width="500"/>
+<img src="assets/gifs/portfolio_screen.gif" alt="PortfolioScreen" width="600"/>
 
-**AI Insights Screen:**
+AI Insights Screen:
 
-<img src="assets/gifs/ai_screen.gif" alt="AIAnalysis" width="500"/>
+<img src="assets/gifs/ai_screen.gif" alt="AIAnalysis" width="600"/>
 
-**Tablet Laoyout:**
+Tablet Laoyout:
 
 <img src="assets/gifs/tablet_layout.png" alt="TabletLayout" width="500"/>
 
-**Mobile Laoyout:**
+Mobile Laoyout:
 
 <img src="assets/gifs/mobile_layout.png" alt="MobileLayout" width="350"/>
 
