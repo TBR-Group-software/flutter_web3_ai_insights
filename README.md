@@ -15,7 +15,7 @@
 <img src="assets/gifs/dashboard_screen.gif" alt="DashboardScreen" width="350"/>
 <img src="assets/gifs/portfolio_screen.gif" alt="PortfolioScreen" width="350"/>
 <img src="assets/gifs/ai_screen.gif" alt="AIAnalysis" width="350"/>
-</div>
+
 
 **Tablet Laoyout**
 
@@ -24,7 +24,7 @@
 **Mobile Laoyout**
 
 <img src="assets/gifs/mobile_layout.png" alt="MobileLayout" width="350"/>
-
+</div>
 ---
 
 ## Table of Contents
