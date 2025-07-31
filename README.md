@@ -11,13 +11,17 @@
 </div>
 
 <div align="center">
+
 **Wallet Connection:**
+
 <img src="assets/gifs/connect_wallet.gif" alt="WalletConnection" width="500"/>
 
 **Dashboard Screen:**
+
 <img src="assets/gifs/dashboard_screen.gif" alt="DashboardScreen" width="500"/>
 
 **Portfolio Screen:**
+
 <img src="assets/gifs/portfolio_screen.gif" alt="PortfolioScreen" width="500"/>
 
 **AI Insights Screen:**
@@ -31,6 +35,7 @@
 **Mobile Laoyout:**
 
 <img src="assets/gifs/mobile_layout.png" alt="MobileLayout" width="350"/>
+
 </div>
 ---
 
