@@ -37,6 +37,7 @@ Mobile Laoyout:
 <img src="assets/gifs/mobile_layout.png" alt="MobileLayout" width="350"/>
 
 </div>
+
 ---
 
 ## Table of Contents
