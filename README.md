@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/ai_insigts_logo.jpg" alt="Web3 AI Insights" width="300"/>
+<img src="assets/ai_insigts_logo.jpg" alt="Web3 AI Insights" width="200"/>
 </div>
 
 ## About the project
