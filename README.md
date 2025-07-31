@@ -17,11 +17,11 @@
 <img src="assets/gifs/ai_screen.gif" alt="AIAnalysis" width="350"/>
 
 
-**Tablet Laoyout**
+**Tablet Laoyout:**
 
 <img src="assets/gifs/tablet_layout.png" alt="TabletLayout" width="500"/>
 
-**Mobile Laoyout**
+**Mobile Laoyout:**
 
 <img src="assets/gifs/mobile_layout.png" alt="MobileLayout" width="350"/>
 </div>
